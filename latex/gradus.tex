@@ -49,26 +49,18 @@
 % \usepackage{amsmath}	% Advanced maths commands
 % \usepackage{amssymb}	% Extra maths symbols (this seems to be already defined)
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 %%%%% AUTHORS - PLACE YOUR OWN COMMANDS HERE %%%%%
 
-% Please keep new commands to a minimum, and use \newcommand not \def to avoid
-% overwriting existing commands. Example:
-%\newcommand{\pcm}{\,cm$^{-2}$}	% per cm-squared
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{custom-commands.tex}
 
 %%%%%%%%%%%%%%%%%%% TITLE PAGE %%%%%%%%%%%%%%%%%%%
 
-% Title of the paper, and the short title which is used in the headers.
-% Keep the title short and informative.
-\title[Gradus]{Gradus}
+\title[Gradus.jl]{Spacetime agnostic general relativistic ray-tracing through automatic differentiation}
 
 % The list of authors, and the short list which is used in the headers.
 % If you need two or more lines of authors, add an extra line using \newauthor
-\author[F. Baker et al.]{
-F. Baker,$^{1}$\thanks{E-mail: Fergus.Baker@bristol.ac.uk (FB)}
+\author[F. J. E. Baker et al.]{
+F. J. E. Baker,$^{1}$\thanks{E-mail: fergus.baker@bristol.ac.uk (FB)}
 and A. J. Young$^{1}$
 % Plus other contributing authors (tbc)
 \\
@@ -90,7 +82,7 @@ $^{1}$H. H. Wills Physics Laboratory, Tyndall Avenue, Bristol BS8 1TL, UK
 
 % Abstract of the paper
 \begin{abstract}
-	We introduce {\tt Gradus}, an open-source...
+	We introduce \Gradus, an open-source...
 \end{abstract}
 
 % Select between one and six entries from the list of approved keywords.
@@ -103,17 +95,54 @@ keyword1 -- keyword2 -- keyword3
 
 %%%%%%%%%%%%%%%%% BODY OF PAPER %%%%%%%%%%%%%%%%%%
 
-\section{Introduction}
+%% INTRODUCTION
+\input{gradus.introduction.tex}
 
-In the era of quantitative, precision observational tests of General Relativity in the strong field regime it is necessary to have a fast and flexible method to compute the observational properties of accreting black hole systems. We have developed an open-source integrator 
-{\tt Gradus}\footnote{Available as an open-source project on GitHub at \url{https://github.com/astro-group-bristol/Gradus.jl}.} for this purpose. In the remainder of the paper we describe how the software works, comparing with previous work in the literature, and outlining the new capabilities of {\tt Gradius}. % Draft - need to include references to review articles, mention things like black hole spin, thick discs, narrow components of iron lines, orbiting hot spots, quasi periodic oscillations, reverberation lags (versus frequency and energy), tidal disruption events and more!
+%% NUMERICAL METHODS
+\input{gradus.numerical-methods.tex}
 
-% Maybe some history of the problem with key references
-Transfer functions \citep{cunningham_effects_1975} % An example reference
+%% DESCRIPTION OF THE CODE
+\section{Description of the code}
 
-\section{Description of {\tt Gradus}} % Need to think of more interesting Section titles!
+For Julia, AD is implemented in the ForwardDiff.jl package \citep{RevelsLubinPapamarkou2016}
 
-% Mention second order, automatic differentiation, arbitrary metrics, photon and particle orbits, innermost stable circular orbit, speed, intersections with arbitrary disc geometries
+Multi-threaded, multi-CPU, optionally GPU decelerated. Speedup depends on choice of solver (fixed time step faster on GPU)
+
+List of currently implemented metrics
+
+Adding new spacetimes
+
+Accretion disc geometries
+
+Point functions for composable results
+
+Performance vs e.g. Bambi's NK and other work
+
+\subsection{Simulation products}
+
+What we can export, and how they can be exported / used in e.g. XSPEC
+
+\section{Test problems}
+
+\subsection{Integration stability}
+Energy conservation, deflection problem, shadow, tests for naked-singularities
+
+\subsection{Analytic solutions}
+All the special radii, the circular orbit energy
+
+\section{Results}
+
+\subsection{Iron line profiles}
+
+Bambi's various metrics and relline, self consistency between methods
+
+\subsection{Lag-frequency spectra}
+
+Ingram's code? Jiachen's code
+
+\subsection{Emissivity curves}
+
+Wilkins and Fabian with lamp post and moving corona
 
 % Placeholder figure
 % \begin{figure}
@@ -122,7 +151,6 @@ Transfer functions \citep{cunningham_effects_1975} % An example reference
 % 	\label{fig:some_figure_reference}
 % \end{figure}
 
-\section{Test problems}
 
 % Note this is not an exhaustive list!
 % Thick discs
@@ -132,28 +160,29 @@ Transfer functions \citep{cunningham_effects_1975} % An example reference
 % 	Time lags versus frequency
 % 	Time lags versus energy
 
-\section{Using {\tt Gradus}}
 
 % Description of how the community can use Gradus and how to make table models.
 
 \section{Conclusions}
 
-We encourage the community to contact us with interesting problems that may be tackled using {\tt Gradus} as we are happy to assist with new applications of the code.
+Outlook
+
+We encourage the community to contact us with interesting problems that may be tackled using \Gradus as we are happy to assist with new applications of the code.
 
 % Note future work, e.g., with regard to fitting, and using the code in other papers
 
 \section*{Acknowledgements}
+This work is supported by the UKRI AIMLAC CDT funded by grant EP/S023992/1.
 
-We thank Cosimo Bambi and Jiachen Jiang for sharing their software for testing purposes.
+We thank Cosimo Bambi and Jiachen Jiang for sharing their software for testing purposes. FB thanks Rosie Baker for her debugging assistance, and Gabriella Kirkpatrick for her insights and conversations.
+
+
+Budgetary codes and sponsors including AIMLAC, UKRI
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Data Availability}
 
- 
 % The inclusion of a Data Availability Statement is a requirement for articles published in MNRAS. Data Availability Statements provide a standardised format for readers to understand the availability of data underlying the research results described in the article. The statement may refer to original data generated in the course of the study or to third-party data analysed in the article. The statement should describe and provide means of access, where possible, by linking to the data or providing the required accession numbers for the relevant databases or DOIs.
-
-
-
 
 %%%%%%%%%%%%%%%%%%%% REFERENCES %%%%%%%%%%%%%%%%%%
 
@@ -162,15 +191,6 @@ We thank Cosimo Bambi and Jiachen Jiang for sharing their software for testing p
 \bibliographystyle{mnras}
 \bibliography{gradus} % if your bibtex file is called example.bib
 
-
-% Alternatively you could enter them by hand, like this:
-% This method is tedious and prone to error if you have lots of references
-%\begin{thebibliography}{99}
-%\bibitem[\protect\citeauthoryear{Author}{2012}]{Author2012}
-%Author A.~N., 2013, Journal of Improbable Astronomy, 1, 1
-%\bibitem[\protect\citeauthoryear{Others}{2013}]{Others2013}
-%Others S., 2012, Journal of Interesting Stuff, 17, 198
-%\end{thebibliography}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

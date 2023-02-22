@@ -1,0 +1,90 @@
+\section{Numerical methods}
+
+Automatic differentiation (AD) is a computational method for calculating derivatives through the chain rule, relying on the chronological sequence in which mathematical expressions are calculated on computers to propagate derivatives through a function call. Forward mode AD is a specific method of accumulation that uses the algebra of dual numbers to track tangent components, first computing the result and dual for each sub expression in order to find the total derivative.
+
+For simplicity, this section will focus on static, axisymmetric spacetimes in the Boyer-Lindquist coordinates, in which a metric may be expressed
+\begin{equation}
+\label{eq:static_axisymmetric_metric}
+    g_{\mu\nu} 
+    = g_{tt} \d t^2 
+    + g_{rr} \d r^2 
+    + g_{\theta\theta} \d \theta^2 
+    + g_{\phi\phi} \d \phi^2 
+    + 2g_{t\phi} \d t \d \phi, 
+\end{equation}
+reserving greek indices to denote the four spacetime components, and latin indices for the three spatial components. We write partial derivatives with respect to the coordinates $x^\mu$ as $\partial_\mu := \partial / \partial x^\mu$, and distinguish Euler's number $\e$ and basis vectors $e$ with italics.
+
+
+%% SECTION: GEODESIC INTEGRATION
+\subsection{Geodesic integration}
+
+The geodesic equation for coordinates $x^\mu$ is
+\begin{equation}
+\label{eq:geodesic_equation}
+    \frac{\d^2 x^\mu}{\d \lambda^2}
+    + \utensor{\Gamma}{\mu}{\nu\sigma}
+    \frac{\d x^\nu}{\d \lambda}
+    \frac{\d x^\sigma}{\d \lambda}
+    = a^\mu,
+\end{equation}
+where $\lambda$ is the affine parameter parameterising the curve, and $a^\mu = 0$ is an external non-gravitational acceleration vector. The Christoffel symbols are
+\begin{equation}
+    \utensor{\Gamma}{\mu}{\nu\sigma}
+    = \frac{1}{2} g^{\mu\rho} 
+    \left(
+        \partial_{\nu}g_{\rho \sigma}
+        + \partial_{\sigma}g_{\rho \nu}
+        - \partial_{\rho}g_{\sigma \nu}
+    \right),
+\end{equation}
+defined solely by components of the metric and derivatives thereof. Note that the Christoffel symbols need only the metric and a sparse Jacobian of the metric to be determined. With forward mode AD, these quantities may be calculated simultaneously, both accurately and efficiently, and, along with \eqref{eq:static_axisymmetric_metric}, one can exploit $\partial_t g_{\mu\nu} = \partial_\phi g_{\mu\nu} = 0$ to reduce the number of operations for different spacetime classes.
+
+A second-order system requires some initial $x^\mu$ and $\partial x^\mu / \partial \lambda$, specifying a point along the geodesic and its tangential velocity. The velocity vectors are constrained by an invariant scalar $\mu$ through
+\begin{equation}
+    g_{\sigma\nu} \deriv{x^\sigma}{\lambda} \deriv{x^\nu}{\lambda} = \mu^2,
+\end{equation}
+such that for $\mu^2 = 0$ one obtains the solutions for null-geodesics, $\mu^2 > 0$ space-like, and $\mu^2 < 0$ time-like \todo{check the sign}. Specifying the three-vector $\partial x^i / \partial \lambda$ determines $\partial x^t / \partial \lambda$ for a chosen $\mu$ up to an ambiguity in the direction of time, which together with $g_{\mu\nu}$ and $x^\mu$ is sufficient to integrate the second-order ODE system. By default, we use the adaptive Tsitouras Runge-Kutta 5/4 algorithm.
+\\[1em]
+
+\notes{
+how we find the initial conditions for velocity.
+Integration schemes, DifferentialEquations.jl and Tsit5
+Redshift
+}
+
+\subsection{Solving for special orbits}
+\notes{
+How we find circular orbits, how we find ISCO, photon radius, event horizon
+}
+
+\subsection{Tracing and constructing images}
+
+\notes{Also mention for the coronal sources}
+
+
+
+
+\subsection{Transfer functions}
+
+
+\notes{
+Both 1d (Cunningham) and 2d (lag-energy) transfer functions, the methods used to solve them, and the quadrature integration schemes.
+}
+
+\subsection{LNRF with Gram-Schmidt}
+
+\notes{
+How we derive the LNRF basis using Gram-Schmidt orthogonalization procedure, how we can use this to model corona
+}
+
+\subsection{Disc emissivity}
+
+\notes{
+We can calculate emissivity / flux maps for discs using either Voronoi tesselation or some symmetric prescriptions
+}
+
+\subsection{Covariant radiative transfer}
+From \eqref{eq:geodesic_equation}, with $a^\mu = f^\mu / m$.
+
+WIP? will probably finish implementing this before writing the full paper
+
