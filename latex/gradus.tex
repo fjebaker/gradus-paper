@@ -101,26 +101,7 @@ keyword1 -- keyword2 -- keyword3
 %% NUMERICAL METHODS
 \input{gradus.numerical-methods.tex}
 
-%% DESCRIPTION OF THE CODE
-\section{Description of the code}
-
-For Julia, AD is implemented in the ForwardDiff.jl package \citep{RevelsLubinPapamarkou2016}
-
-Multi-threaded, multi-CPU, optionally GPU decelerated. Speedup depends on choice of solver (fixed time step faster on GPU)
-
-List of currently implemented metrics
-
-Adding new spacetimes
-
-Accretion disc geometries
-
-Point functions for composable results
-
-Performance vs e.g. Bambi's NK and other work
-
-\subsection{Simulation products}
-
-What we can export, and how they can be exported / used in e.g. XSPEC
+\input{gradus.code.tex}
 
 \section{Test problems}
 
@@ -130,7 +111,7 @@ Energy conservation, deflection problem, shadow, tests for naked-singularities
 \subsection{Analytic solutions}
 All the special radii, the circular orbit energy
 
-\section{Results}
+\section{Applications}
 
 \subsection{Iron line profiles}
 
@@ -189,14 +170,16 @@ Budgetary codes and sponsors including AIMLAC, UKRI
 % The best way to enter references is to use BibTeX:
 
 \bibliographystyle{mnras}
-\bibliography{gradus} % if your bibtex file is called example.bib
+\bibliography{citations} % if your bibtex file is called example.bib
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%% APPENDICES %%%%%%%%%%%%%%%%%%%%%
 
-% \appendix
+\appendix
+
+\input{gradus.appendix.gram-schmidt.tex}
 
 % \section{Some extra material}
 
