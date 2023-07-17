@@ -274,3 +274,7 @@ TSWLatexianTemp*
 
 # Makeindex log files
 *.lpz
+*.vscode
+
+Exported Items.bib
+latex/build

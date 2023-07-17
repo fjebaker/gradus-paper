@@ -1,0 +1,29 @@
+%% DESCRIPTION OF THE CODE
+\section{Description of the code}
+
+Gradus.jl aims to have a single expressive high-level API for a variety of GRRT problems, with sensible defaults that work for most spacetimes. The code is accompanied by both code-level and generated documentation\footnote{\url{https://astro-group-bristol.github.io/Gradus.jl/dev/}}, with short tutorials and examples designed to provide a feature-rich overview and simultaneously teaching new users how to begin constructing their own simulations. The documentation strives to be the most up-to-date description of our numerical methods, detailing algorithm specific choices, and is rebuilt as part of our GitHub Workflows. The source code is written to be read by contributors and users alike to invite extension, and to be explicit about our methods, their benefits, and limitations.
+
+The code makes use of Julia's heterogeneity and concurrency to run in multi-threaded and distributed environments, with GPU-offloading via DiffEqGPU.jl and CUDA.jl\footnote{We note that GPU acceleration is currently limited due to a combination of ODE callbacks and `warp' termination. Progress in resolving outstanding problems is being tracked as an issue.}. Gradus.jl is performant enough to create simulation products on personal computers\footnote{E.g., recomputing all 600 \texttt{relline} transfer function tables \cite{} on a 2021 Apple 8-core M1 Macbook takes approximately 2 hours.}, but scales effortlessly to supercomputers.
+
+Precision is user-defined and inferred from user provided types. Single precision floating point arithmetic may be desirable for GPU computing, whereas `big float' precision may be needed for some extreme near-horizon computations. In our discussion of the numerical methods, we note the current default algorithm is Tsitouras Runge-Kutta 5/4. Gradus.jl vendors many additional ODE solvers and numerical algorithms from the Julia SciML ecosystem, that may be used when certain integrations or problems require them.
+
+Gradus.jl provides a number of predefined metrics, including the Kerr spacetime, Morris-Thorne wormhole, Johannsen-Psaltis, Dilaton-Axion, and a modified Kerr with coronal refraction. The Kerr-Newman metric is also implemented, complete with the ability to specify the electromagnetic potential vector, from which external forces in \eqref{eq:geodesic_equation} are calculated. Furthermore, Gradus.jl allows for 1st order specification of the geodesic ODE system, primarily used as a point of comparison with the second order results.
+
+For Julia, AD is implemented in the ForwardDiff.jl package \citep{RevelsLubinPapamarkou2016}
+
+Multi-threaded, multi-CPU, optionally GPU decelerated. Speedup depends on choice of solver (fixed time step faster on GPU)
+
+List of currently implemented metrics
+
+Adding new spacetimes
+
+Accretion disc geometries
+
+Point functions for composable results
+
+Performance vs e.g. Bambi's NK and other work
+
+\subsection{Simulation products}
+
+What we can export, and how they can be exported / used in e.g. XSPEC
+

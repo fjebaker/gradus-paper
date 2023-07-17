@@ -1,0 +1,150 @@
+\section{Numerical methods}
+
+For simplicity, we will here focus on static, axisymmetric spacetimes in the Boyer-Lindquist coordinates. Such a spacetime has a metric of the form 
+\begin{equation}
+\label{eq:static_axisymmetric_metric}
+    g_{\mu\nu} 
+    = g_{tt} \d t^2 
+    + g_{rr} \d r^2 
+    + g_{\theta\theta} \d \theta^2 
+    + g_{\phi\phi} \d \phi^2 
+    + 2g_{t\phi} \d t \d \phi.
+\end{equation}
+We adopt $(-, +, +, +)$ signature and standard units $c = G = 1$. Greek indices ($\mu, \nu$) will be used to denote the four spacetime components, and Latin indices ($i, j$) for the three spatial components. We write partial derivatives with respect to the coordinates $x^\mu$ as $\partial_\mu := \partial / \partial x^\mu$.
+
+
+%% SECTION: GEODESIC INTEGRATION
+\subsection{Geodesic integration}
+
+The geodesic equation with coordinates $x^\mu$ is
+\begin{equation}
+\label{eq:geodesic_equation}
+    \frac{\d^2 x^\mu}{\d \lambda^2}
+    + \utensor{\Gamma}{\mu}{\nu\sigma}
+    \vel{\nu}
+    \vel{\sigma}
+    = a^\mu,
+\end{equation}
+where $\lambda$ is the affine parameter and $a^\mu$ is some external acceleration. The effects of curvature on the trajectory encoded in the Christoffel symbols, 
+\begin{equation}
+\label{eq:christoffel}
+    \utensor{\Gamma}{\mu}{\nu\sigma}
+    := \frac{1}{2} g^{\mu\rho} 
+    \left(
+        \partial_{\nu}g_{\rho \sigma}
+        + \partial_{\sigma}g_{\rho \nu}
+        - \partial_{\rho}g_{\sigma \nu}
+    \right),
+\end{equation}
+determined solely by metric and derivatives thereof. The geodesic equation is a set of four coupled second order differential equations that may be solved for a choice of initial $x^\mu$ and $\vel{\mu}$. A convention is to choose an initial position with $x^t = 0$, whereas the velocity vector is additionally constrained by the invariance
+\begin{equation}
+\label{eq:velocity_constraint}
+    g_{\sigma\nu} \vel{\sigma} \vel{\nu} = \mu^2,
+\end{equation}
+where $\mu$ is the invariant mass. This invariance gives rise to three solution classes depending on the sign of $\mu^2$, namely $\mu^2 = 0$ corresponding to null-, $\mu^2 > 0$ to time-, and $\mu^2 < 0$ to space-like geodesics. Null geodesics are the trajectories of photons, time-like regular massive particles, and space-like geodesics are the trajectories of exotic particles, such as tachyons. Specifying the three-vector $\vel{i}$ determines $\vel{t}$ by Eq. \eqref{eq:velocity_constraint}, rearranged as
+\begin{equation}
+\vel{t}  = \frac{-g_{t\phi} \vel{\phi} \pm
+    \sqrt{-g_{ij} \vel{i} \vel{j} - \mu^2}
+}{g_{tt}}.
+\end{equation}
+The choice of positive or negative root corresponds to the direction of time, wherein lies the ray-tracing \textit{trick}: a time-reversal symmetry in the metric allows us to trace from an observer back to the point of origin, and then \textit{reverse} time in order to calculate quantities as seen by the observer. \todo{explain better}
+
+The integration of the ODE system is performed numerically with an appropriate choice of algorithm. We favour the adaptive Tsitouras Runge-Kutta 5/4 \citep{tsitouras_rungekutta_2011}. This integrator is shown to be fast and robust, also providing free fourth-order interpolants of the resulting geodesics. The interpolants can be particularly useful if additional quantities need to be re-traced along a geodesic, or for accurately finding points of intersections.
+
+Derivatives of the metric needed in Eq. \eqref{eq:christoffel} may be efficiently computed with AD. This brings versatility and ease, as new spacetimes need only to define the metric for the geodesic system to be computable, and AD ensures the derivatives are free of the pathologies of other e.g. stenciling methods used to compute derivatives. If the class of spacetime exhibits additional symmetries, these can be exploited to reduce computation further: metrics of the form \eqref{eq:static_axisymmetric_metric} can exploit $\partial_t g_{\mu\nu} = \partial{\phi} g_{\mu\nu} = 0$ and avoid calculating two columns of the Jacobian entirely.
+
+Sparsity is often symbolically inferable under simple operations. We use compile time Julia \texttt{@generated} functions, along with Symbolics.jl, to attempt to infer which terms in the Jacobian and Christoffel symbols can be avoided (if any), to generate optimal evaluation for a given class of metric. 
+%This was benchmarked against other packages that perform the sparsity detection generically, such as FastDifferentiation.jl, and find similar performance.
+
+
+\subsection{Observers and emitters}
+
+To determine interpretable initial velocities it is useful to consider the coordinates local to the observer or emitter at coordinates $x^\mu$. Following \cite{cunningham_optical_1973}, for observers one usually considers an image plane onto which a projection of geodesics is rendered, with geometry as in Fig. \ref{fig:observer_coordinates}. One may then define a set of impact parameters from components of the local momenta
+\begin{align}
+    \alpha &:=  x^r \frac{p_{(\phi)}}{p_{(r)}}, \\
+    \beta &:= x^r \frac{p_{(\theta)}}{p_{(r)}},
+\end{align}
+using indices in parentheses to denote the vector components in the local frame. Our choice of symbols ($r, \theta, \phi$) is to anticipate an identification between local and global bases, and to provide some intuition for the local frame.
+
+Along with the invariance of four-momenta (c.f. Eq. \eqref{eq:velocity_constraint}), one may obtain a curve of solutions for the local momenta
+\begin{align}
+    \frac{p_{(r)}}{p_{(t)}} &= -\left( \sqrt{1 + \left(\frac{\alpha}{x^r}\right)^2 + \left(\frac{\beta}{x^r}\right)^2} \right)^{-1} = \mathscr{R}, \\
+    \frac{p_{(\theta)}}{p_{(t)}} &= \mathscr{R} \frac{\beta}{x^r}, \\
+    \frac{p_{(\phi)}}{p_{(t)}} &= \mathscr{R} \frac{\alpha}{x^r}.
+\end{align}
+For emitters, the above set of local initial momenta may be determined from a tangent vector pointing along the direction of a geodesic by decomposition (see also \ref{fig:observer_coordinates}). The component $p_{(t)}$ is the negative of the energy measured in the local frame, and is conventionally set to $-p_{(t)} = E = 1$ without loss of generality. 
+
+For both observers and emitters, we must identify a local frame, where the natural choice is the locally non-rotating frame (LNRF) \citep{bardeen_rotating_1972} \todo{check citation + explain significance}. The transformation from local to global coordinates is
+\begin{equation}
+    p_\mu = \text{e}^{(\nu)}_{\phantom{(\nu)}\mu}\  p_{(\nu)}
+\end{equation}
+where the basis vectors $\text{e}^{(\nu)}_{\phantom{(\nu)}\mu}$ are found using the theorem of Gram-Schmidt (\cite{}, Appendix \ref{appendix:gram-schmidt}). The formalism may be extended for an observer or emitter in motion, where their velocity modifies the mapping by a local Lorenz transformation, $\Lambda^{(\kappa)}_{\phantom{(\kappa)}(\nu)}$, as 
+\begin{equation}
+    p_\mu = \text{e}^{(\nu)}_{\phantom{(\nu)}\mu}\  \Lambda^{(\kappa)}_{\phantom{(a)}(\nu)} p_{(\kappa)}.
+\end{equation}
+
+\subsection{Charts and horizons}
+
+A chart is used to terminate geodesic integration to avoid continuing computation when the fate of a given geodesic is determined. In practical terms, the chart is defined by a set of boundaries, and used to classify the outcome of an integration. As a motivating example, consider a chart with an inner and outer boundary: the inner boundary is a coordinate singularity of the metric, $r_s$ (i.e. an event horizon), whereas the outer boundary is treated as the \textit{effective infinity}, $r_\infty$. Geodesics at the inner boundary are classified as lost behind the coordinate singularity, whereas those that reach the outer boundary are considered to escape to infinity with no further deviation to their trajectory. Additional boundaries of the chart may be used to represent accretion geometry: by terminating the integration when the geodesic crosses such a boundary, we consider the geodesic to have intersected the surface of the accretion disc. 
+
+The event horizon radius, $r_s$, used as the default inner boundary, may be calculated for a metric of the form \eqref{eq:static_axisymmetric_metric} by solving
+\begin{equation}
+    \label{eq:event_horizon}
+    0 = \left. \frac{1}{g_{rr}} \right\rvert_{x^r = r_s}.
+\end{equation}
+For axisymmetric metrics, $g_{rr}$ may be a function of both $x^r$ and $x^\theta$, in which case the inner boundary of the chart is a function of the poloidal coordinate. If no analytic function for $r_s$ is known, it may be numerically approximated using root solving methods. We use root solvers from Roots.jl \citep{}. The default we use is their ``Order 0'' solver, a hybrid method that refines from secant to bracketing methods when possible.
+
+In practice, close to the inner radius the adaptive time step of an ODE integrator tends to shrink dramatically due to near-singular derivatives, causing the integration to slow to almost a standstill. This may be avoided by scaling the inner horizon with the choice of constant $\mathcal{K} > 0$, such that $\tilde{r}_s = (1 + \mathcal{K}) r_s$, terminating the integration early when $x^r \leq \tilde{r}_s$. This constant may be adjusted depending on how vital it is for a geodesic to be able to glance the event horizon. We have chosen $\mathcal{K} = 10^{-2}$ by default, as it dramatically improves integration time without impacting the majority of simulations.
+
+
+\subsection{Computing observables}
+
+We consider observables to be any physical quantity calculated from a simulation that is evaluated using some or all of the points along a geodesic. Often only the start and end point of a geodesic are required to calculate some physical quantity, and under such circumstances it is computational beneficial to avoid allocating space for the full solutions. 
+
+A useful quantity to compute is the apparent redshift along a geodesic, due to both the Doppler and gravitational redshift. This may be compactly written as the ratio of energies
+\begin{equation}
+g = \frac{E_\text{end}}{E_\text{start}} = \frac{\left. k_\mu u^\mu \right\rvert_\text{end}}{\left. k_\mu u^\mu \right\rvert_{\text{start}}},
+\end{equation}
+where $k^\mu$ are the photon momenta, and $u^\mu$ the velocity of the emitting (start) and observing (end) media respectively.
+
+\subsection{Solving for special orbits}
+
+For simple disc models, including the $\alpha$-disc of \cite{shakura_black_1973}, the accreting matter is considered to follow Keplerian circular orbits in the equatorial plane, $x^\theta = \pi/2$, of the central singularity. These orbits are stationary points of the Hamiltonian and constrained by $v^r = v^\theta = 0$. For the class of static, axis-symmetric methods for particles with no external forces, they may be analytically determined (\cite{johannsen_regular_2013}, with a variation of their derivation in Appendix).
+
+In other cases, such when the external acceleration $a^\mu \neq 0$ in \eqref{eq:geodesic_equation}, the analytic approach is often useful up to a point, before resolving to numerical methods for root finding.
+
+Orbits may also be determined purely from the integration of geodesics, by mandating a stability measure and optimizing the initial velocity vector until the measure is a minimum. For example, let $\mathscr{M}$ measure the eccentricity of an orbit in the equatorial plane. For a given radius $x^r$, the velocity corresponding to a circular orbit is $v^\mu = v^t \partial_t + v^\phi \partial_\phi $. With \eqref{eq:velocity_constraint}, the velocity may be found through
+\begin{equation}
+    \underset{v^\phi}{\arg \min}\ \ \mathscr{M}(x^r, v^\phi),
+\end{equation}
+using a numerical optimizer. We use Nelder-Mead as the default algorithm. This optimization method is also used for arbitrary objective functions, such as for pinpointing geodesics that intersect chosen points ($\mathscr{M}$ measures closest approach) or exhibit specific desired features (e.g. $\mathscr{M}$ measures periodicity).
+
+Circular orbits are classified as either stable or unstable, depending on the sign of $\d E / \d x^r$, with $>0$ corresponding to stable configurations. Stable circular orbits are only possible for radii above the innermost stable circular orbit (ISCO) radius, $x^r \geq r_\text{ISCO}$. The ISCO is the critical point at which 
+\begin{equation}
+    0 = \left. \frac{\d E}{\d x^r} \right\rvert_{x^r = r_\text{ISCO}}.
+\end{equation}
+Within the ISCO is the so-called \textit{plunging region} where $v^r \neq 0$. Circular orbits in this region are highly unstable and will either fall into the event horizon or escape to infinity if perturbed. These orbits may be numerically calculated from the ISCO four-velocity by offsetting $r_\text{ISCO} -  \delta x^r$, and integrating over a large $\lambda$ interval. The components of $v^\mu$ may then be interpolated over $x^r$ to approximate analytic solutions.
+
+
+\notes{
+How we find circular orbits, how we find ISCO, photon radius, event horizon
+}
+
+\subsection{Disc emissivity}
+
+\notes{
+We can calculate emissivity / flux maps for discs using either Voronoi tesselation or some symmetric prescriptions
+}
+
+\subsection{Transfer functions}
+
+
+\notes{
+Both 1d (Cunningham) and 2d (lag-energy) transfer functions, the methods used to solve them, and the quadrature integration schemes.
+}
+
+\subsection{Covariant radiative transfer}
+From \eqref{eq:geodesic_equation}, with $a^\mu = f^\mu / m$.
+
+WIP? will probably finish implementing this before writing the full paper
+
