@@ -94,18 +94,28 @@ The event horizon radius, $r_s$, used as the default inner boundary, may be calc
 \end{equation}
 For axisymmetric metrics, $g_{rr}$ may be a function of both $x^r$ and $x^\theta$, in which case the inner boundary of the chart is a function of the poloidal coordinate. If no analytic function for $r_s$ is known, it may be numerically approximated using root solving methods. We use root solvers from Roots.jl \citep{}. The default we use is their ``Order 0'' solver, a hybrid method that refines from secant to bracketing methods when possible.
 
-In practice, close to the inner radius the adaptive time step of an ODE integrator tends to shrink dramatically due to near-singular derivatives, causing the integration to slow to almost a standstill. This may be avoided by scaling the inner horizon with the choice of constant $\mathcal{K} > 0$, such that $\tilde{r}_s = (1 + \mathcal{K}) r_s$, terminating the integration early when $x^r \leq \tilde{r}_s$. This constant may be adjusted depending on how vital it is for a geodesic to be able to glance the event horizon. We have chosen $\mathcal{K} = 10^{-2}$ by default, as it dramatically improves integration time without impacting the majority of simulations.
+In practice, close to the inner radius the adaptive time step of an ODE integrator tends to shrink dramatically due to near-singular derivatives, causing the integration to slow to almost a standstill. This may be avoided by scaling the inner horizon with the choice of constant $\mathcal{K} > 0$, such that $\tilde{r}_s = (1 + \mathcal{K}) r_s$, terminating the integration early when $x^r \leq \tilde{r}_s$. This constant may be adjusted depending on how vital it is for a geodesic to be able to glance the event horizon. We have chosen $\mathcal{K} = 10^{-2}$ by default, as it dramatically improves integration time without impacting the majority of simulations. 
+
+Chart intersection is found using either an interpolating root-solver with \texttt{ContinuousCallback} or a per-point test with \texttt{DiscreteCallback} from DifferentialEquations.jl \citep{}.
 
 
 \subsection{Computing observables}
 
-We consider observables to be any physical quantity calculated from a simulation that is evaluated using some or all of the points along a geodesic. Often only the start and end point of a geodesic are required to calculate some physical quantity, and under such circumstances it is computational beneficial to avoid allocating space for the full solutions. 
+We consider observables to be any physical quantity calculated from a simulation that is evaluated using some or all of the points along a geodesic. Often only the start and end point of a geodesic are required to calculate some physical quantity, and under such circumstances it is computational beneficial to avoid allocating space for the full solutions.
 
-A useful quantity to compute is the apparent redshift along a geodesic, due to both the Doppler and gravitational redshift. This may be compactly written as the ratio of energies
+A frequently required quantity is the redshift along a geodesic, due to both the Doppler and gravitational redshift. This is compactly written as the ratio of energies between the start and end point connected by the geodesic,
 \begin{equation}
-g = \frac{E_\text{end}}{E_\text{start}} = \frac{\left. k_\mu u^\mu \right\rvert_\text{end}}{\left. k_\mu u^\mu \right\rvert_{\text{start}}},
+g := \frac{E_\text{end}}{E_\text{start}} = \frac{\left. k_\mu u^\mu \right\rvert_\text{end}}{\left. k_\mu u^\mu \right\rvert_{\text{start}}},
 \end{equation}
 where $k^\mu$ are the photon momenta, and $u^\mu$ the velocity of the emitting (start) and observing (end) media respectively.
+
+Observables that require multiple points along the geodesic to be determined may either be calculated coincidently with the geodesic equation, or re-traced along the ray at a later time. Such quantities include polarization / parallel transport or radiative transfer / optical depth. The benefit of the latter is that for a given set of metric parameters and observer inclination, the geodesics trajectories are unchanged, allowing the observable to be more efficiently recalculated.
+
+\subsection{Covariant radiative transfer}
+From \eqref{eq:geodesic_equation}, with $a^\mu = f^\mu / m$.
+
+WIP? will probably finish implementing this before writing the full paper
+
 
 \subsection{Solving for special orbits}
 
@@ -138,13 +148,44 @@ We can calculate emissivity / flux maps for discs using either Voronoi tesselati
 
 \subsection{Transfer functions}
 
+\begin{equation}
+\d F(E, t) = I\left(E, t\right)\, \d \Omega
+\end{equation}
+Using Liouville's theorem, which states that the number density of photons in phase space is conserved, the observed and emitted intensities are related by
+\begin{equation}
+    I\left( E, t \right) = g^3 I_\text{em}\left(E_\text{em}, t_\text{em}\right).
+\end{equation}
+\todo{is this $t_\text{em}$ or just $t$??}
+Integrating over the observer's sky $\d \Omega$ is equivalent to integrating over the image plane $\d \alpha \d \beta$, which in practical terms is binning the geodesic in each pixel by time and energy. In this formulation, for any change in $I_\text{em}$, the geodesic calculation would have to be recomputed, or a large table of values related to each geodesic stored, to finite precision. The sampling over the image plane similarly plays an important role, especially in increasing efficiency, since most of the variation in $I_\text{em}$ is sourced close to the ISCO, which can be under-resolved on coarse image planes. This may lead to oversampling regions of low or zero variation further out on the disc.
+
+\todo{discuss double valued nature of transfer functions}
+
+To elide this problems, and to be able to succinctly cache geodesic computation, the relativistic effects are often encoded in so-called \emph{transfer functions}, first introduced in \cite{cunningham_effects_1975},
+\begin{equation}
+    f:=\frac{g}{\pi r_\text{em}} \sqrt{g^\ast(1 - g^\ast)} \jacobian{(\alpha, \beta)}{(r_\text{em}, g^\ast)},
+\end{equation}
+where $r_\text{em}$ is the emission radius on the disc, and
+\begin{equation}
+    g^\ast := \frac{g - g_\text{min}}{g_\text{max} - g_\text{min}} \in [0, 1],
+\end{equation}
+is a rescaled redshift parameter with extremal $g$ over a given $r_\text{em}$, see Figure \ref{fig:transfer-parameterisation}. The transfer functions are ostensibly a change-of-variable Jacobian, multiplied by an elliptical function in $g$ that supresses the singular values of the Jacobian as $g^\ast$ becomes $0$ or $1$.
+
+Integrating transfer functions to calculate line-profiles is described in detail in \cite{dauser_broad_2010}, including the Green's function formalism that adds additional flexibility in the definition of $I_\text{em}$. We trivially modify this integration to optionally include the geodesic coordinate time as
+\begin{equation}
+    F(E, t) =
+    \int_{r_\text{in}}^{r_\text{out}} \d r_\text{em} \int_0^\infty \d t^\prime \delta(t - t^\prime) \int_0^1 \d g^\ast\, \delta(E - gE_\text{line})\,  \, \mathcal{F},
+\end{equation}
+with integrand
+\begin{equation}
+    \mathcal{F} = \pi g^2 I_\text{em}\left(E_\text{em}, t^\prime\right) \frac{r_\text{em} f(r_\text{em}, g^\ast)}{\sqrt{g^\ast (1 - g^\ast)}},
+\end{equation}
+and $g = g( r_\text{em}, g^\ast)$ implicitly. The definition of $f$ as a Jacobian is now clear with the normalizing terms cancelling out in the integral. The integrand in practice remains singular at $g^\ast \rightarrow (0, 1)$, and therefore the integration is performed over $g^\ast \in [h, 1 - h]$. Outside of this domain, the limits of the integrand can be taken, as in \cite{dauser_broad_2010}.
+
+
+We use $h = 10^{-3}$, and evaluate the integral over $\d g^\ast$ using a 7$^\text{th}$ order Gauss-Kronrod quadrature scheme, which avoids evaluating the integral directly at $h$ and $1 - h$. Finer grids for $r_\text{em}$ and $g^\ast$ are constructed to help with stability. The integration over $\d r_\text{em}$ is performed using a trapezoidal interpolation, which is sufficient in both accuracy and performance. Since the integration over $\d t$ has the selection effect of binning, we assign the flux $F(E)$ into time bin $t$ by averaging $t$ over the width of $g^\ast$ on the fine grid.
+
+By formulating the integration with the time component, we can use the same transfer function table to compute both line-profiles and reverberation lags efficiently, with arbitrary intensity functions $I_\text{em}$. We note that extensions to the intensity function that require, for example, the photon emission angle on the disc, are trivial to include.
 
 \notes{
 Both 1d (Cunningham) and 2d (lag-energy) transfer functions, the methods used to solve them, and the quadrature integration schemes.
 }
-
-\subsection{Covariant radiative transfer}
-From \eqref{eq:geodesic_equation}, with $a^\mu = f^\mu / m$.
-
-WIP? will probably finish implementing this before writing the full paper
-
