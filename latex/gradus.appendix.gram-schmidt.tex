@@ -1,7 +1,7 @@
 \section{orthonormalization with Gram-Schmidt}
 \label{appendix:gram-schmidt}
 
-The theorem of Gram-Schmidt states that it is always possible to construct a set of orthonormal vectors in any inner-product space $\mathbb{R}^n$, and uses a projection subtraction procedure as a proof. Starting with $n$ linearly independent vectors $\vector{v}_n$, and denoting the projection of a vector $\vector{u}$ along the direction of $\vector{v}$ as
+The theorem of Gram-Schmidt states that it is always possible to construct a set of orthonormal vectors in any inner-product space $\mathbb{R}^n$, and uses a projection-subtraction procedure as a proof. Starting with $n$ linearly independent vectors $\vector{v}_n$, and denoting the projection of a vector $\vector{u}$ along the direction of $\vector{v}$ as
 \begin{equation}
 \mathrm{P}_{\vector{v}}\left(\vector{u}\right) := \frac{\vector{v} \cdot \vector{u}}{\vector{u} \cdot \vector{u}}\ \vector{u} = \frac{g_{\mu\nu} v^\mu u^\nu}{g_{\sigma\rho} u^\sigma u^\rho} \vector{u},
 \end{equation}
@@ -12,7 +12,7 @@ allows expressing the Gram-Schmidt procedure as
     &\vdots \nonumber \\
     \vector{k}_n &= \vector{v}_n - \sum_{i = 1}^{n-1} \mathrm{P}_{\vector{k}_i} \left(\vector{v}_n \right).
 \end{align}
-Constructing meaningful orthonormal frames requires appropriate choice of the initial linearly independent vectors $\vector{n}$, in order to associate global directions with the tetrad. The locally non-rotating frame (LNRF) \todo{explain}  and $\omega = -g_{t\phi} / g_{\phi\phi}$ is the \todo{angular velocity of the frame}. 
+Constructing meaningful orthonormal frames requires appropriate choice of the initial linearly independent vectors $\vector{v}$, in order to associate global directions with the tetrad. The locally non-rotating frame (LNRF) \todo{explain}  and $\omega = -g_{t\phi} / g_{\phi\phi}$ is the \todo{angular velocity of the frame}. 
 
 To construct the LNRF, a choice of initial vectors may be
 \begin{align}

@@ -148,15 +148,18 @@ We can calculate emissivity / flux maps for discs using either Voronoi tesselati
 
 \subsection{Transfer functions}
 
+A particular observable that is frequently calculated with GRRT is the flux coming from a particular model of an accreting black hole. The infinitesimal flux is
 \begin{equation}
-\d F(E, t) = I\left(E, t\right)\, \d \Omega
+\d F(E, t) = I\left(E, t\right)\, \d \Omega,
 \end{equation}
-Using Liouville's theorem, which states that the number density of photons in phase space is conserved, the observed and emitted intensities are related by
+for observed energy $E$, time $t$, intensity $I$ and solid angle $\d \Omega$ on the observer's sky.
+
+Using Liouville's theorem -- that the number density of photons in phase space is conserved -- the observed and emitted intensities are related by
 \begin{equation}
     I\left( E, t \right) = g^3 I_\text{em}\left(E_\text{em}, t_\text{em}\right).
 \end{equation}
 \todo{is this $t_\text{em}$ or just $t$??}
-Integrating over the observer's sky $\d \Omega$ is equivalent to integrating over the image plane $\d \alpha \d \beta$, which in practical terms is binning the geodesic in each pixel by time and energy. In this formulation, for any change in $I_\text{em}$, the geodesic calculation would have to be recomputed, or a large table of values related to each geodesic stored, to finite precision. The sampling over the image plane similarly plays an important role, especially in increasing efficiency, since most of the variation in $I_\text{em}$ is sourced close to the ISCO, which can be under-resolved on coarse image planes. This may lead to oversampling regions of low or zero variation further out on the disc.
+Integrating over $\d \Omega$ is equivalent to integrating over the image plane $\d \alpha \d \beta$, which in practical terms is binning the geodesic in each pixel by $E$ and $t$. In this formulation, for any change in $I_\text{em}$, the geodesic calculation would have to be recomputed, or a large table of values related to each geodesic stored, to finite precision. The sampling over the image plane similarly plays an important role, especially in increasing efficiency, since most of the variation in $I_\text{em}$ is sourced close to the ISCO, which can be under-resolved on coarse image planes. This may lead to oversampling regions of low or zero variation further out on the disc.
 
 \todo{discuss double valued nature of transfer functions}
 
@@ -168,21 +171,21 @@ where $r_\text{em}$ is the emission radius on the disc, and
 \begin{equation}
     g^\ast := \frac{g - g_\text{min}}{g_\text{max} - g_\text{min}} \in [0, 1],
 \end{equation}
-is a rescaled redshift parameter with extremal $g$ over a given $r_\text{em}$, see Figure \ref{fig:transfer-parameterisation}. The transfer functions are ostensibly a change-of-variable Jacobian, multiplied by an elliptical function in $g$ that supresses the singular values of the Jacobian as $g^\ast$ becomes $0$ or $1$.
+is a rescaled dimensionless redshift parameter with extremal $g$ over a given $r_\text{em}$, see Figure \ref{fig:transfer-parameterisation}. As is shown, this re-parameterisation of the image plane is double valued in $g^\ast$ except when $g^\ast = 0, 1$. These transfer functions then are ostensibly a change-of-variable Jacobian, enveloped with an elliptical function in $g$ that supresses the singular values of the Jacobian as $g^\ast$ becomes $0$ or $1$. Sample transfer functions and $t(r_\text{em}, g^\ast)$ are shown in Figure \ref{fig:transfer-functions}.
 
-Integrating transfer functions to calculate line-profiles is described in detail in \cite{dauser_broad_2010}, including the Green's function formalism that adds additional flexibility in the definition of $I_\text{em}$. We trivially modify this integration to optionally include the geodesic coordinate time as
+Integrating $\d F(E)$ to calculate line-profiles is described in detail in \cite{dauser_broad_2010}, including the Green's function formalism that adds additional flexibility in the definition of $I_\text{em}$. We trivially modify this integration to optionally include the geodesic coordinate time as
 \begin{equation}
     F(E, t) =
-    \int_{r_\text{in}}^{r_\text{out}} \d r_\text{em} \int_0^\infty \d t^\prime \delta(t - t^\prime) \int_0^1 \d g^\ast\, \delta(E - gE_\text{line})\,  \, \mathcal{F},
+    \int_{r_\text{in}}^{r_\text{out}} \d r_\text{em} \int_0^\infty \d t^\prime \delta(t - t^\prime) \int_0^1 \d g^\ast\, \delta(E - gE_\text{line})\,  \, \mathcal{S},
 \end{equation}
 with integrand
 \begin{equation}
-    \mathcal{F} = \pi g^2 I_\text{em}\left(E_\text{em}, t^\prime\right) \frac{r_\text{em} f(r_\text{em}, g^\ast)}{\sqrt{g^\ast (1 - g^\ast)}},
+    \mathcal{S} = \pi g^2 I_\text{em}\left(E_\text{em}, t^\prime\right) \frac{r_\text{em} f(r_\text{em}, g^\ast)}{\sqrt{g^\ast (1 - g^\ast)}},
 \end{equation}
 and $g = g( r_\text{em}, g^\ast)$ implicitly. The definition of $f$ as a Jacobian is now clear with the normalizing terms cancelling out in the integral. The integrand in practice remains singular at $g^\ast \rightarrow (0, 1)$, and therefore the integration is performed over $g^\ast \in [h, 1 - h]$. Outside of this domain, the limits of the integrand can be taken, as in \cite{dauser_broad_2010}.
 
 
-We use $h = 10^{-3}$, and evaluate the integral over $\d g^\ast$ using a 7$^\text{th}$ order Gauss-Kronrod quadrature scheme, which avoids evaluating the integral directly at $h$ and $1 - h$. Finer grids for $r_\text{em}$ and $g^\ast$ are constructed to help with stability. The integration over $\d r_\text{em}$ is performed using a trapezoidal interpolation, which is sufficient in both accuracy and performance. Since the integration over $\d t$ has the selection effect of binning, we assign the flux $F(E)$ into time bin $t$ by averaging $t$ over the width of $g^\ast$ on the fine grid.
+We use $h = 10^{-3}$, and evaluate the integral over $\d g^\ast$ using a 7$^\text{th}$ order Gauss-Kronrod quadrature scheme, which avoids evaluating the integral directly at $h$ and $1 - h$ \citep{}. Finer grids for $r_\text{em}$ and $g^\ast$ are constructed to help with stability, and rebinned into the desired grid. The integration over $\d r_\text{em}$ is performed using a trapezoidal interpolation, which is sufficient in both accuracy and performance with the finer bins. Since the integration over $\d t$ has the selection effect of binning, we assign the flux $F(E)$ into time bin $t$ by averaging $t$ over the width of $g^\ast$ on the fine grid.
 
 By formulating the integration with the time component, we can use the same transfer function table to compute both line-profiles and reverberation lags efficiently, with arbitrary intensity functions $I_\text{em}$. We note that extensions to the intensity function that require, for example, the photon emission angle on the disc, are trivial to include.
 
