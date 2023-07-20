@@ -48,6 +48,8 @@
 \usepackage{graphicx}	% Including figure files
 % \usepackage{amsmath}	% Advanced maths commands
 % \usepackage{amssymb}	% Extra maths symbols (this seems to be already defined)
+\usepackage{cuted}
+\setlength{\stripsep}{0ex}
 
 %%%%% AUTHORS - PLACE YOUR OWN COMMANDS HERE %%%%%
 
@@ -105,14 +107,23 @@ keyword1 -- keyword2 -- keyword3
 
 \section{Test problems}
 
-\subsection{Integration stability}
+\subsection{Integration accuracy and stability}
 
-Angular deflection $\Delta \phi$
+\todo{Angular deflection $\Delta \phi$}
+
+Derived semi-analytically in \cite{iyer_lights_2009} (presented compactly and extended for metrics of form \eqref{eq:static_axisymmetric_metric} in Appendix \ref{appendix:deflection-angle}).
+
+Since our method for integration does not use the constants of motion directly, the stability of the integrator may also be gauged by sampling invariant quantities along the trajectory. In Figure \ref{fig:constants-of-motion} is shown the value of $v_\mu v^\mu$, as in \eqref{eq:velocity_constraint}, for a number of trajectories.
 
 Energy conservation, deflection problem, shadow, tests for naked-singularities
 
-\subsection{Analytic solutions}
-All the special radii, the circular orbit energy
+\subsection{Analytic radiative transfer problems}
+
+Do some of that Gold (2022) paper with all the test problems
+
+\subsection{Geodesic throughput}
+
+How fast are we exactly?
 
 \section{Applications}
 
@@ -181,6 +192,8 @@ We thank Cosimo Bambi and Jiachen Jiang for sharing their software for testing p
 \appendix
 
 \input{gradus.appendix.gram-schmidt.tex}
+\input{gradus.appendix.circular-orbits.tex}
+\input{gradus.appendix.deflection-angle.tex}
 
 % \section{Some extra material}
 

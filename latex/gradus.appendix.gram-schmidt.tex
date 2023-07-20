@@ -12,9 +12,7 @@ allows expressing the Gram-Schmidt procedure as
     &\vdots \nonumber \\
     \vector{k}_n &= \vector{v}_n - \sum_{i = 1}^{n-1} \mathrm{P}_{\vector{k}_i} \left(\vector{v}_n \right).
 \end{align}
-Constructing meaningful orthonormal frames requires appropriate choice of the initial linearly independent vectors $\vector{v}$, in order to associate global directions with the tetrad. The locally non-rotating frame (LNRF) \todo{explain}  and $\omega = -g_{t\phi} / g_{\phi\phi}$ is the \todo{angular velocity of the frame}. 
-
-To construct the LNRF, a choice of initial vectors may be
+Constructing meaningful orthonormal frames requires appropriate choice of the initial linearly independent vectors $\vector{v}$, in order to associate global directions with the tetrad. The locally non-rotating frame (LNRF), with angular velocity $\omega = -g_{t\phi} / g_{\phi\phi}$, has tangential frame velocity $v^\mu = A (1, 0, 0, \omega)$ where $A$ is some normalization. To construct the LNRF, a choice of initial vectors may therefore be
 \begin{align}
     \vector{v}_1 &= \left(1, 0, 0, \omega \right) \mapsto \dtensor{\e}{(t)}{\mu}, \nonumber \\
     \vector{v}_2 &= \left(1, 0, 0, 1\right) \mapsto \dtensor{\e}{(\phi)}{\mu}, \nonumber \\

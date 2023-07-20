@@ -78,7 +78,7 @@ For both observers and emitters, we must identify a local frame, where the natur
 \begin{equation}
     p_\mu = \e^{(\nu)}_{\phantom{(\nu)}\mu}\  p_{(\nu)}
 \end{equation}
-where the basis vectors $\e^{(\nu)}_{\phantom{(\nu)}\mu}$ are found using the theorem of Gram-Schmidt (\cite{}, Appendix \ref{appendix:gram-schmidt}). The formalism may be extended for an observer or emitter in motion, where their velocity modifies the mapping by a local Lorenz transformation, $\Lambda^{(\kappa)}_{\phantom{(\kappa)}(\nu)}$, as 
+where the basis vectors $\e^{(\nu)}_{\phantom{(\nu)}\mu}$ are found using the theorem of Gram-Schmidt (\cite{schmidt_uber_1989}, Appendix \ref{appendix:gram-schmidt}). The formalism may be extended for an observer or emitter in motion, where their velocity modifies the mapping by a local Lorenz transformation, $\Lambda^{(\kappa)}_{\phantom{(\kappa)}(\nu)}$, as 
 \begin{equation}
     p_\mu = \e^{(\nu)}_{\phantom{(\nu)}\mu}\  \Lambda^{(\kappa)}_{\phantom{(a)}(\nu)} p_{(\kappa)}.
 \end{equation}
@@ -109,17 +109,38 @@ g := \frac{E_\text{end}}{E_\text{start}} = \frac{\left. k_\mu u^\mu \right\rvert
 \end{equation}
 where $k^\mu$ are the photon momenta, and $u^\mu$ the velocity of the emitting (start) and observing (end) media respectively.
 
-Observables that require multiple points along the geodesic to be determined may either be calculated coincidently with the geodesic equation, or re-traced along the ray at a later time. Such quantities include polarization / parallel transport or radiative transfer / optical depth. The benefit of the latter is that for a given set of metric parameters and observer inclination, the geodesics trajectories are unchanged, allowing the observable to be more efficiently recalculated.
+Observables that require multiple points along the geodesic to be determined may either be calculated coincidentally with the geodesic equation, or re-traced along the ray at a later time. Such quantities include polarization / parallel transport or radiative transfer / optical depth. Calculating the quantities simultaneously has the benefit that the error tolerance of the integrator is sensitive to dramatic changes in the observable. The benefit of the latter is that for a given set of metric parameters and observer inclination, the geodesics trajectories are unchanged, allowing the observable to be more efficiently recalculated.
 
 \subsection{Covariant radiative transfer}
-From \eqref{eq:geodesic_equation}, with $a^\mu = f^\mu / m$.
 
-WIP? will probably finish implementing this before writing the full paper
+The intensity of a given geodesic is an observable that can be either calculated coincident with the geodesic trajectory, or retraced once the trajectory is determined.
+
+The covariant formulation of the radiative transfer equation calculates the emissions and extinction in frame co-moving with the geodesic \citep{fuerst_radiation_2004}. The generalized form of the differential equation with respect to the affine parameter $\lambda$ is
+\begin{equation}
+    \label{eq:covariant-radiative-transfer}
+    \frac{\d \mathcal{I}}{\d \lambda} = \left. \frac{\d s}{\d \lambda} \right\rvert_\lambda \left( -\alpha_\nu \mathcal{I} + \frac{j_\nu}{\nu^3} \right),
+\end{equation}
+where $\mathcal{I}$ is the invariant intensity, $s$ is the proper length traversed by the geodesic, and $\alpha_\nu$ and $j_\nu$ are the frequency $\nu$ dependent absorption and emissivity coefficients respectively, as measured in the local frame. In general, both of these coefficients are also functions of the position $x^\mu$. The derivative term is calculated by projecting the geodesic momentum $v_\mu$ into the frame of the medium with velocity $u^\mu$, via the tensor
+\begin{equation}
+    \mathrm{P}^{\mu\nu} := g^{\mu\nu} + u^\mu u^\nu.
+\end{equation}
+The path length derivative is then
+\begin{align}
+    \left. \frac{\d s}{\d \lambda} \right\rvert_\lambda
+    &= - \left. \left\lVert \mathrm{P}^{\mu\nu} v_\mu\right\rVert\, \right\rvert_\lambda,\\
+    &= - \left. \sqrt{v_\mu v^\mu + \left(v_\mu u^\mu\right)^2 \left(2 + u^\mu u_\mu\right)} \, \right\rvert_\lambda,
+\end{align}
+such that for the particular case of null geodesics through a time-like medium
+\begin{equation}
+    \left. \frac{\d s}{\d \lambda} \right\rvert_\lambda = - \left. v_\mu u^\mu \right\rvert_\lambda.
+\end{equation}
+
+The covariant intensity $\mathcal{I}$ is calculated by selecting an observed frequency $\nu$ at the point of integration, for which $\alpha_\nu$ and $j_\nu$ are known. For differing $\nu$, the integration of $\mathcal{I}$ must be recalculated.
 
 
 \subsection{Solving for special orbits}
 
-For simple disc models, including the $\alpha$-disc of \cite{shakura_black_1973}, the accreting matter is considered to follow Keplerian circular orbits in the equatorial plane, $x^\theta = \pi/2$, of the central singularity. These orbits are stationary points of the Hamiltonian and constrained by $v^r = v^\theta = 0$. For the class of static, axis-symmetric methods for particles with no external forces, they may be analytically determined (\cite{johannsen_regular_2013}, with a variation of their derivation in Appendix).
+For simple disc models, including the $\alpha$-disc of \cite{shakura_black_1973}, the accreting matter is considered to follow Keplerian circular orbits in the equatorial plane, $x^\theta = \pi/2$, of the central singularity. These orbits are stationary points of the Hamiltonian and constrained by $v^r = v^\theta = 0$. For the class of static, axis-symmetric methods for particles with no external forces, they may be analytically determined (\cite{johannsen_regular_2013}, with a variation of their derivation extended for $a^\mu \neq 0$ in Appendix \ref{appendix:circular-orbits}).
 
 In other cases, such when the external acceleration $a^\mu \neq 0$ in \eqref{eq:geodesic_equation}, the analytic approach is often useful up to a point, before resolving to numerical methods for root finding.
 
@@ -174,18 +195,26 @@ where $r_\text{em}$ is the emission radius on the disc, and
 is a rescaled dimensionless redshift parameter with extremal $g$ over a given $r_\text{em}$, see Figure \ref{fig:transfer-parameterisation}. As is shown, this re-parameterisation of the image plane is double valued in $g^\ast$ except when $g^\ast = 0, 1$. These transfer functions then are ostensibly a change-of-variable Jacobian, enveloped with an elliptical function in $g$ that supresses the singular values of the Jacobian as $g^\ast$ becomes $0$ or $1$. Sample transfer functions and $t(r_\text{em}, g^\ast)$ are shown in Figure \ref{fig:transfer-functions}.
 
 Integrating $\d F(E)$ to calculate line-profiles is described in detail in \cite{dauser_broad_2010}, including the Green's function formalism that adds additional flexibility in the definition of $I_\text{em}$. We trivially modify this integration to optionally include the geodesic coordinate time as
+
+\begin{strip}
+\rule[-1ex]{\columnwidth}{0.7pt}\rule[-1ex]{0.7pt}{1.5ex}
+\vspace{1em}
 \begin{equation}
     F(E, t) =
-    \int_{r_\text{in}}^{r_\text{out}} \d r_\text{em} \int_0^\infty \d t^\prime \delta(t - t^\prime) \int_0^1 \d g^\ast\, \delta(E - gE_\text{line})\,  \, \mathcal{S},
+    \pi
+    \int_0^\infty \d t^\prime \delta(t - t^\prime)
+    \int_{r_\text{in}}^{r_\text{out}} \d r_\text{em}\,r_\text{em}   
+    \int_0^1 \d g^\ast\, \delta(E - gE_\text{line})\, g^2 I_\text{em}\left(\frac{E}{g}, t^\prime\right) \frac{f(r_\text{em}, g^\ast)}{\sqrt{g^\ast (1 - g^\ast)}},
 \end{equation}
-with integrand
-\begin{equation}
-    \mathcal{S} = \pi g^2 I_\text{em}\left(E_\text{em}, t^\prime\right) \frac{r_\text{em} f(r_\text{em}, g^\ast)}{\sqrt{g^\ast (1 - g^\ast)}},
-\end{equation}
-and $g = g( r_\text{em}, g^\ast)$ implicitly. The definition of $f$ as a Jacobian is now clear with the normalizing terms cancelling out in the integral. The integrand in practice remains singular at $g^\ast \rightarrow (0, 1)$, and therefore the integration is performed over $g^\ast \in [h, 1 - h]$. Outside of this domain, the limits of the integrand can be taken, as in \cite{dauser_broad_2010}.
+\vbox{\vspace{2em}}
+\hfill\rule[1ex]{0.7pt}{1.5ex}\rule[2.3ex]{\columnwidth}{0.7pt}
+\end{strip}
+\noindent and $g = g( r_\text{em}, g^\ast, t')$ implicitly. The integrand remains in practice singular at $g^\ast \rightarrow (0, 1)$, and therefore the integration is performed over $g^\ast \in [h, 1 - h]$. Outside of this domain, the limits of the integrand can be taken to approximate the edges of the bin, as in \cite{dauser_broad_2010}.
 
 
 We use $h = 10^{-3}$, and evaluate the integral over $\d g^\ast$ using a 7$^\text{th}$ order Gauss-Kronrod quadrature scheme, which avoids evaluating the integral directly at $h$ and $1 - h$ \citep{}. Finer grids for $r_\text{em}$ and $g^\ast$ are constructed to help with stability, and rebinned into the desired grid. The integration over $\d r_\text{em}$ is performed using a trapezoidal interpolation, which is sufficient in both accuracy and performance with the finer bins. Since the integration over $\d t$ has the selection effect of binning, we assign the flux $F(E)$ into time bin $t$ by averaging $t$ over the width of $g^\ast$ on the fine grid.
+
+\todo{how does one actually integrate: interpolate $f$ over $r$, then integrate $g^\ast$, then bin by $t$}
 
 By formulating the integration with the time component, we can use the same transfer function table to compute both line-profiles and reverberation lags efficiently, with arbitrary intensity functions $I_\text{em}$. We note that extensions to the intensity function that require, for example, the photon emission angle on the disc, are trivial to include.
 
