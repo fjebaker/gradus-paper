@@ -105,6 +105,7 @@ We consider observables to be any physical quantity calculated from a simulation
 
 A frequently required quantity is the redshift along a geodesic, due to both the Doppler and gravitational redshift. This is compactly written as the ratio of energies between the start and end point connected by the geodesic,
 \begin{equation}
+\label{eq:redshift}
 g := \frac{E_\text{end}}{E_\text{start}} = \frac{\left. v_\mu u^\mu \right\rvert_\text{end}}{\left. v_\mu u^\mu \right\rvert_{\text{start}}},
 \end{equation}
 where $v_\mu$ are the photon momenta, and $u^\mu$ the velocity of the emitting (start) and observing (end) media respectively.
@@ -161,7 +162,14 @@ Within the ISCO is the so-called \textit{plunging region} where $v^r \neq 0$. Ci
 How we find circular orbits, how we find ISCO, photon radius, event horizon
 }
 
-\subsection{Disc emissivity}
+\subsection{Emissivity profiles}
+
+The emissivity of a disc is defined as the flux emitted from the disc, such that the emissivity profile is the flux as a function of the disc coordinates \citep{wilkins_understanding_2012}. For reflection, the flux emitted is proportional to the flux received from the illuminating corona \citep{laor_line_1991}. As axis-symmetry is usually manifest, the emissivity profile is a function of the radial coordinate on the accretion disc and given by
+\begin{equation}
+    \varepsilon (r, \d r) = \frac{\mathcal{N}(r, \d r)}{g^2 A(r, \d r)},
+\end{equation}
+\todo{redo this but using the angle formulation of Dauser+13}
+where $\mathcal{N}$ is the photon count in an annulus $r + \d r$, $g$ is the redshift \eqref{eq:redshift}, and $A$ is the relativistically corrected (proper) area of the annulus.
 
 \notes{
 We can calculate emissivity / flux maps for discs using either Voronoi tesselation or some symmetric prescriptions
