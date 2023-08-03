@@ -3,27 +3,35 @@
 
 Gradus.jl is implemented in Julia, but makes itself available via popular package managers to a wide variety of languages, including Python via \texttt{pip}.
 
-Gradus.jl aims to have a single expressive high-level API for a variety of GRRT problems, with sensible defaults and optional fine-grained control. The code is accompanied by both code-level and HTML-generated documentation\footnote{\url{https://astro-group-bristol.github.io/Gradus.jl/dev/}}, with short tutorials and examples designed to provide a feature-rich overview whilst simultaneously demonstrating how to construct custom simulations and how to integrate Gradus.jl in a user's model. We encourage readers who are interesting in learning up-to-date information and method in our codes to consult the documentation over this paper. 
+Gradus.jl aims to have a single expressive high-level API for a variety of GRRT problems, with sensible defaults and optional fine-grained control. The code is accompanied by rendered documentation\footnote{\url{https://astro-group-bristol.github.io/Gradus.jl/}}, with short tutorials and examples designed to provide a feature-rich overview whilst simultaneously demonstrating how to construct custom simulations and how to integrate Gradus.jl in a user's model. We encourage readers who are interesting in learning up-to-date information and method in our codes to consult the documentation over this paper. 
 
 The documentation strives to be the most accurate description of the code as it is maintained, detailing algorithm specific choices and implementations, and is built as part of our continuous deployment (CD). The source code is written to be read by contributors and users alike to invite extension, and to be explicit about our methods, their benefits, and limitations.
 
-The code makes use of Julia's heterogeneity and concurrency to run in multi-threaded and distributed environments, with GPU-offloading via DiffEqGPU.jl and CUDA.jl\footnote{We note that GPU acceleration is currently limited due to a combination of ODE callbacks and `warp' termination. Progress in resolving outstanding problems is being tracked as an issue.}. Gradus.jl is performant enough to create simulation products on personal computers\footnote{E.g., recomputing all 600 \texttt{relline} transfer function tables \cite{} on a 2021 Apple 8-core M1 Macbook takes approximately 2 hours.}, but scales effortlessly to supercomputers.
+Our code makes use of Julia's heterogeneity and concurrency to run in multi-threaded and distributed environments, with GPU-offloading via DiffEqGPU.jl and the various supported backends (CUDA.jl \ref{}, Metal.jl \ref{}, AMDGPU.jl \ref{}). Precision is user-defined and inferred from user defined types: single precision floating point arithmetic may be desirable or even required for GPU computing, whereas arbitrary precision `big floats' may be required for some asymptotically near-horizon computations.
 
-Precision is user-defined and inferred from user provided types. Single precision floating point arithmetic may be desirable for GPU computing, whereas `big float' precision may be needed for some extreme near-horizon computations. In our discussion of the numerical methods, we note the current default algorithm is Tsitouras Runge-Kutta 5/4. Gradus.jl vendors many additional ODE solvers and numerical algorithms from the Julia SciML ecosystem, that may be used when certain integrations or problems require them.
+In our discussion of the numerical methods, we note the current default ODE integration algorithm is Tsitouras Runge-Kutta 5/4. Gradus.jl vendors many additional ODE solvers and numerical algorithms from the Julia SciML ecosystem, with both adaptive and fixed time steps.
 
-Gradus.jl provides a number of predefined metrics, including the Kerr spacetime, Morris-Thorne wormhole, Johannsen-Psaltis, Dilaton-Axion, and a modified Kerr with coronal refraction. The Kerr-Newman metric is also implemented, complete with the ability to specify the electromagnetic potential vector, from which external forces in \eqref{eq:geodesic_equation} are calculated. Furthermore, Gradus.jl allows for 1st order specification of the geodesic ODE system, primarily used as a point of comparison with the second order results.
+Gradus.jl maintains a catalogue of predefined metrics, including the Kerr spacetime, Morris-Thorne wormhole, Johannsen-Psaltis metric, the Einstein-Maxwell Dilaton-Axion metric \todo{citations for these}. The Kerr-Newman metric is also implemented, complete with the ability to specify the electromagnetic potential vector, from which external accelerations $a^\mu$ in \eqref{eq:geodesic_equation} are calculated. Furthermore, Gradus.jl allows for 1st order specification of the geodesic ODE system, where such a system is known. This is already implemented for the Kerr spacetime, and used primarily as a self-consistency check with the second-order implementation.
 
-For Julia, AD is implemented in the ForwardDiff.jl package \citep{RevelsLubinPapamarkou2016}
-
-Multi-threaded, multi-CPU, optionally GPU decelerated. Speedup depends on choice of solver (fixed time step faster on GPU)
-
-List of currently implemented metrics
-
-Adding new spacetimes
+The AD in our code is from the ForwardDiff.jl package \citep{RevelsLubinPapamarkou2016}, and may be used when calculating any quantity or observable to simultaneously determine gradients.
 
 Accretion disc geometries
 
 Point functions for composable results
+
+\subsection{Extensibility}
+
+The design of Gradus.jl has prioritized useability and extensibility. With Julia's multiple-dispatch, a user may overload specific functions in Gradus.jl with their own custom types to bootstrap arbitrary models and routines into any stage of ray-tracing process, with a rich integration callback system vendored from DifferentialEquations.jl.
+
+New spacetimes are straightforward to define, requiring only the parameters of the spacetime and a function implementing the non-zero matrix elements of the metric at a given coordinate. This in also allows numerically computed matrix fields to be traced. Code examples and walkthroughs are available in the Gradus.jl documentation.
+
+New accretion geometry
+
+Additional quantities to trace
+
+\subsection{Performance}
+
+GPU vs CPU and when one is one better than the other
 
 Performance vs e.g. Bambi's NK and other work
 

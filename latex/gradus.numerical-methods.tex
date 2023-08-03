@@ -164,12 +164,21 @@ How we find circular orbits, how we find ISCO, photon radius, event horizon
 
 \subsection{Emissivity profiles}
 
-The emissivity of a disc is defined as the flux emitted from the disc, such that the emissivity profile is the flux as a function of the disc coordinates \citep{wilkins_understanding_2012}. For reflection, the flux emitted is proportional to the flux received from the illuminating corona \citep{laor_line_1991}. As axis-symmetry is usually manifest, the emissivity profile is a function of the radial coordinate on the accretion disc and given by
+The emissivity of a disc is defined as the flux emitted from the disc, such that the emissivity profile is the flux as a function of the disc coordinates \citep{wilkins_understanding_2012}. For reflection, the flux emitted is proportional to the flux received from the illuminating corona \citep{laor_line_1991}. As axis-symmetry of the accretion disc emissivity profile is usually manifest, the emissivity profile is a function of the radial coordinate on the accretion disc and given by
 \begin{equation}
-    \varepsilon (r, \d r) = \frac{\mathcal{N}(r, \d r)}{g^2 A(r, \d r)},
+    \varepsilon (r, \d r) = \frac{\mathcal{N}(r, \d r)}{\gamma A(r, \d r)} I(g),
 \end{equation}
+where $\mathcal{N}$ is the photon count in an annulus $r + \d r$, $I$ is the intensity of the illuminating flux as a function of redshift $g$, $A$ is the relativistically corrected (proper) area of the annulus, and $\gamma$ is the Lorentz factor account for contraction of the annulus due to the velocity of the disc.
+
+An alternative method for calculating the flux from point sources is detailed in \cite{dauser_irradiation_2013}, where the axis-symmetry is further exploited. This method determines the radii of the annuli by tracing photons that are emitted at equally spaced angles in the source frame, and using the density of these geodesics on the radial coordinate of the disc $(\delta r)^{-1}$ as a proxy for the number density. Since in three spatial dimensions, the poloidal coordinate must be distributed as a $\sin \theta$ distribution for isotropic emission, $\varepsilon$ is weighted similarly\footnote{Instead of equally spaced $\theta$, one may instead sample $\theta \sim \cos (1 - 2 \mathcal{U})$, where $\mathcal{U}$ is a uniform distribution $\mathcal{U}(0,1)$. In this case, there is no $\sin \theta$ weight in $\varepsilon$. This result may be shown using the inverse-CDF or Smirnov transform method.},
+\begin{equation}
+    \varepsilon(r, \delta r) = \frac{\sin \theta}{\gamma A(r, \delta r)} I(g).
+\end{equation}
+The differences between these two methods is shown in Figure \ref{fig:coronal-tracing}. It should be noted that the latter method converges faster than the (Monte-Carlo) sampling of $\mathcal{N}$, and captures the behaviour at small $r$ close to the ISCO faithfully. However, since this method is specialized for point sources, extended corona require an approximate rebinning algorithm to reconstruct the emissivity profile taking into account the overlap between the annuli determined from different source points.
+
+In general, the emissivity can also be a function of time.
+
 \todo{redo this but using the angle formulation of Dauser+13}
-where $\mathcal{N}$ is the photon count in an annulus $r + \d r$, $g$ is the redshift \eqref{eq:redshift}, and $A$ is the relativistically corrected (proper) area of the annulus.
 
 \notes{
 We can calculate emissivity / flux maps for discs using either Voronoi tesselation or some symmetric prescriptions
