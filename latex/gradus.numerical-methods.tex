@@ -83,6 +83,37 @@ where the basis vectors $\e^{(\nu)}_{\phantom{(\nu)}\mu}$ are found using the th
     p_\mu = \e^{(\nu)}_{\phantom{(\nu)}\mu}\  \Lambda^{(\kappa)}_{\phantom{(a)}(\nu)} p_{(\kappa)}.
 \end{equation}
 
+\subsection{Special orbits and horizons}
+
+For many disc models, accreting matter is considered to follow Keplerian circular orbits in the equatorial plane $(x^\theta = \pi/2)$ of the central singularity. These Keplerian circular orbits are stationary points of the Hamiltonian and constrained by $v^r = v^\theta = 0$. For static, axis-symmetric spacetimes, these orbits may be studied analytically (e.g. \cite{johannsen_regular_2013}, with a variation of their derivation extended for $a^\mu \neq 0$ in Appendix \ref{appendix:circular-orbits}).
+
+In general relativity, circular orbits are classified as either stable or unstable. There exists an innermost stable circular orbit (ISCO) radius \ref{}, below which orbits are energetically hyperbolic: small perturbations will send the test particle escaping to infinity or spiralling into the central singularity.  Stability of an orbit depends on the sign of $\d E / \d x^r$, with $>0$ corresponding to energetically stable configurations, such that the ISCO is the critical point at which 
+\begin{equation}
+    \label{eq:isco-definition}
+    0 = \left. \frac{\d E}{\d x^r} \right\rvert_{x^r := r_\text{ISCO}}.
+\end{equation}
+Stable circular orbits are only possible for radii $x^r \geq r_\text{ISCO}$. Within the ISCO is the so-called \textit{plunging region} where $v^r \neq 0$. 
+
+
+Orbits may also be determined purely from the integration of geodesics, by mandating a stability measure and optimizing the initial velocity vector until some heuristic measure is a minimum. For example, let $\mathscr{M}$ measure the eccentricity of an orbit in the equatorial plane. For a given radius $x^r$, the velocity corresponding to a circular orbit is $v^\mu = v^t \partial_t + v^\phi \partial_\phi $. With \eqref{eq:velocity_constraint}, the circular orbit velocity may be found through
+\begin{equation}
+    \underset{v^\phi}{\arg \min}\ \ \mathscr{M}(x^r, v^\phi),
+\end{equation}
+using a numerical optimizer. We use the Nelder-Mead simplex method as our preferred optimization algorithm for exploring the $v^\phi$ parameter space \citep{nelder_simplex_1965}. Due to only integrating finite windings of the orbit, this approach may find both unstable and stable orbits. These may be distinguished by inspecting $E$ as a function of $x^r$, or similarly $E$ as a function of $L_z$, see Figure \ref{fig:e-lz-cusp}. The $r_\text{ISCO}$ is found by determining \eqref{eq:isco-definition} numerically, or by finding $x^r$ corresponding to the \textit{cusp} of the $E$ against $L_z$ plot.
+
+The velocity of plunging region orbits may be numerically calculated by ``dropping'' a test particle from $r_\text{ISCO} -  \delta x^r$, and tracing for a large interval of proper time. The components of $v^\mu$ may then be interpolated over $x^r$ to approximate analytic solutions. Figure \ref{fig:circular-orbit-error} illustrates the accuracy of our numerical method for determining orbits.
+
+The heuristic minimization is also used for other objective functions, such as for pinpointing geodesics that intersect a chosen point in the spacetime ($\mathscr{M}$ measures closest approach), or exhibit some specific desired features (e.g. $\mathscr{M}$ measures periodicity).
+
+
+
+
+
+\notes{
+How we find circular orbits, how we find ISCO, photon radius, event horizon
+}
+
+
 \subsection{Charts and horizons}
 
 A chart is used to terminate geodesic integration to avoid continuing computation when the fate of a given geodesic is determined. In practical terms, the chart is defined by a set of boundaries, and used to classify the outcome of an integration. As a motivating example, consider a chart with an inner and outer boundary: the inner boundary is a coordinate singularity of the metric, $r_s$ (i.e. an event horizon), whereas the outer boundary is treated as the \textit{effective infinity}, $r_\infty$. Geodesics at the inner boundary are classified as lost behind the coordinate singularity, whereas those that reach the outer boundary are considered to escape to infinity with no further deviation to their trajectory. Additional boundaries of the chart may be used to represent accretion geometry: by terminating the integration when the geodesic crosses such a boundary, we consider the geodesic to have intersected the surface of the accretion disc. 
@@ -116,12 +147,12 @@ Observables that require multiple points along the geodesic to be determined may
 
 The intensity of a given geodesic is an observable that can be either calculated coincident with the geodesic trajectory, or retraced once the trajectory is determined.
 
-The covariant formulation of the radiative transfer equation calculates the emissions and extinction in aframe co-moving with the geodesic \citep{fuerst_radiation_2004}. The generalized form of the differential equation with respect to the affine parameter $\lambda$ is
+The covariant formulation of the radiative transfer equation calculates the emissions and extinction in aframe co-moving with the geodesic \citep{fuerst_radiation_2004,younsi_general_2012}. The generalized form of the differential equation with respect to the affine parameter $\lambda$ is
 \begin{equation}
     \label{eq:covariant-radiative-transfer}
     \frac{\d \mathcal{I}}{\d \lambda} = \left. \frac{\d s}{\d \lambda} \right\rvert_\lambda \left( -\alpha_\nu \mathcal{I} + \frac{j_\nu}{\nu^3} \right),
 \end{equation}
-where $\mathcal{I}$ is the invariant intensity, $s$ is the proper length traversed by the geodesic, and $\alpha_\nu$ and $j_\nu$ are the frequency $\nu$ dependent absorption and emissivity coefficients respectively, as measured in the local frame. In general both of these coefficients are also functions of the position $x^\mu$. The derivative term is calculated by projecting the geodesic momentum $v_\mu$ onto the velocity $u^\mu$ of the medium, via the tensor
+where $\mathcal{I}$ is the invariant intensity, $s$ is the proper length traversed by the geodesic, and $\alpha_\nu$ and $j_\nu$ are the frequency $\nu$ dependent absorption and emissivity coefficients respectively, as measured in the local frame. In general both of these coefficients are also functions of the position $x^\mu$. The derivative term is calculated by projecting the geodesic momentum $v_\mu$ onto the velocity $u^\mu$ of the medium, via the projection tensor
 \begin{equation}
     \mathrm{P}^{\mu\nu} := g^{\mu\nu} + u^\mu u^\nu.
 \end{equation}
@@ -136,31 +167,8 @@ such that for the particular case of null geodesics through a time-like medium
     \left. \frac{\d s}{\d \lambda} \right\rvert_\lambda = - \left. v_\mu u^\mu \right\rvert_\lambda.
 \end{equation}
 
-The covariant intensity $\mathcal{I}$ is calculated by selecting an observed frequency $\nu$ at the point of integration, for which $\alpha_\nu$ and $j_\nu$ are known, in which case \eqref{eq:covariant-radiative-transfer} can be integrated along with the geodesic equation. For differing $\nu$, the integration of $\mathcal{I}$ must be recalculated.
+The covariant intensity $\mathcal{I}$ is related to the observed intensity $I_\nu = \mathcal{I} \nu^3$, derived using Liouville's theorem. The intensity is therefore calculated by selecting $\nu$ at the observer, and integrating \eqref{eq:covariant-radiative-transfer} along a given geodesic. This integration is frequency dependant, and therefore for differing $\nu$, the integration of $\mathcal{I}$ must be recalculated.
 
-
-\subsection{Solving for special orbits}
-
-For simple disc models, including the $\alpha$-disc of \cite{shakura_black_1973}, the accreting matter is considered to follow Keplerian circular orbits in the equatorial plane $(x^\theta = \pi/2)$ of the central singularity. These orbits are stationary points of the Hamiltonian and constrained by $v^r = v^\theta = 0$. For the class of static, axis-symmetric methods for particles with no external forces, they may be analytically determined (\cite{johannsen_regular_2013}, with a variation of their derivation extended for external forces $a^\mu \neq 0$ in Appendix \ref{appendix:circular-orbits}).
-
-In other cases, such when the external acceleration $a^\mu \neq 0$ in \eqref{eq:geodesic_equation}, the analytic approach is often useful up to a point, before resolving to numerical methods for root finding.
-
-Orbits may also be determined purely from the integration of geodesics, by mandating a stability measure and optimizing the initial velocity vector until the measure is a minimum. For example, let $\mathscr{M}$ measure the eccentricity of an orbit in the equatorial plane. For a given radius $x^r$, the velocity corresponding to a circular orbit is $v^\mu = v^t \partial_t + v^\phi \partial_\phi $. With \eqref{eq:velocity_constraint}, the velocity may be found through
-\begin{equation}
-    \underset{v^\phi}{\arg \min}\ \ \mathscr{M}(x^r, v^\phi),
-\end{equation}
-using a numerical optimizer. We use Nelder-Mead as the default algorithm. This optimization method is also used for arbitrary objective functions, such as for pinpointing geodesics that intersect chosen points ($\mathscr{M}$ measures closest approach) or exhibit specific desired features (e.g. $\mathscr{M}$ measures periodicity).
-
-Circular orbits are classified as either stable or unstable, depending on the sign of $\d E / \d x^r$, with $>0$ corresponding to stable configurations. Stable circular orbits are only possible for radii above the innermost stable circular orbit (ISCO) radius, $x^r \geq r_\text{ISCO}$. The ISCO is the critical point at which 
-\begin{equation}
-    0 = \left. \frac{\d E}{\d x^r} \right\rvert_{x^r = r_\text{ISCO}}.
-\end{equation}
-Within the ISCO is the so-called \textit{plunging region} where $v^r \neq 0$. Circular orbits in this region are highly unstable and will either fall into the event horizon or escape to infinity if perturbed. These orbits may be numerically calculated from the ISCO four-velocity by offsetting $r_\text{ISCO} -  \delta x^r$, and integrating over a large $\lambda$ interval. The components of $v^\mu$ may then be interpolated over $x^r$ to approximate analytic solutions.
-
-
-\notes{
-How we find circular orbits, how we find ISCO, photon radius, event horizon
-}
 
 \subsection{Emissivity profiles}
 
@@ -170,19 +178,15 @@ The emissivity of a disc is defined as the flux emitted from the disc, such that
 \end{equation}
 where $\mathcal{N}$ is the photon count in an annulus $r + \d r$, $I$ is the intensity of the illuminating flux as a function of redshift $g$, $A$ is the relativistically corrected (proper) area of the annulus, and $\gamma$ is the Lorentz factor account for contraction of the annulus due to the velocity of the disc.
 
-An alternative method for calculating the flux from point sources is detailed in \cite{dauser_irradiation_2013}, where the axis-symmetry is further exploited. This method determines the radii of the annuli by tracing photons that are emitted at equally spaced angles in the source frame, and using the density of these geodesics on the radial coordinate of the disc $(\delta r)^{-1}$ as a proxy for the number density. Since in three spatial dimensions, the poloidal coordinate must be distributed as a $\sin \theta$ distribution for isotropic emission, $\varepsilon$ is weighted similarly\footnote{Instead of equally spaced $\theta$, one may instead sample $\theta \sim \cos (1 - 2 \mathcal{U})$, where $\mathcal{U}$ is a uniform distribution $\mathcal{U}(0,1)$. In this case, there is no $\sin \theta$ weight in $\varepsilon$. This result may be shown using the inverse-CDF or Smirnov transform method.},
+The intensity function for the illuminating corona is usually assumed to be a powerlaw $I(g) = g^{-\Gamma}$ with varying photon index $\Gamma$ \citep{gonzalez_probing_2017}.
+
+An alternative method for calculating the flux from point sources is detailed in \cite{dauser_irradiation_2013}, where the axis-symmetry is further exploited. This method determines the radii of the annuli by tracing photons that are emitted at equally spaced angles $\delta \theta$ in the source frame, and using the radial coordinate of geodesics where they intersect the disc $\delta r$ as a proxy for the reciprocal number density. Since in three spatial dimensions, the poloidal coordinate must be distributed as a $\sin \theta$ distribution for isotropic emission, $\varepsilon$ is weighted similarly\footnote{Instead of equally spaced $\theta$, one may instead sample $\theta \sim \cos (1 - 2 \mathcal{U})$, where $\mathcal{U}$ is a uniform distribution $\mathcal{U}(0,1)$. In this case, there is no $\sin \theta$ weight in $\varepsilon$. This result may be shown using the inverse-CDF or Smirnov transform method.}
 \begin{equation}
     \varepsilon(r, \delta r) = \frac{\sin \theta}{\gamma A(r, \delta r)} I(g).
 \end{equation}
 The differences between these two methods is shown in Figure \ref{fig:coronal-tracing}. It should be noted that the latter method converges faster than the (Monte-Carlo) sampling of $\mathcal{N}$, and captures the behaviour at small $r$ close to the ISCO faithfully. However, since this method is specialized for point sources, extended corona require an approximate rebinning algorithm to reconstruct the emissivity profile taking into account the overlap between the annuli determined from different source points.
 
-In general, the emissivity can also be a function of time.
-
-\todo{redo this but using the angle formulation of Dauser+13}
-
-\notes{
-We can calculate emissivity / flux maps for discs using either Voronoi tesselation or some symmetric prescriptions
-}
+When axis-symmetry does not apply, we have developed a method for calculating the emissivity field as a function of $(r, \phi)$ on the disc. Here the point of intersection on the disc become the generators of a Delauney tesselation, such that the Voronoi (proper) area may be used as a proxy for $\mathcal{N} / A$ (see Appendix \ref{appendix:voronoi}) in the limit of high sample count.
 
 \subsection{Transfer functions}
 
