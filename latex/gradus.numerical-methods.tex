@@ -105,9 +105,8 @@ The velocity of plunging region orbits may be numerically calculated by ``droppi
 
 The heuristic minimization is also used for other objective functions, such as for pinpointing geodesics that intersect a chosen point in the spacetime ($\mathscr{M}$ measures closest approach), or exhibit some specific desired features (e.g. $\mathscr{M}$ measures periodicity).
 
-
-
-
+\todo{solving for radii / horizons}
+We use root solvers from Roots.jl \citep{}. The default we use is their ``Order 0'' solver, a hybrid method that refines from secant to bracketing methods when possible.
 
 \notes{
 How we find circular orbits, how we find ISCO, photon radius, event horizon
@@ -123,7 +122,7 @@ The event horizon radius, $r_s$, used as the default inner boundary, may be calc
     \label{eq:event_horizon}
     0 = \left. \frac{1}{g_{rr}} \right\rvert_{x^r = r_s}.
 \end{equation}
-For axisymmetric metrics, $g_{rr}$ may be a function of both $x^r$ and $x^\theta$, in which case the inner boundary of the chart is a function of the poloidal coordinate. If no analytic function for $r_s$ is known, it may be numerically approximated using root solving methods. We use root solvers from Roots.jl \citep{}. The default we use is their ``Order 0'' solver, a hybrid method that refines from secant to bracketing methods when possible.
+For axisymmetric metrics, $g_{rr}$ may be a function of both $x^r$ and $x^\theta$, in which case the inner boundary of the chart is a function of the poloidal coordinate. If no analytic function for $r_s$ is known, it may be numerically approximated using root solving methods.
 
 In practice, close to the inner radius the adaptive time step of an ODE integrator tends to shrink dramatically due to near-singular derivatives, causing the integration to slow to almost a standstill. This may be avoided by scaling the inner horizon with the choice of constant $\mathcal{K} > 0$, such that $\tilde{r}_s = (1 + \mathcal{K}) r_s$, terminating the integration early when $x^r \leq \tilde{r}_s$. This constant may be adjusted depending on how vital it is for a geodesic to be able to glance the event horizon. We have chosen $\mathcal{K} = 10^{-2}$ by default, as it dramatically improves integration time without impacting the majority of simulations. 
 
@@ -152,7 +151,13 @@ The covariant formulation of the radiative transfer equation calculates the emis
     \label{eq:covariant-radiative-transfer}
     \frac{\d \mathcal{I}}{\d \lambda} = \left. \frac{\d s}{\d \lambda} \right\rvert_\lambda \left( -\alpha_\nu \mathcal{I} + \frac{j_\nu}{\nu^3} \right),
 \end{equation}
-where $\mathcal{I}$ is the invariant intensity, $s$ is the proper length traversed by the geodesic, and $\alpha_\nu$ and $j_\nu$ are the frequency $\nu$ dependent absorption and emissivity coefficients respectively, as measured in the local frame. In general both of these coefficients are also functions of the position $x^\mu$. The derivative term is calculated by projecting the geodesic momentum $v_\mu$ onto the velocity $u^\mu$ of the medium, via the projection tensor
+where $\mathcal{I}$ is the invariant intensity, $s$ is the proper length traversed by the geodesic, and $\alpha_\nu$ and $j_\nu$ are the frequency $\nu$ dependent absorption and emissivity coefficients respectively, as measured in the local frame. The frequency $\nu$ is related to the observed frequency via the redshift
+\begin{equation}
+    g = \frac{\nu_\text{obs}}{\nu},
+\end{equation}
+In general, both coefficients $\alpha_nu$ and $j_\nu$ are also functions of the position $x^\mu$. 
+
+The $\d s / \d \lambda$ derivative term is calculated by projecting the geodesic momentum $v_\mu$ onto the velocity $u^\mu$ of the medium, using the projection tensor
 \begin{equation}
     \mathrm{P}^{\mu\nu} := g^{\mu\nu} + u^\mu u^\nu.
 \end{equation}
