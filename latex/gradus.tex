@@ -113,13 +113,40 @@ keyword1 -- keyword2 -- keyword3
 
 Derived semi-analytically in \cite{iyer_lights_2009} (presented compactly and extended for metrics of form \eqref{eq:static_axisymmetric_metric} in Appendix \ref{appendix:deflection-angle}).
 
+
+\ref{fig:deflection-angle}
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.94\linewidth]{figures/deflection.iyer-hansen.pdf}
+	\caption{\todo{caption, also note about the distances / effect of integrator}}
+	\label{fig:deflection-angle}
+\end{figure}
+
 Since our method for integration does not use the constants of motion directly, the stability of the integrator may also be gauged by sampling invariant quantities along the trajectory. In Figure \ref{fig:constants-of-motion} is shown the value of $v_\mu v^\mu$, as in \eqref{eq:velocity_constraint}, for a number of trajectories.
+
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.95\linewidth]{figures/stability.conservation.pdf}
+	\caption{\todo{caption + better choice of integrators to compare}}
+	\label{fig:dot-stability}
+\end{figure}
 
 \todo{Energy conservation, deflection problem, shadow, tests for naked-singularities}
 
 \subsection{Analytic radiative transfer model}
 
 Do some of that Gold (2022) paper with all the test problems
+
+\ref{fig:gold-test-problems}
+
+\begin{figure*}
+	\centering
+	\includegraphics[width=0.97\linewidth]{figures/radiative-transfer.gold.pdf}
+	\caption{\todo{caption, also the values are not using the correct physical parameters from the Gold paper yet}}
+	\label{fig:gold-test-problems}
+\end{figure*}
 
 \subsection{Emissivity curves}
 
@@ -152,7 +179,7 @@ We thank Cosimo Bambi and Jiachen Jiang for sharing their software for testing p
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Data Availability}
 
-No new data or analyses have been generated for this work. The code to reproduce this paper and all of the figures therein is freely available under MIT license:
+No new data or analyses have been created for this work. The code to reproduce this paper and all figures therein is freely available under MIT license:
 \url{https://github.com/fjebaker/gradus-paper}
 
 

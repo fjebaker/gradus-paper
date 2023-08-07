@@ -25,7 +25,7 @@ The geodesic equation with coordinates $x^\mu$ is
     \vel{\sigma}
     = a^\mu,
 \end{equation}
-where $\lambda$ is the affine parameter and $a^\mu$ is some external acceleration. The effects of curvature on the trajectory encoded in the Christoffel symbols, 
+where $\lambda$ is the affine parameter, $v^\mu = \d x^\mu / \d \lambda$ is the four-velocity, and $a^\mu$ is some external acceleration. The effects of curvature on the trajectory are encoded in the Christoffel connections, 
 \begin{equation}
 \label{eq:christoffel}
     \utensor{\Gamma}{\mu}{\nu\sigma}
@@ -36,12 +36,12 @@ where $\lambda$ is the affine parameter and $a^\mu$ is some external acceleratio
         - \partial_{\rho}g_{\sigma \nu}
     \right),
 \end{equation}
-determined solely by metric and derivatives thereof. The geodesic equation is a set of four coupled second order differential equations that may be solved for a choice of initial $x^\mu$ and $\vel{\mu}$. A convention is to choose an initial position with $x^t = 0$, whereas the velocity vector is additionally constrained by the invariance
+determined solely by metric and derivatives thereof. For a given metric, the geodesic equation is a set of four coupled second order differential equations that may be solved for a choice of initial $x^\mu$ and $\vel{\mu}$. The convention is to choose an initial position with $x^t = 0$, whereas the velocity vector is additionally constrained by the invariance
 \begin{equation}
 \label{eq:velocity_constraint}
     g_{\sigma\nu} \vel{\sigma} \vel{\nu} = \mu^2,
 \end{equation}
-where $\mu$ is the invariant mass. This invariance gives rise to three solution classes depending on the sign of $\mu^2$, namely $\mu^2 = 0$ corresponding to null-, $\mu^2 > 0$ to time-, and $\mu^2 < 0$ to space-like geodesics. Null geodesics are the trajectories of photons, time-like regular massive particles, and space-like geodesics are the trajectories of exotic particles, such as tachyons. Specifying the three-vector $\vel{i}$ determines $\vel{t}$ by Eq. \eqref{eq:velocity_constraint}, rearranged as
+where $\mu$ is the invariant mass. This invariance gives rise to three solution classes depending on the sign of $\mu^2$, namely $\mu^2 = 0$ corresponding to null-, $\mu^2 > 0$ to time-, and $\mu^2 < 0$ to space-like geodesics. Null geodesics are the trajectories of photons, time-like geodesics are the trajectories of massive particles, and space-like geodesics are the trajectories of exotic particles, such as tachyons. Specifying the three-vector $\vel{i}$ determines $\vel{t}$ by Eq. \eqref{eq:velocity_constraint}, rearranged as
 \begin{equation}
 \vel{t}  = \frac{-g_{t\phi} \vel{\phi} \pm
     \sqrt{-g_{ij} \vel{i} \vel{j} - \mu^2}
@@ -99,7 +99,14 @@ Orbits may also be determined purely from the integration of geodesics, by manda
 \begin{equation}
     \underset{v^\phi}{\arg \min}\ \ \mathscr{M}(x^r, v^\phi),
 \end{equation}
-using a numerical optimizer. We use the Nelder-Mead simplex method as our preferred optimization algorithm for exploring the $v^\phi$ parameter space \citep{nelder_simplex_1965}. Due to only integrating finite windings of the orbit, this approach may find both unstable and stable orbits. These may be distinguished by inspecting $E$ as a function of $x^r$, or similarly $E$ as a function of $L_z$, see Figure \ref{fig:e-lz-cusp}. The $r_\text{ISCO}$ is found by determining \eqref{eq:isco-definition} numerically, or by finding $x^r$ corresponding to the \textit{cusp} of the $E$ against $L_z$ plot.
+using a numerical optimizer. We use the Nelder-Mead simplex method as our preferred optimization algorithm for exploring the $v^\phi$ parameter space \citep{nelder_simplex_1965}. Due to only integrating finite windings of the orbit, this approach may find both unstable and stable orbits. These may be distinguished by inspecting $E$ as a function of $x^r$, or similarly $E$ as a function of $L_z$ \citep{hackmann_charged_2013}, see Figure \ref{fig:e-lz-cusp}. The $r_\text{ISCO}$ is found by determining \eqref{eq:isco-definition} numerically, or by finding $x^r$ corresponding to the \textit{cusp} of the $E$ against $L_z$ plot.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.85\linewidth]{figures/circular-orbits.E-Lz.pdf}
+    \caption{\todo{TODO, also show the points we calculate using the numeric orbit finder}}
+    \label{fig:e-lz-cusp}
+\end{figure}
 
 The velocity of plunging region orbits may be numerically calculated by ``dropping'' a test particle from $r_\text{ISCO} -  \delta x^r$, and tracing for a large interval of proper time. The components of $v^\mu$ may then be interpolated over $x^r$ to approximate analytic solutions. Figure \ref{fig:circular-orbit-error} illustrates the accuracy of our numerical method for determining orbits.
 
@@ -191,6 +198,13 @@ An alternative method for calculating the flux from point sources is detailed in
 \end{equation}
 The differences between these two methods is shown in Figure \ref{fig:coronal-tracing}. It should be noted that the latter method converges faster than the (Monte-Carlo) sampling of $\mathcal{N}$, and captures the behaviour at small $r$ close to the ISCO faithfully. However, since this method is specialized for point sources, extended corona require an approximate rebinning algorithm to reconstruct the emissivity profile taking into account the overlap between the annuli determined from different source points.
 
+\begin{figure}
+    \centering
+    \includegraphics[width=0.95\linewidth]{figures/emissivity.coronal-traces.pdf}
+    \caption{\todo{caption}}
+    \label{fig:coronal-tracing}
+\end{figure}
+
 When axis-symmetry does not apply, we have developed a method for calculating the emissivity field as a function of $(r, \phi)$ on the disc. Here the point of intersection on the disc become the generators of a Delauney tesselation, such that the Voronoi (proper) area may be used as a proxy for $\mathcal{N} / A$ (see Appendix \ref{appendix:voronoi}) in the limit of high sample count.
 
 \subsection{Transfer functions}
@@ -208,7 +222,7 @@ Using Liouville's theorem -- that the number density of photons in phase space i
 \todo{is this $t_\text{em}$ or just $t$??}
 Integrating over $\d \Omega$ is equivalent to integrating over the image plane $\d \alpha \d \beta$, which in practical terms is binning the geodesic in each pixel by $E$ and $t$. In this formulation, for any change in $I_\text{em}$, the geodesic calculation would have to be recomputed, or a large table of values related to each geodesic stored, to finite precision. The sampling over the image plane similarly plays an important role, especially in increasing efficiency, since most of the variation in $I_\text{em}$ is sourced close to the ISCO, which can be under-resolved on coarse image planes. This may lead to oversampling regions of low or zero variation further out on the disc.
 
-\todo{discuss double valued nature of transfer functions}
+\todo{discuss double valued nature of transfer functions + branch cut}
 
 To elide this problems, and to be able to succinctly cache geodesic computation, the relativistic effects are often encoded in so-called \emph{transfer functions}, first introduced in \cite{cunningham_effects_1975},
 \begin{equation}
@@ -222,20 +236,20 @@ is a rescaled dimensionless redshift parameter with extremal $g$ over a given $r
 
 Integrating $\d F(E)$ to calculate line-profiles is described in detail in \cite{dauser_broad_2010}, including the Green's function formalism that adds additional flexibility in the definition of $I_\text{em}$. We extend the transfer function integration to include the geodesic coordinate time, integrating $f$ as
 
-\begin{strip}
-\rule[-1ex]{\columnwidth}{0.7pt}\rule[-1ex]{0.7pt}{1.5ex}
-\vbox{\vspace{2em}}
-\begin{equation}
+% \begin{strip}
+% \rule[-1ex]{\columnwidth}{0.7pt}\rule[-1ex]{0.7pt}{1.5ex}
+% \vbox{\vspace{2em}}
+\begin{align}
     \label{eq:transfer-integration}
-    F(E, t) =
+    F(E, t) &=
     \pi
     \int_0^\infty \d t^\prime \delta(t - t^\prime)
-    \int_{r_\text{in}}^{r_\text{out}} \d r_\text{em}\,r_\text{em}   
-    \int_0^1 \d g^\ast\, \delta(E - gE_\text{line})\, g^2 I_\text{em}\left(\frac{E}{g}, t^\prime\right) \frac{f(r_\text{em}, g^\ast)}{\sqrt{g^\ast (1 - g^\ast)}},
-\end{equation}
-\vbox{\vspace{2em}}
-\hfill\rule[1ex]{0.7pt}{1.5ex}\rule[2.3ex]{\columnwidth}{0.7pt}
-\end{strip}
+    \int_{r_\text{in}}^{r_\text{out}} \d r_\text{em}\,r_\text{em} \nonumber \\
+    &\ \int_0^1 \d g^\ast\, \delta(E - gE_\text{line})\, g^2 I_\text{em}\left(\frac{E}{g}, t^\prime\right) \frac{f(r_\text{em}, g^\ast)}{\sqrt{g^\ast (1 - g^\ast)}},
+\end{align}
+% \vbox{\vspace{2em}}
+% \hfill\rule[1ex]{0.7pt}{1.5ex}\rule[2.3ex]{\columnwidth}{0.7pt}
+% \end{strip}
 \noindent and $g = g( r_\text{em}, g^\ast, t')$ implicitly. The integrand remains in practice singular at $g^\ast \rightarrow (0, 1)$, and therefore the integration is performed over $g^\ast \in [h, 1 - h]$. Outside of this domain, the limits of the integrand can be taken to approximate the edges of the bin, as in \cite{dauser_broad_2010},
 \begin{equation}
    F_\text{edge}(E,t) \propto 2\left( \sqrt{E_\text{max}} - \sqrt{E_\text{min}} \right).

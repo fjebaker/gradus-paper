@@ -1,0 +1,8 @@
+[deps]
+BenchmarkTools = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
+CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
+Gradus = "c5b7b928-ea15-451c-ad6f-a331a0f3e4b7"
+IyerHansen2009 = "6dbec4dd-1c77-466f-be49-4bb8b7bc4e69"
+JuliaFormatter = "98e50ef6-434e-11e9-1051-2b60c6c9e899"
+LaTeXStrings = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
+Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
