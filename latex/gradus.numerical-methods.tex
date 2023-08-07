@@ -59,7 +59,7 @@ Sparsity is often symbolically inferable under simple operations. We use compile
 
 \subsection{Observers and emitters}
 
-To determine interpretable initial velocities it is useful to consider the coordinates local to the observer or emitter at coordinates $x^\mu$. Following \cite{cunningham_optical_1973}, for observers one usually considers an image plane onto which a projection of geodesics is rendered, with geometry as in Fig. \ref{fig:observer_coordinates}. One may then define a set of impact parameters from components of the local momenta
+To determine interpretable initial velocities it is useful to consider the coordinates local to the observer or emitter at coordinates $x^\mu$. Following \cite{cunningham_optical_1973}, for observers one usually an image plane onto which a projection of geodesics is rendered, with geometry as in Fig. \ref{fig:observer_coordinates}. One may then define a set of impact parameters from components of the local momenta
 \begin{align}
     \alpha &:=  x^r \frac{p_{(\phi)}}{p_{(r)}}, \\
     \beta &:= x^r \frac{p_{(\theta)}}{p_{(r)}},
@@ -131,7 +131,7 @@ Chart intersection is found using either an interpolating root-solver with \text
 
 \subsection{Computing observables}
 
-We consider observables to be any physical quantity calculated from a simulation that is evaluated using some or all of the points along a geodesic. Often only the start and end point of a geodesic are required to calculate some physical quantity, and under such circumstances it is computational beneficial to avoid allocating space for the full solutions.
+We consider \textit{observables} to be any physical quantity calculated from a simulation that is evaluated using some or all of the points along a geodesic. Often only the start and end point of a geodesic are required to calculate some physical quantity, and under such circumstances it is computational beneficial to avoid allocating space for the full solutions.
 
 A frequently required quantity is the redshift along a geodesic, due to both the Doppler and gravitational redshift. This is compactly written as the ratio of energies between the start and end point connected by the geodesic,
 \begin{equation}
@@ -161,7 +161,7 @@ The $\d s / \d \lambda$ derivative term is calculated by projecting the geodesic
 \begin{equation}
     \mathrm{P}^{\mu\nu} := g^{\mu\nu} + u^\mu u^\nu.
 \end{equation}
-The path length derivative is then
+The path length derivative is 
 \begin{align}
     \left. \frac{\d s}{\d \lambda} \right\rvert_\lambda
     &= - \left. \left\lVert \mathrm{P}^{\mu\nu} v_\mu\right\rVert\, \right\rvert_\lambda,\\
@@ -172,7 +172,7 @@ such that for the particular case of null geodesics through a time-like medium
     \left. \frac{\d s}{\d \lambda} \right\rvert_\lambda = - \left. v_\mu u^\mu \right\rvert_\lambda.
 \end{equation}
 
-The covariant intensity $\mathcal{I}$ is related to the observed intensity $I_\nu = \mathcal{I} \nu^3$, derived using Liouville's theorem. The intensity is therefore calculated by selecting $\nu$ at the observer, and integrating \eqref{eq:covariant-radiative-transfer} along a given geodesic. This integration is frequency dependant, and therefore for differing $\nu$, the integration of $\mathcal{I}$ must be recalculated.
+The covariant intensity $\mathcal{I}$ is related to the observed intensity $I_\nu = \mathcal{I} \nu^3$, derived using Liouville's theorem. The intensity is therefore calculated by selecting $\nu_\text{obs} = E$ at the observer, and integrating \eqref{eq:covariant-radiative-transfer} along a given geodesic. 
 
 
 \subsection{Emissivity profiles}
@@ -185,9 +185,9 @@ where $\mathcal{N}$ is the photon count in an annulus $r + \d r$, $I$ is the int
 
 The intensity function for the illuminating corona is usually assumed to be a powerlaw $I(g) = g^{-\Gamma}$ with varying photon index $\Gamma$ \citep{gonzalez_probing_2017}.
 
-An alternative method for calculating the flux from point sources is detailed in \cite{dauser_irradiation_2013}, where the axis-symmetry is further exploited. This method determines the radii of the annuli by tracing photons that are emitted at equally spaced angles $\delta \theta$ in the source frame, and using the radial coordinate of geodesics where they intersect the disc $\delta r$ as a proxy for the reciprocal number density. Since in three spatial dimensions, the poloidal coordinate must be distributed as a $\sin \theta$ distribution for isotropic emission, $\varepsilon$ is weighted similarly\footnote{Instead of equally spaced $\theta$, one may instead sample $\theta \sim \cos (1 - 2 \mathcal{U})$, where $\mathcal{U}$ is a uniform distribution $\mathcal{U}(0,1)$. In this case, there is no $\sin \theta$ weight in $\varepsilon$. This result may be shown using the inverse-CDF or Smirnov transform method.}
+An alternative method for calculating the flux from point sources is detailed in \cite{dauser_irradiation_2013}, where the axis-symmetry is further exploited. This method determines the radii of the annuli by tracing photons that are emitted at equally spaced angles $\Delta \theta$ in the source frame, and using the radial coordinate of geodesics where they intersect the disc $\Delta r$ as a proxy for the reciprocal number density. Since in three spatial dimensions, the poloidal coordinate must be distributed as a $\sin \theta$ distribution for isotropic emission, $\varepsilon$ is weighted similarly\footnote{Instead of equally spaced $\theta$, one may instead sample $\theta \sim \cos (1 - 2 \mathcal{U})$, where $\mathcal{U}$ is a uniform distribution $\mathcal{U}(0,1)$. In this case, there is no $\sin \theta$ weight in $\varepsilon$. This result may be shown using the inverse-CDF or Smirnov transform method.}
 \begin{equation}
-    \varepsilon(r, \delta r) = \frac{\sin \theta}{\gamma A(r, \delta r)} I(g).
+    \varepsilon(r, \Delta r) = \frac{\sin \theta}{\gamma A(r, \Delta r)} I(g).
 \end{equation}
 The differences between these two methods is shown in Figure \ref{fig:coronal-tracing}. It should be noted that the latter method converges faster than the (Monte-Carlo) sampling of $\mathcal{N}$, and captures the behaviour at small $r$ close to the ISCO faithfully. However, since this method is specialized for point sources, extended corona require an approximate rebinning algorithm to reconstruct the emissivity profile taking into account the overlap between the annuli determined from different source points.
 
@@ -220,12 +220,13 @@ where $r_\text{em}$ is the emission radius on the disc, and
 \end{equation}
 is a rescaled dimensionless redshift parameter with extremal $g$ over a given $r_\text{em}$, see Figure \ref{fig:transfer-parameterisation}. As is shown, this re-parameterisation of the image plane is double valued in $g^\ast$ except when $g^\ast = 0, 1$. These transfer functions then are ostensibly a change-of-variable Jacobian, enveloped with an elliptical function in $g$ that supresses the singular values of the Jacobian as $g^\ast$ becomes $0$ or $1$. Sample transfer functions and $t(r_\text{em}, g^\ast)$ are shown in Figure \ref{fig:transfer-functions}.
 
-Integrating $\d F(E)$ to calculate line-profiles is described in detail in \cite{dauser_broad_2010}, including the Green's function formalism that adds additional flexibility in the definition of $I_\text{em}$. We trivially modify this integration to optionally include the geodesic coordinate time as
+Integrating $\d F(E)$ to calculate line-profiles is described in detail in \cite{dauser_broad_2010}, including the Green's function formalism that adds additional flexibility in the definition of $I_\text{em}$. We extend the transfer function integration to include the geodesic coordinate time, integrating $f$ as
 
 \begin{strip}
 \rule[-1ex]{\columnwidth}{0.7pt}\rule[-1ex]{0.7pt}{1.5ex}
 \vbox{\vspace{2em}}
 \begin{equation}
+    \label{eq:transfer-integration}
     F(E, t) =
     \pi
     \int_0^\infty \d t^\prime \delta(t - t^\prime)
@@ -235,15 +236,19 @@ Integrating $\d F(E)$ to calculate line-profiles is described in detail in \cite
 \vbox{\vspace{2em}}
 \hfill\rule[1ex]{0.7pt}{1.5ex}\rule[2.3ex]{\columnwidth}{0.7pt}
 \end{strip}
-\noindent and $g = g( r_\text{em}, g^\ast, t')$ implicitly. The integrand remains in practice singular at $g^\ast \rightarrow (0, 1)$, and therefore the integration is performed over $g^\ast \in [h, 1 - h]$. Outside of this domain, the limits of the integrand can be taken to approximate the edges of the bin, as in \cite{dauser_broad_2010}.
+\noindent and $g = g( r_\text{em}, g^\ast, t')$ implicitly. The integrand remains in practice singular at $g^\ast \rightarrow (0, 1)$, and therefore the integration is performed over $g^\ast \in [h, 1 - h]$. Outside of this domain, the limits of the integrand can be taken to approximate the edges of the bin, as in \cite{dauser_broad_2010},
+\begin{equation}
+   F_\text{edge}(E,t) \propto 2\left( \sqrt{E_\text{max}} - \sqrt{E_\text{min}} \right).
+\end{equation}
+We use $h = 10^{-3}$, and evaluate the integral over $\d g^\ast$ using a 7$^\text{th}$ order Gauss-Kronrod quadrature scheme, which avoids evaluating the integral directly at $h$ and $1 - h$ \citep{}. Finer grids for $r_\text{em}$ and $g^\ast$ are constructed to help with stability, and rebinned into the desired grid. 
 
+The method for numerically integrating the transfer functions is as follows: the limits of the integral are chosen $(r_\text{in}, r_\text{out})$, and limits of the output space similarly $(E_\text{min}, E_\text{max})$, $(t_\text{min}, t_\text{max})$. Any evaluation of \eqref{eq:transfer-integration} that is outside of the energy and time limits is ignored. To ensure the approximate methods remain accurate, a fine grid in $r$ and $g$ is constructed\footnote{The grid in $r$ should be irregularly spaced, e.g. $\sim 1 / r$, whereas the grid in $g$ should be linear.}. The integration over $\d r_\text{em}$ is performed using a trapezoidal interpolation, which is sufficient in both accuracy and performance with the finer bins. Since the integration over $\d t$ has the selection effect of binning, we assign the flux $F(E)$ into time bin $t$ by considering $t$ over the width of $g^\ast$ on the fine grid. In full:
+\begin{enumerate}
+    \item Interpolate the values of the transfer function, $f$, $t$, and $g_\text{min}$, and $g_\text{max}$, for the current radius $r_i$.
+    \item Calculate the trapezoidal integration weight for the radial coordinate, in effect $\omega_i = \Delta r_i r_i \varepsilon(r_i)$.
+    \item For each bin in the fine $g$ grid, integrate $f$ over this bin. Record $t_\text{min} = t(g_\text{min})$ and $t_\text{max} = t(g_\text{max})$.
+    \item Add $\omega_i F(E, t)$ to the bin corresponding to $E = gE_\text{line}$, and $t$. If either $\Delta E$ or $\Delta t$ straddles an output bin, the flux must be weighted appropriately and divided into those bins. 
+\end{enumerate}
 
-We use $h = 10^{-3}$, and evaluate the integral over $\d g^\ast$ using a 7$^\text{th}$ order Gauss-Kronrod quadrature scheme, which avoids evaluating the integral directly at $h$ and $1 - h$ \citep{}. Finer grids for $r_\text{em}$ and $g^\ast$ are constructed to help with stability, and rebinned into the desired grid. The integration over $\d r_\text{em}$ is performed using a trapezoidal interpolation, which is sufficient in both accuracy and performance with the finer bins. Since the integration over $\d t$ has the selection effect of binning, we assign the flux $F(E)$ into time bin $t$ by averaging $t$ over the width of $g^\ast$ on the fine grid.
+By formulating the integration with the time component, we can use the same transfer function table to compute both line-profiles and reverberation lags efficiently, with arbitrary intensity functions $I_\text{em}$. We note that extensions to $I_\text{em}$ that require, for example, the photon emission angle on the disc, are trivial to include.
 
-\todo{how does one actually integrate: interpolate $f$ over $r$, then integrate $g^\ast$, then bin by $t$}
-
-By formulating the integration with the time component, we can use the same transfer function table to compute both line-profiles and reverberation lags efficiently, with arbitrary intensity functions $I_\text{em}$. We note that extensions to the intensity function that require, for example, the photon emission angle on the disc, are trivial to include.
-
-\notes{
-Both 1d (Cunningham) and 2d (lag-energy) transfer functions, the methods used to solve them, and the quadrature integration schemes.
-}
