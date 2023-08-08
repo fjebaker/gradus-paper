@@ -24,6 +24,7 @@ v = map_impact_parameters(m, x, 5.0, 0.0)
 sol = tracegeodesics(m, x, v, 20_000.0)
 
 using BenchmarkTools
+import BenchmarkTools: median
 t1 = @benchmark tracegeodesics(m, x, v, 20_000.0)
 t2 = @benchmark tracegeodesics(m, x, v, 20_000.0, solver = Gradus.Feagin10())
 t3 = @benchmark tracegeodesics(m, x, v, 20_000.0, solver = Gradus.Vern6())
@@ -53,14 +54,14 @@ begin
         valign = 0.8,
         xgridvisible = false,
         ygridvisible = false,
-        ytickformat = values -> ["$(trunc(Int, v / 1e3)) μs" for v in values],
+        ytickformat = values -> ["$(trunc(Int, v / 1e3)) μs" for v in values]
     )
 
     hidexdecorations!(axmini)
 
-    barplot!(axmini, [1], [mean(t1.times)])
-    barplot!(axmini, [2], [mean(t2.times)])
-    barplot!(axmini, [3], [mean(t3.times)])
+    barplot!(axmini, [1], [median(t1.times)])
+    barplot!(axmini, [2], [median(t2.times)])
+    barplot!(axmini, [3], [median(t3.times)])
 
     ax2 = Axis(
         ga[3, 1],
@@ -80,7 +81,7 @@ begin
         [l1, l2, l3],
         ["Tsit5", "Feagin10", "Vern6"],
         orientation = :horizontal,
-        labelsize = 10,
+        # labelsize = 10,
         padding = (0, 0, 0, 0),
         framevisible = false,
     )

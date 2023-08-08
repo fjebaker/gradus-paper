@@ -94,7 +94,7 @@ test2 = AnalyticDiscTest(A = 0.0, α = -2.0, h = 0.0, l₀ = 1.0)
 m_test2 = KerrMetric(1.0, 0.0)
 test3 = AnalyticDiscTest(A = 0.0, α = 0.0, h = 10.0 / 3, l₀ = 1.0)
 test4 = AnalyticDiscTest(A = 0.2, α = 0.0, h = 10.0 / 3, l₀ = 1.0)
-test5 = AnalyticDiscTest(A = 1.0, α = 0.0, h = 100.0 / 3, l₀ = 1.0)
+test5 = AnalyticDiscTest(A = 2.0, α = 0.0, h = 100.0 / 3, l₀ = 1.0)
 
 a1, b1, im1 = do_trace(m, x, test1)
 a2, b2, im2 = do_trace(m_test2, x, test2)
@@ -102,10 +102,10 @@ a3, b3, im3 = do_trace(m, x, test3)
 a4, b4, im4 = do_trace(m, x, test4)
 a5, b5, im5 = do_trace(m, x, test5)
 
-function plot_heatmap!(ax, x, y, im)
-    hm = heatmap!(ax, x, y, im' ./ 1e5, colormap = :batlowW)
-    S = sum(filter(!isnan, im)) ./ 1e5
-    s = Printf.@sprintf("%1.4f", S)
+function plot_heatmap!(ax, x, y, im; kwargs...)
+    S = sum(filter(!isnan, im))
+    hm = heatmap!(ax, x, y, im' ./ S, colormap = :cubehelix; kwargs...)
+    s = Printf.@sprintf("%1.4f", S / 1e5)
     text!(
         ax,
         (-14.5, 11),
@@ -123,32 +123,35 @@ begin
 
     ax1 = Axis(ga[1, 1], aspect = DataAspect(), ylabel = L"\beta", xlabel = L"\alpha")
     hm1 = plot_heatmap!(ax1, a1, b1, im1)
+    crange = (0.0, 2e-4)
     Label(ga[1, 1, Top()], "Test 1", padding = (0, 0, 0, 0), font = :bold)
 
     ax2 = Axis(ga[1, 2], aspect = DataAspect(), xlabel = L"\alpha")
-    hm2 = plot_heatmap!(ax2, a2, b2, im2)
+    hm2 = plot_heatmap!(ax2, a2, b2, im2, colorrange = crange)
     Label(ga[1, 2, Top()], "Test 2", padding = (0, 0, 0, 0), font = :bold)
 
     ax3 = Axis(ga[1, 3], aspect = DataAspect(), xlabel = L"\alpha")
-    hm3 = plot_heatmap!(ax3, a3, b3, im3)
+    hm3 = plot_heatmap!(ax3, a3, b3, im3, colorrange = crange)
     Label(ga[1, 3, Top()], "Test 3", padding = (0, 0, 0, 0), font = :bold)
 
     ax4 = Axis(ga[1, 4], aspect = DataAspect(), xlabel = L"\alpha")
-    hm4 = plot_heatmap!(ax4, a4, b4, im4)
+    hm4 = plot_heatmap!(ax4, a4, b4, im4, colorrange = crange)
     Label(ga[1, 4, Top()], "Test 4", padding = (0, 0, 0, 0), font = :bold)
 
     ax5 = Axis(ga[1, 5], aspect = DataAspect(), xlabel = L"\alpha")
-    hm5 = plot_heatmap!(ax5, a5, b5, im5)
+    hm5 = plot_heatmap!(ax5, a5, b5, im5, colorrange = crange)
     Label(ga[1, 5, Top()], "Test 5", padding = (0, 0, 0, 0), font = :bold)
 
-    dp1(x) = Printf.@sprintf("%.0f", x)
-    Colorbar(
+    dp1(x) = Printf.@sprintf("%.1f", x)
+    cbar = Colorbar(
         ga[1, 6],
-        hm1,
-        label = L"S_\text{tot} / S_\text{exact}",
+        limits = crange,
+        label = L"S / S_\text{tot}",
         labelsize = 24,
+        ticks = [0, 0.5e-4, 1.0e-4, 1.5e-4, 2e-4],
         tickformat = values -> [L"%$(dp1(x * 1e4)) \times 10^4" for x in values],
         tellheight = false,
+        colormap = :cubehelix,
         height = 172,
     )
 
@@ -159,6 +162,7 @@ begin
     hideydecorations!(ax5)
     colgap!(ga, 8)
 
+    resize_to_layout!(fig)
     fig
     @savefigure(fig)
 end
