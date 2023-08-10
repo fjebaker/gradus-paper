@@ -3,8 +3,30 @@ using Gradus
 
 include("common.jl")
 
-function plot_paths_xy!(ax, sol; N = 200_000, kwargs...)
-    x, y, z = Gradus._extract_path(sol, N, t_span = 16)
+function _extract_path(sol, n_points; projection = :none, t_span = 100.0)
+    mid_i = max(1, length(sol.u) ÷ 2)
+
+    start_t = max(sol.t[mid_i] - t_span, sol.t[1])
+    end_t = min(sol.t[mid_i] + t_span, sol.t[end])
+
+    t_range = Gradus.Grids._inverse_grid(end_t - 18, end_t, n_points)
+
+    r = [sol(t)[2] for t in t_range]
+    θ = [sol(t)[3] for t in t_range]
+    ϕ = [sol(t)[4] for t in t_range]
+
+    if projection == :polar
+        r, θ, ϕ
+    else
+        x = @. r * cos(ϕ) * sin(θ)
+        y = @. r * sin(ϕ) * sin(θ)
+        z = @. r * cos(θ)
+        x, y, z
+    end
+end
+
+function plot_paths_xy!(ax, sol; N = 500_000, kwargs...)
+    x, y, z = _extract_path(sol, N, t_span = 16)
     lines!(ax, x, y; kwargs...)
 end
 
@@ -25,9 +47,11 @@ sol = tracegeodesics(m, x, v, 20_000.0)
 
 using BenchmarkTools
 import BenchmarkTools: median
-t1 = @benchmark tracegeodesics(m, x, v, 20_000.0)
-t2 = @benchmark tracegeodesics(m, x, v, 20_000.0, solver = Gradus.Feagin10())
-t3 = @benchmark tracegeodesics(m, x, v, 20_000.0, solver = Gradus.Vern6())
+if !isdefined(Main, :t1)
+    # t1 = @benchmark tracegeodesics(m, x, v, 20_000.0)
+    # t2 = @benchmark tracegeodesics(m, x, v, 20_000.0, solver = Gradus.Feagin10())
+    # t3 = @benchmark tracegeodesics(m, x, v, 20_000.0, solver = Gradus.Vern6())
+end
 
 begin
     fig = Figure(resolution = (480, 550))
@@ -54,7 +78,7 @@ begin
         valign = 0.8,
         xgridvisible = false,
         ygridvisible = false,
-        ytickformat = values -> ["$(trunc(Int, v / 1e3)) μs" for v in values]
+        ytickformat = values -> ["$(trunc(Int, v / 1e3)) μs" for v in values],
     )
 
     hidexdecorations!(axmini)
@@ -93,7 +117,7 @@ begin
     text!(ax1, (11.5, 0.7), text = "b", font = :bold, fontsize = 20)
     text!(ax2, (6000, 4e-7), text = "c", font = :bold, fontsize = 20)
 
-    # resize_to_layout!(fig)
+    resize_to_layout!(fig)
     fig
     @savefigure(fig)
 end

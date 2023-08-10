@@ -49,7 +49,7 @@ end
 begin
     fig = Figure(resolution = (500, 420))
     ga = fig[1, 1] = GridLayout()
-    ax = Axis(ga[1, 1], ylabel = "Deflection [rad]")
+    ax = Axis(ga[1, 1], ylabel = L"\text{Deflection (rad)}")
     ylims!(ax, 0.0, 2.0)
 
     poly!(

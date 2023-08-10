@@ -59,12 +59,19 @@ Sparsity is often symbolically inferable under simple operations. We use compile
 
 \subsection{Observers and emitters}
 
-To determine interpretable initial velocities it is useful to consider the coordinates local to the observer or emitter at coordinates $x^\mu$. Following \cite{cunningham_optical_1973}, for observers one usually an image plane onto which a projection of geodesics is rendered, with geometry as in Fig. \ref{fig:observer_coordinates}. One may then define a set of impact parameters from components of the local momenta
+\begin{figure}
+    \centering
+    \includegraphics[width=0.95\linewidth]{figures/skycoords.pdf}
+    \caption{\todo{figure}}
+    \label{fig:observer-coordinates}
+\end{figure}
+
+To determine interpretable initial velocities it is useful to consider the coordinates local to the observer or emitter at coordinates $x^\mu$. For observers one usually an image plane onto which a projection of geodesics is rendered, with geometry as in Fig. \ref{fig:observer-coordinates}. Following \cite{cunningham_optical_1973}, one may then define a set of impact parameters from components of the local momenta
 \begin{align}
     \alpha &:=  x^r \frac{p_{(\phi)}}{p_{(r)}}, \\
     \beta &:= x^r \frac{p_{(\theta)}}{p_{(r)}},
 \end{align}
-using indices in parentheses to denote the vector components in the local frame. Our choice of symbols ($r, \theta, \phi$) is to anticipate an identification between local and global bases, and to provide some intuition for the local frame.
+using indices in parentheses to denote the vector components in the local frame. The choice of subscript ($r, \theta, \phi$) is to anticipate an identification between local and global bases, and to provide some intuition for the local frame.
 
 Along with the invariance of four-momenta (c.f. Eq. \eqref{eq:velocity_constraint}), one may obtain a curve of solutions for the local momenta
 \begin{align}
@@ -72,22 +79,38 @@ Along with the invariance of four-momenta (c.f. Eq. \eqref{eq:velocity_constrain
     \frac{p_{(\theta)}}{p_{(t)}} &= \mathscr{R} \frac{\beta}{x^r}, \\
     \frac{p_{(\phi)}}{p_{(t)}} &= \mathscr{R} \frac{\alpha}{x^r}.
 \end{align}
-For emitters, the above set of local initial momenta may be determined from a tangent vector pointing along the direction of a geodesic by decomposition (see also \ref{fig:observer_coordinates}). The component $p_{(t)}$ is the negative of the energy measured in the local frame, and is conventionally set to $-p_{(t)} = E = 1$ without loss of generality. 
+
+For emitters, one determines these momenta from an initial velocity tangent vector pointing along a direction on the local sky, parameterized by local angles $(\Upsilon, \Psi)$, as in Figure \ref{fig:observer-coordinates}. Using simple geometry and projecting the local angles onto a Cartesian coordinate system gives momenta
+\begin{equation}
+    \frac{p_{(i)}}{p_{(t)}} = \frac{1}{p_{(t)}}
+    \left[\pderiv{(x, y, z)}{(r, \theta, \phi)}\right]
+    \left(
+    \begin{matrix}
+        \sin \Upsilon \cos \Psi \\
+        \sin \Upsilon \sin \Psi \\
+        \cos \Upsilon \\
+    \end{matrix}
+    \right),
+\end{equation}
+where the partial derivative term denotes the cartesian to spherical coordinate Jacobian. The component $p_{(t)}$ is the negative of the energy measured in the local frame, and is conventionally set to $-p_{(t)} = E = 1$ without loss of generality. 
 
 For both observers and emitters, we must identify a local frame, where the natural choice is the locally non-rotating frame (LNRF) \citep{bardeen_rotating_1972} \todo{check citation + explain significance}. The transformation from local to global coordinates is
 \begin{equation}
     p_\mu = \e^{(\nu)}_{\phantom{(\nu)}\mu}\  p_{(\nu)}
 \end{equation}
-where the basis vectors $\e^{(\nu)}_{\phantom{(\nu)}\mu}$ are found using the theorem of Gram-Schmidt (\cite{schmidt_uber_1989}, Appendix \ref{appendix:gram-schmidt}). The formalism may be extended for an observer or emitter in motion, where their velocity modifies the mapping by a local Lorenz transformation, $\Lambda^{(\kappa)}_{\phantom{(\kappa)}(\nu)}$, as 
+where the basis vectors $\e^{(\nu)}_{\phantom{(\nu)}\mu}$ (or tetrad) are found using the theorem of Gram-Schmidt (\cite{schmidt_uber_1989}, Appendix \ref{appendix:gram-schmidt}). The formalism may be extended for an observer or emitter in motion, where their velocity modifies the mapping by a local Lorenz transformation, $\Lambda^{(\kappa)}_{\phantom{(\kappa)}(\nu)}$, as 
 \begin{equation}
     p_\mu = \e^{(\nu)}_{\phantom{(\nu)}\mu}\  \Lambda^{(\kappa)}_{\phantom{(a)}(\nu)} p_{(\kappa)}.
 \end{equation}
+However, this Lorenz transformation may be absorbed into the tetrad with careful construction, using the velocity of the observer or emitter as $\utensor{\e}{(t)}{\mu}$.
+
+Expressions for the impact parameters from the constant of motion in \cite{cunningham_optical_1973} always assume that the observer is situated in asymptotically flat space, whereas our calculations are specific to the location of the observer. This should be taken into account when comparing trajectories between codes and methods.
 
 \subsection{Special orbits and horizons}
 
-For many disc models, accreting matter is considered to follow Keplerian circular orbits in the equatorial plane $(x^\theta = \pi/2)$ of the central singularity. These Keplerian circular orbits are stationary points of the Hamiltonian and constrained by $v^r = v^\theta = 0$. For static, axis-symmetric spacetimes, these orbits may be studied analytically (e.g. \cite{johannsen_regular_2013}, with a variation of their derivation extended for $a^\mu \neq 0$ in Appendix \ref{appendix:circular-orbits}).
+For many disc models, accreting matter is considered to follow Keplerian circular orbits in the equatorial plane $(x^\theta = \pi/2)$ of the central singularity \citep{shakura_black_1973}. These Keplerian circular orbits are stationary points of the Hamiltonian and constrained by $v^r = v^\theta = 0$. For static, axis-symmetric spacetimes, these orbits may be studied analytically (e.g. \cite{johannsen_regular_2013}, with a variation of their derivation and extension for $a^\mu \neq 0$ in Appendix \ref{appendix:circular-orbits}).
 
-In general relativity, circular orbits are classified as either stable or unstable. There exists an innermost stable circular orbit (ISCO) radius \ref{}, below which orbits are energetically hyperbolic: small perturbations will send the test particle escaping to infinity or spiralling into the central singularity.  Stability of an orbit depends on the sign of $\d E / \d x^r$, with $>0$ corresponding to energetically stable configurations, such that the ISCO is the critical point at which 
+In general relativity, circular orbits are classified as either stable or unstable \citep{wilkins_bound_1972,bardeen_rotating_1972}. There exists an innermost stable circular orbit (ISCO) radius, below which orbits are energetically hyperbolic: small perturbations will send the test particle escaping to infinity or spiralling into the central singularity.  Stability of an orbit depends on the sign of $\d E / \d x^r$, with $>0$ corresponding to energetically stable configurations, such that the ISCO is the critical point at which 
 \begin{equation}
     \label{eq:isco-definition}
     0 = \left. \frac{\d E}{\d x^r} \right\rvert_{x^r := r_\text{ISCO}}.
