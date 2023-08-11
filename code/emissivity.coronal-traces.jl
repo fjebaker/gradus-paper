@@ -55,7 +55,7 @@ begin
         ga[1, 1],
         aspect = DataAspect(),
         yticks = LinearTicks(3),
-        ylabel = L"z\, [r_\text{g}]",
+        ylabel = L"z\, [\rg]",
     )
     xlims!(ax, -10, 10)
     ylims!(ax, 0, 10)
@@ -67,8 +67,8 @@ begin
         ga[2, 1],
         aspect = DataAspect(),
         yticks = LinearTicks(3),
-        xlabel = L"x\,[r_\text{g}]",
-        ylabel = L"z\, [r_\text{g}]",
+        xlabel = L"x\,[\rg]",
+        ylabel = L"z\, [\rg]",
     )
     xlims!(ax2, -10, 10)
     ylims!(ax2, 0, 10)

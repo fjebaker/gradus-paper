@@ -6,7 +6,6 @@ include("common.jl")
 function _extract_path(sol, n_points; projection = :none, t_span = 100.0)
     mid_i = max(1, length(sol.u) ÷ 2)
 
-    start_t = max(sol.t[mid_i] - t_span, sol.t[1])
     end_t = min(sol.t[mid_i] + t_span, sol.t[end])
 
     t_range = Gradus.Grids._inverse_grid(end_t - 18, end_t, n_points)
@@ -48,9 +47,11 @@ sol = tracegeodesics(m, x, v, 20_000.0)
 using BenchmarkTools
 import BenchmarkTools: median
 if !isdefined(Main, :t1)
-    # t1 = @benchmark tracegeodesics(m, x, v, 20_000.0)
-    # t2 = @benchmark tracegeodesics(m, x, v, 20_000.0, solver = Gradus.Feagin10())
-    # t3 = @benchmark tracegeodesics(m, x, v, 20_000.0, solver = Gradus.Vern6())
+    @info "Running benchmark"
+    t1 = @benchmark tracegeodesics(m, x, v, 20_000.0)
+    t2 = @benchmark tracegeodesics(m, x, v, 20_000.0, solver = Gradus.Feagin10())
+    t3 = @benchmark tracegeodesics(m, x, v, 20_000.0, solver = Gradus.Vern6())
+    t4 = @benchmark tracegeodesics(m, x, v, 20_000.0, solver = Gradus.RK4())
 end
 
 begin
@@ -62,8 +63,8 @@ begin
         aspect = DataAspect(),
         xticks = LinearTicks(4),
         yticks = LinearTicks(4),
-        xlabel = L"x\, [r_\text{g}]",
-        ylabel = L"y\, [r_\text{g}]",
+        xlabel = L"x\, [\rg]",
+        ylabel = L"y\, [\rg]",
     )
     ylims!(ax1, -5, 2)
     xlims!(ax1, -2, 13)
@@ -86,24 +87,26 @@ begin
     barplot!(axmini, [1], [median(t1.times)])
     barplot!(axmini, [2], [median(t2.times)])
     barplot!(axmini, [3], [median(t3.times)])
+    barplot!(axmini, [4], [median(t4.times)])
 
     ax2 = Axis(
         ga[3, 1],
         yscale = log10,
         xscale = log10,
         ylabel = L"\text{abs} \left(\, g_{\mu\nu} v^\mu v^\nu  \,  \right)",
-        xlabel = L"r\, [r_\text{g}]",
+        xlabel = L"r\, [\rg]",
         xtickformat = values -> ["$(trunc(Int, v))" for v in values],
     )
 
     l1 = lines!(ax2, error_measure(m, x, v)...)
     l2 = lines!(ax2, error_measure(m, x, v, solver = Gradus.Feagin10())...)
     l3 = lines!(ax2, error_measure(m, x, v, solver = Gradus.Vern6())...)
+    l4 = lines!(ax2, error_measure(m, x, v, solver = Gradus.RK4())...)
 
     leg = Legend(
         ga[1, 1],
-        [l1, l2, l3],
-        ["Tsit5", "Feagin10", "Vern6"],
+        [l1, l2, l3, l4],
+        ["Tsit5", "Feagin10", "Vern6", "RK4"],
         orientation = :horizontal,
         # labelsize = 10,
         padding = (0, 0, 0, 0),
@@ -115,7 +118,7 @@ begin
 
     text!(ax1, (-1.3, -4.8), text = "a", font = :bold, fontsize = 20)
     text!(ax1, (11.5, 0.7), text = "b", font = :bold, fontsize = 20)
-    text!(ax2, (6000, 4e-7), text = "c", font = :bold, fontsize = 20)
+    text!(ax2, (6000, 4e-5), text = "c", font = :bold, fontsize = 20)
 
     resize_to_layout!(fig)
     fig

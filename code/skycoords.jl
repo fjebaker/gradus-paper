@@ -272,19 +272,22 @@ begin
     _ = popfirst!(palette)
     color_Psi = popfirst!(palette)
 
-    # coordinate axes
-
-    # top = SkyRay(π/2, 0.0, 10.0)
-    # draw(ax, top, color = :black)
+    # color_sphere = :black
+    # color_plane = :black
+    # color_tetrad = :black
+    # color_ray = :black
+    # color_helpers = :black
+    # color_impact = :black
+    # color_upsilon = :black
+    # color_Psi = :black
 
     sphere = SkySphere(10)
     draw(ax, sphere, color = color_sphere, linewidth = 3.0)
 
     p1 = PointOnSphere(sphere, theta, phi)
-    # draw(ax, p1)
 
     plane = ImagePlane(sphere, theta, phi, 14.8, 9.8)
-    draw(ax, plane, color = color_plane)
+    draw(ax, plane, color = color_plane, linewidth = 2.0)
     plane_coords = coordlines(plane)
     draw(ax, plane_coords, color = color_plane, linestyle = :dash)
 
@@ -295,8 +298,6 @@ begin
 
     baseline = SphereArc(sphere, Horizontal(), theta - π / 2, phi)
     draw(ax, baseline; linewidth = 1.0, linestyle = :dash, color = color_sphere)
-    # sideline = SphereArc(sphere, Vertical(), 0.0, phi + π / 2)
-    # draw(ax, sideline; linewidth = 1.0, linestyle = :dash, color = color_sphere)
 
     prad = SkyRay(theta, phi, 13)
     draw(ax, prad, color = color_tetrad)
@@ -316,7 +317,7 @@ begin
     k1, k2, P = axes_points(pinter)
     draw(ax, PointLine(k1, P, k2); color = color_impact)
     O = midpoint(plane)
-    # draw(ax, PointLine(k1 .- O, P .- O, SVector(0.0, 0.0, 0.0), k1); color = :black, linewidth = 1, linestyle = :dash)
+
     draw(ax, PointLine(SVector(0.0, 0.0, 0.0), P .- O), color = color_helpers)
     draw(
         ax,
@@ -343,7 +344,6 @@ begin
     Psi = FiniteArc(to_vector(pphi), P .- O, 8.0)
     draw(ax, Psi; color = color_Psi)
 
-    # draw(ax, angle_between(pphi, , 3.0))
     draw(ax, pinter, color = color_ray, marker = :x)
 
     text!(ax, point_between(k2, P), text = L"\alpha", fontsize = 20, color = color_impact)
@@ -370,10 +370,7 @@ begin
     text!(ax, endpoint(ray2), text = L"v_{(\mu)}", fontsize = 20, color = color_ray)
 
 
-    # sideline = SphereArc(sphere, Vertical(), 0.0, -π / 2)
-    # draw(ax, sideline; linewidth = 1.0, linestyle = :dash, color = color_sphere)
-
     resize_to_layout!(fig)
     fig
-    @savefigure(fig)
+    # @savefigure(fig)
 end

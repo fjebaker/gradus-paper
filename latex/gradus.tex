@@ -109,22 +109,7 @@ keyword1 -- keyword2 -- keyword3
 
 \subsection{Integration accuracy and stability}
 
-\todo{Angular deflection $\Delta \phi$}
-
-Derived semi-analytically in \cite{iyer_lights_2009} (presented compactly and extended for metrics of form \eqref{eq:static_axisymmetric_metric} in Appendix \ref{appendix:deflection-angle}).
-
-
-\ref{fig:deflection-angle}
-
-\begin{figure}
-	\centering
-	\includegraphics[width=0.94\linewidth]{figures/deflection.iyer-hansen.pdf}
-	\caption{\todo{caption, also note about the distances / effect of integrator}}
-	\label{fig:deflection-angle}
-\end{figure}
-
-Since our method for integration does not use the constants of motion directly, the stability of the integrator may also be gauged by sampling invariant quantities along the trajectory. In Figure \ref{fig:constants-of-motion} is shown the value of $v_\mu v^\mu$, as in \eqref{eq:velocity_constraint}, for a number of trajectories.
-
+Since our method for integration does not use the constants of motion directly, the stability of the integrator may be gauged by sampling invariant quantities along the trajectory. In Figure \ref{fig:dot-stability} is shown the value the invariant of $v_\mu v^\mu$ for a geodesic that spirals into a maximally spinning black hole. The magnitude of the invariant is shown for a sample of integration algorithms, along with the solving time for the geodesic. Note this solving time includes the time to initialize the integrator, calculate the full trajectory (with interpolants), and package the solution structure. When tracing multiple geodesics, much of the initialization time may be avoided by reusing allocated memory -- see Section \ref{sec:performance}.
 
 \begin{figure}
 	\centering
@@ -132,6 +117,24 @@ Since our method for integration does not use the constants of motion directly, 
 	\caption{\todo{caption + better choice of integrators to compare}}
 	\label{fig:dot-stability}
 \end{figure}
+
+To test accuracy, we compare our numerical results with analytic values. The angular deflection is the difference in $x^\phi$ of a geodesic traveling from positive to negative infinity, that is
+\begin{equation}
+	\delta x^\phi :=
+		x^\phi_{+\infty} - x^\phi_{-\infty} 
+		- \pi,
+\end{equation}
+where the $-\pi$ is to account for radial change in the coordinate system between start and endpoint as the geodesic passes the origin \todo{is this right??}. Semi-analytic solutions for the deflection angle in the Kerr spacetime have been calculated for equatorial geodesics in \cite{iyer_lights_2009}, using elliptic integrals to find the coordinate differences. We follow their notation and denote the analytic deflection angle $\hat{\alpha}$, and present a compact summary of their calculations in Appendix \ref{appendix:deflection-angle}. 
+
+Figure \ref{fig:deflection-angle} shows the deflection angle as a function of impact parameter $\alpha$ calculated using our code, along with the analytic deflection, and a measure of the error for different integration algorithms. Note the asymptotic behaviour of the error as $\lvert \alpha \rvert$ increases -- we account for this as related to the approximate observer at infinity in ray-tracing methods, catalyzed by the geometry of our observer introducing a small error at any finite $x^r$ when calculating the impact parameters relative to an $x^r = \infty$ observer. As can be expected, the error increases if $x^r_\text{start}$ is decreased.
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.94\linewidth]{figures/deflection.iyer-hansen.pdf}
+	\caption{Deflection angle in the Kerr spacetime ($M = 1$, $a = 0.998$) for geodesics in the equatorial plane over a range of impact parameters $\alpha$. Upper panel: numerical deflection $\delta x^r$ calculated with  $x^r_\text{start} = 2 \times 10^8 \, \rg$, absolute and relative tolerances set to $10^{-14}$, and effective infinity $4 \times 10^8\, \rg$, shown with the numerical solutions for $\hat{\alpha}$. Lower panel: the absolute relative error between the numeric and analytic deflection angles for different integration algorithms.}
+	\label{fig:deflection-angle}
+\end{figure}
+
 
 \todo{Energy conservation, deflection problem, shadow, tests for naked-singularities}
 
@@ -167,6 +170,8 @@ Ingram's code? Jiachen's code
 \section{Conclusions}
 
 We encourage the community to contact us with interesting problems that may be tackled using \Gradus as we are happy to assist with new applications of the code.
+
+\todo{problems with the code are being patched, see github issues}
 
 % Note future work, e.g., with regard to fitting, and using the code in other papers
 

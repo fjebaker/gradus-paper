@@ -61,28 +61,28 @@ Sparsity is often symbolically inferable under simple operations. We use compile
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.95\linewidth]{figures/skycoords.pdf}
-    \caption{\todo{figure}}
+    \includegraphics[width=0.99\linewidth]{figures/skycoords.pdf}
+    \caption{Geometry of the local sky for an observer or emitter. The image plane is perpendicular to the $e_{(r)}$ axis, which for an observer points towards the global origin. The momenta $v_{(\phi)}$ and $v_{(\theta)}$ are used to calculate the impact parameters on the image plane, $\alpha$ and $\beta$ respectively. For emitters, the angles $(\Upsilon, \Psi)$ are used to parameterize points on the local sky, that may be decomposed onto the basis $e_{(i)}$ to find $v_{(\mu)}$.}
     \label{fig:observer-coordinates}
 \end{figure}
 
 To determine interpretable initial velocities it is useful to consider the coordinates local to the observer or emitter at coordinates $x^\mu$. For observers one usually an image plane onto which a projection of geodesics is rendered, with geometry as in Fig. \ref{fig:observer-coordinates}. Following \cite{cunningham_optical_1973}, one may then define a set of impact parameters from components of the local momenta
 \begin{align}
-    \alpha &:=  x^r \frac{p_{(\phi)}}{p_{(r)}}, \\
-    \beta &:= x^r \frac{p_{(\theta)}}{p_{(r)}},
+    \alpha &:=  x^r \frac{v_{(\phi)}}{v_{(r)}}, \\
+    \beta &:= x^r \frac{v_{(\theta)}}{v_{(r)}},
 \end{align}
 using indices in parentheses to denote the vector components in the local frame. The choice of subscript ($r, \theta, \phi$) is to anticipate an identification between local and global bases, and to provide some intuition for the local frame.
 
 Along with the invariance of four-momenta (c.f. Eq. \eqref{eq:velocity_constraint}), one may obtain a curve of solutions for the local momenta
 \begin{align}
-    \frac{p_{(r)}}{p_{(t)}} &= -\left( \sqrt{1 + \left(\frac{\alpha}{x^r}\right)^2 + \left(\frac{\beta}{x^r}\right)^2} \right)^{-1} = \mathscr{R}, \\
-    \frac{p_{(\theta)}}{p_{(t)}} &= \mathscr{R} \frac{\beta}{x^r}, \\
-    \frac{p_{(\phi)}}{p_{(t)}} &= \mathscr{R} \frac{\alpha}{x^r}.
+    \frac{v_{(r)}}{v_{(t)}} &= -\left( \sqrt{1 + \left(\frac{\alpha}{x^r}\right)^2 + \left(\frac{\beta}{x^r}\right)^2} \right)^{-1} = \mathscr{R}, \\
+    \frac{v_{(\theta)}}{v_{(t)}} &= \mathscr{R} \frac{\beta}{x^r}, \\
+    \frac{v_{(\phi)}}{v_{(t)}} &= \mathscr{R} \frac{\alpha}{x^r}.
 \end{align}
 
 For emitters, one determines these momenta from an initial velocity tangent vector pointing along a direction on the local sky, parameterized by local angles $(\Upsilon, \Psi)$, as in Figure \ref{fig:observer-coordinates}. Using simple geometry and projecting the local angles onto a Cartesian coordinate system gives momenta
 \begin{equation}
-    \frac{p_{(i)}}{p_{(t)}} = \frac{1}{p_{(t)}}
+    \frac{v_{(i)}}{v_{(t)}} = \frac{1}{v_{(t)}}
     \left[\pderiv{(x, y, z)}{(r, \theta, \phi)}\right]
     \left(
     \begin{matrix}
@@ -92,15 +92,15 @@ For emitters, one determines these momenta from an initial velocity tangent vect
     \end{matrix}
     \right),
 \end{equation}
-where the partial derivative term denotes the cartesian to spherical coordinate Jacobian. The component $p_{(t)}$ is the negative of the energy measured in the local frame, and is conventionally set to $-p_{(t)} = E = 1$ without loss of generality. 
+where the partial derivative term denotes the cartesian to spherical coordinate Jacobian. The component $v_{(t)}$ is the negative of the energy measured in the local frame, and is conventionally set to $-v_{(t)} = E = 1$ without loss of generality. 
 
 For both observers and emitters, we must identify a local frame, where the natural choice is the locally non-rotating frame (LNRF) \citep{bardeen_rotating_1972} \todo{check citation + explain significance}. The transformation from local to global coordinates is
 \begin{equation}
-    p_\mu = \e^{(\nu)}_{\phantom{(\nu)}\mu}\  p_{(\nu)}
+    v_\mu = \e^{(\nu)}_{\phantom{(\nu)}\mu}\  v_{(\nu)}
 \end{equation}
 where the basis vectors $\e^{(\nu)}_{\phantom{(\nu)}\mu}$ (or tetrad) are found using the theorem of Gram-Schmidt (\cite{schmidt_uber_1989}, Appendix \ref{appendix:gram-schmidt}). The formalism may be extended for an observer or emitter in motion, where their velocity modifies the mapping by a local Lorenz transformation, $\Lambda^{(\kappa)}_{\phantom{(\kappa)}(\nu)}$, as 
 \begin{equation}
-    p_\mu = \e^{(\nu)}_{\phantom{(\nu)}\mu}\  \Lambda^{(\kappa)}_{\phantom{(a)}(\nu)} p_{(\kappa)}.
+    v_\mu = \e^{(\nu)}_{\phantom{(\nu)}\mu}\  \Lambda^{(\kappa)}_{\phantom{(a)}(\nu)} v_{(\kappa)}.
 \end{equation}
 However, this Lorenz transformation may be absorbed into the tetrad with careful construction, using the velocity of the observer or emitter as $\utensor{\e}{(t)}{\mu}$.
 
@@ -277,6 +277,8 @@ Integrating $\d F(E)$ to calculate line-profiles is described in detail in \cite
 \begin{equation}
    F_\text{edge}(E,t) \propto 2\left( \sqrt{E_\text{max}} - \sqrt{E_\text{min}} \right).
 \end{equation}
+The constant of proportionality is determined from evaluating the integrand at $h$ or $1 - h$ respectively.
+
 We use $h = 10^{-3}$, and evaluate the integral over $\d g^\ast$ using a 7$^\text{th}$ order Gauss-Kronrod quadrature scheme, which avoids evaluating the integral directly at $h$ and $1 - h$ \citep{}. Finer grids for $r_\text{em}$ and $g^\ast$ are constructed to help with stability, and rebinned into the desired grid. 
 
 The method for numerically integrating the transfer functions is as follows: the limits of the integral are chosen $(r_\text{in}, r_\text{out})$, and limits of the output space similarly $(E_\text{min}, E_\text{max})$, $(t_\text{min}, t_\text{max})$. Any evaluation of \eqref{eq:transfer-integration} that is outside of the energy and time limits is ignored. To ensure the approximate methods remain accurate, a fine grid in $r$ and $g$ is constructed\footnote{The grid in $r$ should be irregularly spaced, e.g. $\sim 1 / r$, whereas the grid in $g$ should be linear.}. The integration over $\d r_\text{em}$ is performed using a trapezoidal interpolation, which is sufficient in both accuracy and performance with the finer bins. Since the integration over $\d t$ has the selection effect of binning, we assign the flux $F(E)$ into time bin $t$ by considering $t$ over the width of $g^\ast$ on the fine grid. In full:

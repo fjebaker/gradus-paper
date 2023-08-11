@@ -7,17 +7,18 @@ Gradus.jl aims to have a single expressive high-level API for a variety of GRRT 
 
 The documentation strives to be the most accurate description of the code as it is maintained, detailing algorithm specific choices and implementations, and is built as part of our continuous deployment (CD). The source code is written to be read by contributors and users alike to invite extension, and to be explicit about our methods, their benefits, and limitations.
 
-Our code makes use of Julia's heterogeneity and concurrency to run in multi-threaded and distributed environments, with GPU-offloading via DiffEqGPU.jl and the various supported backends (CUDA.jl \ref{}, Metal.jl \ref{}, AMDGPU.jl \ref{}). Precision is user-defined and inferred from user defined types: single precision floating point arithmetic may be desirable or even required for GPU computing, whereas arbitrary precision `big floats' may be required for some asymptotically near-horizon computations.
-
 In our discussion of the numerical methods, we note the current default ODE integration algorithm is Tsitouras Runge-Kutta 5/4. Gradus.jl vendors many additional ODE solvers and numerical algorithms from the Julia SciML ecosystem, with both adaptive and fixed time steps.
 
 Gradus.jl maintains a catalogue of predefined metrics, including the Kerr spacetime, Morris-Thorne wormhole, Johannsen-Psaltis metric, the Einstein-Maxwell Dilaton-Axion metric \todo{citations for these}. The Kerr-Newman metric is also implemented, complete with the ability to specify the electromagnetic potential vector, from which external accelerations $a^\mu$ in \eqref{eq:geodesic_equation} are calculated. Furthermore, Gradus.jl allows for 1st order specification of the geodesic ODE system, where such a system is known. This is already implemented for the Kerr spacetime, and used primarily as a self-consistency check with the second-order implementation.
 
 The AD in our code is from the ForwardDiff.jl package \citep{RevelsLubinPapamarkou2016}, and may be used when calculating any quantity or observable to simultaneously determine gradients.
 
-Accretion disc geometries
+\subsection{Parallelism and ensembles}
 
-Point functions for composable results
+Our code makes use of Julia's heterogeneity and concurrency to run in multi-threaded and distributed environments, with GPU-offloading via DiffEqGPU.jl and the various supported backends (CUDA.jl \ref{}, Metal.jl \ref{}, AMDGPU.jl \ref{}). Precision is user-defined and inferred from user defined types: single precision floating point arithmetic may be desirable or even required for GPU computing, whereas arbitrary precision `big floats' may be required for some asymptotically near-horizon computations.
+
+
+\todo{a little talk about the threading strategies etc.}
 
 \subsection{Extensibility}
 
@@ -25,12 +26,19 @@ The design of Gradus.jl has prioritized useability and extensibility. With Julia
 
 New spacetimes are straightforward to define, requiring only the parameters of the spacetime and a function implementing the non-zero matrix elements of the metric at a given coordinate. This in also allows numerically computed matrix fields to be traced. Code examples and walkthroughs are available in the Gradus.jl documentation.
 
-New accretion geometry 
-including the $\alpha$-disc of \cite{shakura_black_1973}
+\todo{New accretion geometry 
+including the $\alpha$-disc of \cite{shakura_black_1973}, and maybe ADAF
+}
+
 
 Additional quantities to trace
 
+Accretion disc geometries
+Point functions for composable results
+
+
 \subsection{Performance}
+\label{sec:performance}
 
 GPU vs CPU and when one is one better than the other
 
