@@ -336,7 +336,7 @@ begin
 
     draw(ax, Orthogonal(ptheta, pphi, 0.8); color = color_tetrad)
     draw(ax, Orthogonal(ptheta, prad, 0.8); color = color_tetrad)
-    draw(ax, Orthogonal(pphi2, prad, 0.8); color = color_tetrad)
+    draw(ax, Orthogonal(pphi, prad, 0.8); color = color_tetrad)
 
     upsilon_arc = angle_between(prad, ray2, 3.0)
     draw(ax, upsilon_arc; color = color_upsilon)
