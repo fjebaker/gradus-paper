@@ -62,7 +62,7 @@ Sparsity is often symbolically inferable under simple operations. We use compile
 \begin{figure}
     \centering
     \includegraphics[width=0.99\linewidth]{figures/skycoords.pdf}
-    \caption{Geometry of the local sky for an observer or emitter. The image plane is perpendicular to the $e_{(r)}$ axis, which for an observer points towards the global origin. The momenta $v_{(\phi)}$ and $v_{(\theta)}$ are used to calculate the impact parameters on the image plane, $\alpha$ and $\beta$ respectively. For emitters, the angles $(\Upsilon, \Psi)$ are used to parameterize points on the local sky, that may be decomposed onto the basis $e_{(i)}$ to find $v_{(\mu)}$.}
+    \caption{Geometry of the local sky for an observer or emitter. The image plane is perpendicular to the $e_{(r)}$ axis, which for an observer points towards the global origin and therefore the central singularity. The momenta $v_{(\phi)}$ and $v_{(\theta)}$ are used to calculate the impact parameters on the image plane, $\alpha$ and $\beta$ respectively. For emitters, the angles $(\Upsilon, \Psi)$ are used to parameterize points on the local sky, that may be decomposed onto the basis $e_{(i)}$ to find $v_{(\mu)}$.}
     \label{fig:observer-coordinates}
 \end{figure}
 
@@ -245,7 +245,11 @@ Using Liouville's theorem -- that the number density of photons in phase space i
 \todo{is this $t_\text{em}$ or just $t$??}
 Integrating over $\d \Omega$ is equivalent to integrating over the image plane $\d \alpha \d \beta$, which in practical terms is binning the geodesic in each pixel by $E$ and $t$. In this formulation, for any change in $I_\text{em}$, the geodesic calculation would have to be recomputed, or a large table of values related to each geodesic stored, to finite precision. The sampling over the image plane similarly plays an important role, especially in increasing efficiency, since most of the variation in $I_\text{em}$ is sourced close to the ISCO, which can be under-resolved on coarse image planes. This may lead to oversampling regions of low or zero variation further out on the disc.
 
-\todo{discuss double valued nature of transfer functions + branch cut}
+\begin{figure}
+    \centering
+    \caption{\todo{caption}}
+    \label{fig:transfer-parameterisation}
+\end{figure}
 
 To elide this problems, and to be able to succinctly cache geodesic computation, the relativistic effects are often encoded in so-called \emph{transfer functions}, first introduced in \cite{cunningham_effects_1975},
 \begin{equation}
@@ -255,7 +259,13 @@ where $r_\text{em}$ is the emission radius on the disc, and
 \begin{equation}
     g^\ast := \frac{g - g_\text{min}}{g_\text{max} - g_\text{min}} \in [0, 1],
 \end{equation}
-is a rescaled dimensionless redshift parameter with extremal $g$ over a given $r_\text{em}$, see Figure \ref{fig:transfer-parameterisation}. As is shown, this re-parameterisation of the image plane is double valued in $g^\ast$ except when $g^\ast = 0, 1$. These transfer functions then are ostensibly a change-of-variable Jacobian, enveloped with an elliptical function in $g$ that supresses the singular values of the Jacobian as $g^\ast$ becomes $0$ or $1$. Sample transfer functions and $t(r_\text{em}, g^\ast)$ are shown in Figure \ref{fig:transfer-functions}.
+is a rescaled dimensionless redshift parameter, and the extremal $g$ is calculated over a given $r_\text{em}$. This $g^\ast$ parameterization is double-valued everywhere except at $g^\ast = 0$ and $g^\ast = 1$, illustrated in Figure \ref{fig:transfer-parameterisation}. The transfer functions $f$ are then ostensibly a change-of-variable Jacobian, re-parameterizing the projected image of the disc from $(\alpha, \beta)$ to $(r_\text{em}, g^\ast)$. The additional elliptical envelope in $g$ supresses the singular values of the Jacobian as $g^\ast$ becomes $0$ or $1$, permitting numerical integration of the transfer function with fewer issues. To avoid the double-valued degeneracy when integrating, the transfer functions are in practice split into an ``upper'' and ``lower'' branch, between extremal $g^\ast$, shown in Figure \ref{fig:transfer-functions} with the light-travel time of the geodesic similarly constructed. Furthermore, with the disc projection given in terms of quantities on the disc allows physical emission models to be specified in the local emitting frame.
+
+\begin{figure}
+    \centering
+    \caption{\todo{caption}}
+    \label{fig:transfer-functions}
+\end{figure}
 
 Integrating $\d F(E)$ to calculate line-profiles is described in detail in \cite{dauser_broad_2010}, including the Green's function formalism that adds additional flexibility in the definition of $I_\text{em}$. We extend the transfer function integration to include the geodesic coordinate time, integrating $f$ as
 
@@ -279,7 +289,7 @@ Integrating $\d F(E)$ to calculate line-profiles is described in detail in \cite
 \end{equation}
 The constant of proportionality is determined from evaluating the integrand at $h$ or $1 - h$ respectively.
 
-We use $h = 10^{-3}$, and evaluate the integral over $\d g^\ast$ using a 7$^\text{th}$ order Gauss-Kronrod quadrature scheme, which avoids evaluating the integral directly at $h$ and $1 - h$ \citep{}. Finer grids for $r_\text{em}$ and $g^\ast$ are constructed to help with stability, and rebinned into the desired grid. 
+We use $h = 2 \times 10^{-8}$, and evaluate the integral over $\d g^\ast$ using a 7$^\text{th}$ order Gauss-Kronrod quadrature scheme, which avoids evaluating the integral directly at $h$ and $1 - h$ \citep{}. Finer grids for $r_\text{em}$ and $g^\ast$ are constructed to help with stability, and rebinned into the desired grid. 
 
 The method for numerically integrating the transfer functions is as follows: the limits of the integral are chosen $(r_\text{in}, r_\text{out})$, and limits of the output space similarly $(E_\text{min}, E_\text{max})$, $(t_\text{min}, t_\text{max})$. Any evaluation of \eqref{eq:transfer-integration} that is outside of the energy and time limits is ignored. To ensure the approximate methods remain accurate, a fine grid in $r$ and $g$ is constructed\footnote{The grid in $r$ should be irregularly spaced, e.g. $\sim 1 / r$, whereas the grid in $g$ should be linear.}. The integration over $\d r_\text{em}$ is performed using a trapezoidal interpolation, which is sufficient in both accuracy and performance with the finer bins. Since the integration over $\d t$ has the selection effect of binning, we assign the flux $F(E)$ into time bin $t$ by considering $t$ over the width of $g^\ast$ on the fine grid. In full:
 \begin{enumerate}
