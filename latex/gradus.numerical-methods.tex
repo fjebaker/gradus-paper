@@ -98,7 +98,7 @@ For both observers and emitters, we must identify a local frame, where the natur
 \begin{equation}
     v_\mu = \e^{(\nu)}_{\phantom{(\nu)}\mu}\  v_{(\nu)}
 \end{equation}
-where the basis vectors $\e^{(\nu)}_{\phantom{(\nu)}\mu}$ (or tetrad) are found using the theorem of Gram-Schmidt (\cite{schmidt_uber_1989}, Appendix \ref{appendix:gram-schmidt}). The formalism may be extended for an observer or emitter in motion, where their velocity modifies the mapping by a local Lorenz transformation, $\Lambda^{(\kappa)}_{\phantom{(\kappa)}(\nu)}$, as 
+where the basis vectors $\e^{(\nu)}_{\phantom{(\nu)}\mu}$ (or tetrad) are found using the theorem of Gram-Schmidt (\citealp{schmidt_uber_1989}, Appendix \ref{appendix:gram-schmidt}). The formalism may be extended for an observer or emitter in motion, where their velocity modifies the mapping by a local Lorenz transformation, $\Lambda^{(\kappa)}_{\phantom{(\kappa)}(\nu)}$, as 
 \begin{equation}
     v_\mu = \e^{(\nu)}_{\phantom{(\nu)}\mu}\  \Lambda^{(\kappa)}_{\phantom{(a)}(\nu)} v_{(\kappa)}.
 \end{equation}
@@ -107,8 +107,9 @@ However, this Lorenz transformation may be absorbed into the tetrad with careful
 Expressions for the impact parameters from the constant of motion in \cite{cunningham_optical_1973} always assume that the observer is situated in asymptotically flat space, whereas our calculations are specific to the location of the observer. This should be taken into account when comparing trajectories between codes and methods.
 
 \subsection{Special orbits and horizons}
+\label{sec:special-orbits}
 
-For many disc models, accreting matter is considered to follow Keplerian circular orbits in the equatorial plane $(x^\theta = \pi/2)$ of the central singularity \citep{shakura_black_1973}. These Keplerian circular orbits are stationary points of the Hamiltonian and constrained by $v^r = v^\theta = 0$. For static, axis-symmetric spacetimes, these orbits may be studied analytically (e.g. \cite{johannsen_regular_2013}, with a variation of their derivation and extension for $a^\mu \neq 0$ in Appendix \ref{appendix:circular-orbits}).
+For many disc models, accreting matter is considered to follow Keplerian circular orbits in the equatorial plane $(x^\theta = \pi/2)$ of the central singularity \citep{shakura_black_1973}. These Keplerian circular orbits are stationary points of the Hamiltonian and constrained by $v^r = v^\theta = 0$. For static, axis-symmetric spacetimes, these orbits may be studied analytically (e.g. \citealp{johannsen_regular_2013}, with a variation of their derivation and extension for $a^\mu \neq 0$ in Appendix \ref{appendix:circular-orbits}).
 
 In general relativity, circular orbits are classified as either stable or unstable \citep{wilkins_bound_1972,bardeen_rotating_1972}. There exists an innermost stable circular orbit (ISCO) radius, below which orbits are energetically hyperbolic: small perturbations will send the test particle escaping to infinity or spiralling into the central singularity.  Stability of an orbit depends on the sign of $\d E / \d x^r$, with $>0$ corresponding to energetically stable configurations, such that the ISCO is the critical point at which 
 \begin{equation}
@@ -262,11 +263,32 @@ where $r_\text{em}$ is the emission radius on the disc, and
 \end{equation}
 is a rescaled dimensionless redshift parameter, and the extremal $g$ is calculated over a given $r_\text{em}$. This $g^\ast$ parameterization is double-valued everywhere except at $g^\ast = 0$ and $g^\ast = 1$, illustrated in Figure \ref{fig:transfer-parameterisation}. The transfer functions $f$ are then ostensibly a change-of-variable Jacobian, re-parameterizing the projected image of the disc from $(\alpha, \beta)$ to $(r_\text{em}, g^\ast)$. The additional elliptical envelope in $g$ supresses the singular values of the Jacobian as $g^\ast$ becomes $0$ or $1$, permitting numerical integration of the transfer function with fewer issues. To avoid the double-valued degeneracy when integrating, the transfer functions are in practice split into an ``upper'' and ``lower'' branch, between extremal $g^\ast$, shown in Figure \ref{fig:transfer-functions} with the light-travel time of the geodesic similarly constructed. Furthermore, with the disc projection given in terms of quantities on the disc allows physical emission models to be specified in the local emitting frame.
 
+Our method for calculating the transfer functions is a variation on the algorithms detailed by other authors (\citealp{speith_photon_1995,bambi_testing_2017}, improved in \citealp{abdikamalov_public_2019}). The procedure is as follows: first, we find the impact parameters that map to a ring of radius $r_\text{em}$ on the accretion disc. In the case of simple axis-symmetric discs, the projection of a ring will be the boundary of a star-convex set on the image plane, and therefore a polar curve $\mathcal{R}(\vartheta)$, with $\alpha = \mathcal{R}(\vartheta) \cos(\vartheta)$ and $\beta = \mathcal{R}(\vartheta) \sin(\vartheta)$. For a given $\vartheta$, the offset on the image plane $\mathcal{R}$ is found by root-finding the difference between $r_\text{em}$ and the projected endpoint of the geodesic on the disc $r = x^r (\mathcal{R}) \sin x^\theta(\mathcal{R})$, using the same alternating root finder as in Section \ref{sec:special-orbits}.
+
+For a given $r_\text{em}$, the extremal $g$ are found by using the Golden-Section bracketing method to extremize $g(\vartheta)$, with the assumption that extremal $g$ approximately coincide with extremal $\alpha$. Informed by this, we use $\vartheta \in [ -\pi/2, 3\pi/4 )$ to ensure the maxima and minima are not at the boundaries of the domain. \todo{want to say more about how difficult finding extremal $g$ is / how important getting good estimates is??}
+
+The Jacobian is more conveniently calculated as
+\begin{equation}
+    \left\lvert 
+    \pderiv{(\alpha, \beta)}{(r_\text{em}, g^\ast)} 
+    \right\rvert
+    =
+    \left\lvert
+    \pderiv{r_\text{em}}{\alpha}\pderiv{g^\ast}{\beta}
+    -
+    \pderiv{r_\text{em}}{\beta}\pderiv{g^\ast}{\alpha}
+    \right\rvert^{-1},
+\end{equation}
+where the derivatives have previously been determined using a stenciling approach to determine the Jacobian term, or even just a fixed $\delta \alpha$ and $\delta \beta$. Unless the algorithm can adapt extremely well, these approaches may introduce singular values or risk large numerical error at extremal $g$. We instead use AD to directly calculate the inverse of the Jacobian, which has the additional benefit that it only requires the evaluation of a single geodesic to compute, as is thus substantially faster.
+
+
 \begin{figure}
     \centering
     \caption{\todo{caption}}
     \label{fig:transfer-functions}
 \end{figure}
+
+\subsection{Integrating transfer functions}
 
 Integrating $\d F(E)$ to calculate line-profiles is described in detail in \cite{dauser_broad_2010}, including the Green's function formalism that adds additional flexibility in the definition of $I_\text{em}$. We extend the transfer function integration to include the geodesic coordinate time, integrating $f$ as
 
