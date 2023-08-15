@@ -29,7 +29,16 @@ function compute_lineprofiles(gs, m::KerrMetric, x)
     maxrₑ = 50.0
 
     # g grid to do flux integration over
-    _, flux = @time lineprofile(gs, ε, m, x, d, redshift_pf = redshift, maxrₑ = maxrₑ, verbose = true)
+    _, flux = @time lineprofile(
+        gs,
+        ε,
+        m,
+        x,
+        d,
+        redshift_pf = redshift,
+        maxrₑ = maxrₑ,
+        verbose = true,
+    )
     # transform to observed energy
     flux_relline = evaluate_relline(gs, m, x, maxrₑ)
 
@@ -38,7 +47,7 @@ end
 
 x = SVector(0.0, 1000.0, deg2rad(40), 0.0)
 
-m = KerrMetric(M=1.0, a=0.998)
+m = KerrMetric(M = 1.0, a = 0.998)
 g1 = range(0.05, 1.2, 500)
 flux, relline_flux = compute_lineprofiles(g1, m, x)
 
@@ -47,20 +56,20 @@ g2 = range(0.4, 1.2, 500)
 flux2, relline_flux2 = compute_lineprofiles(g2, m, x)
 
 begin
-norm_factor = maximum(flux)
-f1_g = flux ./ norm_factor
-f1_r = relline_flux ./ norm_factor
+    norm_factor = maximum(flux)
+    f1_g = flux ./ norm_factor
+    f1_r = relline_flux ./ norm_factor
 end
 begin
-norm_factor = maximum(flux2)
-f2_g = flux2 ./ norm_factor
-f2_r = relline_flux2 ./ norm_factor
+    norm_factor = maximum(flux2)
+    f2_g = flux2 ./ norm_factor
+    f2_r = relline_flux2 ./ norm_factor
 end
 
 function plot_lineprofile(ax1, ax2, x, f1, f2, c1, c2)
     lines!(ax1, x, f1, label = "Gradus.jl", color = c1)
     lines!(ax1, x[1:end-1], f2, label = "relline", color = c2)
-    
+
     lines!(ax2, x[1:end-1], f1[1:end-1] .- f2)
 
     hidexdecorations!(ax1, grid = false)
@@ -74,16 +83,21 @@ begin
     palette = Iterators.Stateful(Iterators.Cycle(Makie.wong_colors()))
     fig = Figure(resolution = (530, 400))
 
-    ga = fig[1,1] = GridLayout()
+    ga = fig[1, 1] = GridLayout()
 
     color_gradus = popfirst!(palette)
     color_relline = popfirst!(palette)
 
-    axf1 = Axis(ga[1,1], ylabel = L"$F$ arb.", title = L"a = 0.998")
-    axd1 = Axis(ga[2,1], yticks = LinearTicks(3), xlabel = L"E / E_\text{em}", ylabel = L"\Delta F")
+    axf1 = Axis(ga[1, 1], ylabel = L"$F$ arb.", title = L"a = 0.998")
+    axd1 = Axis(
+        ga[2, 1],
+        yticks = LinearTicks(3),
+        xlabel = L"E / E_\text{em}",
+        ylabel = L"\Delta F",
+    )
 
-    axf2 = Axis(ga[1,2], title = L"a=0")
-    axd2 = Axis(ga[2,2], yticks = LinearTicks(3), xlabel = L"E / E_\text{em}")
+    axf2 = Axis(ga[1, 2], title = L"a=0")
+    axd2 = Axis(ga[2, 2], yticks = LinearTicks(3), xlabel = L"E / E_\text{em}")
 
     hideydecorations!(axf2, grid = false)
     hideydecorations!(axd2, grid = false)

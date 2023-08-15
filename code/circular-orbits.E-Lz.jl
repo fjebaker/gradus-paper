@@ -5,11 +5,11 @@ using Gradus
 include("common.jl")
 
 function E_Lz(m::AbstractMetric, r; q = 0.0)
-    CircularOrbits.energy_angmom(m, SVector(r, π/2))
+    CircularOrbits.energy_angmom(m, SVector(r, π / 2))
 end
 
 function E_Lz(m::KerrNewmanMetric, r; q = 0.0)
-    CircularOrbits.energy_angmom(m, SVector(r, π/2); q = q)
+    CircularOrbits.energy_angmom(m, SVector(r, π / 2); q = q)
 end
 
 function plot_curve!(ax, m, rs; q = 0.0, kwargs...)
@@ -39,7 +39,7 @@ begin
     palette = Iterators.Stateful(Iterators.Cycle(Makie.wong_colors()))
 
     fig = Figure(resolution = (500, 400))
-    layout = fig[1,1] = GridLayout()
+    layout = fig[1, 1] = GridLayout()
     ax = Axis(layout[2, 1], xlabel = L"L_z", ylabel = L"E", yticks = LinearTicks(3))
     ylims!(ax, 0.85, 1.23)
     xlims!(ax, 1, 6.5)
@@ -50,38 +50,47 @@ begin
     color_3 = popfirst!(palette)
 
     s1 = plot_curve!(ax, m1, rs1, color = color_1)
-    k1 = plot_curve!(
+    k1 = plot_curve!(ax, m2, rs2, linestyle = :dot, linewidth = 1.5, color = color_1)
+
+    kp1 = plot_curve!(
         ax,
-        m2,
-        rs2,
+        m3,
+        rs3,
+        q = 0.9e8,
+        color = color_2,
         linestyle = :dot,
         linewidth = 1.5,
-        color = color_1,
     )
-
-    kp1 = plot_curve!(ax, m3, rs3, q = 0.9e8, color = color_2, linestyle = :dot, linewidth = 1.5)
     sp1 = plot_curve!(ax, m4, rs4, q = 0.9e8, color = color_2)
 
-    kn1 = plot_curve!(ax, m3, rs3, q = -0.9e8, color = color_3, linestyle = :dot, linewidth = 1.5)
+    kn1 = plot_curve!(
+        ax,
+        m3,
+        rs3,
+        q = -0.9e8,
+        color = color_3,
+        linestyle = :dot,
+        linewidth = 1.5,
+    )
     sn1 = plot_curve!(ax, m4, rs4, q = -0.9e8, color = color_3)
 
     a_str = Printf.@sprintf("%0.1f", m2.a)
-    
+
     ga = layout[1, 1] = GridLayout()
     Legend(
-        ga[1,1],
-        [s1, k1], 
+        ga[1, 1],
+        [s1, k1],
         [L"a = 0.0", L"a = %$(a_str)"],
         orientation = :horizontal,
         framevisible = false,
-        height = 10
+        height = 10,
     )
     Legend(
-        ga[2,1],
-        [sp1, s1, sn1], 
+        ga[2, 1],
+        [sp1, s1, sn1],
         [L"qQ = 1", L"qQ = 0", L"qQ = -1"],
         orientation = :horizontal,
-        framevisible = false
+        framevisible = false,
     )
     colgap!(ga, 0)
     rowgap!(ga, 0)

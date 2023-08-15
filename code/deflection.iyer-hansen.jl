@@ -11,9 +11,8 @@ function trace_deflection(m::AbstractMetric, xs, vs; kwargs...)
         save_on = false,
         chart = Gradus.chart_for_metric(m, 400_000_000.0),
         abstol = 1e-14,
-        reltol = 1e-14
-        ;
-        kwargs...
+        reltol = 1e-14;
+        kwargs...,
     )
     points = unpack_solution(sols)
     deflection = [
