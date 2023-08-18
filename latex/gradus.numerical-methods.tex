@@ -246,12 +246,12 @@ Using Liouville's theorem -- that the number density of photons in phase space i
 \todo{is this $t_\text{em}$ or just $t$??}
 Integrating over $\d \Omega$ is equivalent to integrating over the image plane $\d \alpha \d \beta$, which in practical terms is binning the geodesic in each pixel by $E$ and $t$. In this formulation, for any change in $I_\text{em}$, the geodesic calculation would have to be recomputed, or a large table of values related to each geodesic stored, to finite precision. The sampling over the image plane similarly plays an important role, especially in increasing efficiency, since most of the variation in $I_\text{em}$ is sourced close to the ISCO, which can be under-resolved on coarse image planes. This may lead to oversampling regions of low or zero variation further out on the disc.
 
-\begin{figure}
+\begin{figure*}
     \centering
     \includegraphics[width=0.95\linewidth]{figures/transfer-function.parameterization.pdf}
-    \caption{\todo{caption}}
+    \caption{Concentric rings of radius $r_\text{em}$ and contours of constant dimensionless redshift $g^\ast$ on a geometrically thin disc in the equatorial plane, projected on the image plane of a distant observer at $\theta_\text{obs} = 75^\circ$. The central singularity is described by the Kerr metric with $a = 0.998$. The innermost thick black line is the projection of the ISCO. Note the contours of $g^\ast$ are double valued for any given $r_\text{em}$. \todo{update caption}}
     \label{fig:transfer-parameterisation}
-\end{figure}
+\end{figure*}
 
 To elide this problems, and to be able to succinctly cache geodesic computation, the relativistic effects are often encoded in so-called \emph{transfer functions}, first introduced in \cite{cunningham_effects_1975},
 \begin{equation}
@@ -263,11 +263,12 @@ where $r_\text{em}$ is the emission radius on the disc, and
 \end{equation}
 is a rescaled dimensionless redshift parameter, and the extremal $g$ is calculated over a given $r_\text{em}$. This $g^\ast$ parameterization is double-valued everywhere except at $g^\ast = 0$ and $g^\ast = 1$, illustrated in Figure \ref{fig:transfer-parameterisation}. The transfer functions $f$ are then ostensibly a change-of-variable Jacobian, re-parameterizing the projected image of the disc from $(\alpha, \beta)$ to $(r_\text{em}, g^\ast)$. The additional elliptical envelope in $g$ supresses the singular values of the Jacobian as $g^\ast$ becomes $0$ or $1$, permitting numerical integration of the transfer function with fewer issues. To avoid the double-valued degeneracy when integrating, the transfer functions are in practice split into an ``upper'' and ``lower'' branch, between extremal $g^\ast$, shown in Figure \ref{fig:transfer-functions} with the light-travel time of the geodesic similarly constructed. Furthermore, with the disc projection given in terms of quantities on the disc allows physical emission models to be specified in the local emitting frame.
 
-Our method for calculating the transfer functions is a variation on the algorithms detailed by other authors (\citealp{speith_photon_1995,bambi_testing_2017}, improved in \citealp{abdikamalov_public_2019}). The procedure is as follows: first, we find the impact parameters that map to a ring of radius $r_\text{em}$ on the accretion disc. In the case of simple axis-symmetric discs, the projection of a ring will be the boundary of a star-convex set on the image plane, and therefore a polar curve $\mathcal{R}(\vartheta)$, with $\alpha = \mathcal{R}(\vartheta) \cos(\vartheta)$ and $\beta = \mathcal{R}(\vartheta) \sin(\vartheta)$. For a given $\vartheta$, the offset on the image plane $\mathcal{R}$ is found by root-finding the difference between $r_\text{em}$ and the projected endpoint of the geodesic on the disc $r = x^r (\mathcal{R}) \sin x^\theta(\mathcal{R})$, using the same alternating root finder as in Section \ref{sec:special-orbits}.
+Our method for calculating the transfer functions is a variation on the algorithms detailed by other authors (\citealp{speith_photon_1995,bambi_testing_2017}, improved in \citealp{abdikamalov_public_2019}). The procedure is as follows: first, we find the impact parameters that map to a ring of radius $r_\text{em}$ on the accretion disc. In the case of simple axis-symmetric discs, the projection of a ring will be the boundary of a star-convex set on the image plane, and therefore a polar curve $\mathcal{R}(\vartheta)$, with $\alpha = \mathcal{R}(\vartheta) \cos(\vartheta)$ and $\beta = \mathcal{R}(\vartheta) \sin(\vartheta)$. For a given $\vartheta$, the offset on the image plane $\mathcal{R}$ is found by root-finding the difference between $r_\text{em}$ and the projected endpoint of the geodesic on the disc $r = x^r (\mathcal{R}) \sin x^\theta(\mathcal{R})$, using the same alternating root-finder as in Section \ref{sec:special-orbits}.
 
-For a given $r_\text{em}$, the extremal $g$ are found by using the Golden-Section bracketing method to extremize $g(\vartheta)$, with the assumption that extremal $g$ approximately coincide with extremal $\alpha$. Informed by this, we use $\vartheta \in [ -\pi/2, 3\pi/4 )$ to ensure the maxima and minima are not at the boundaries of the domain. \todo{want to say more about how difficult finding extremal $g$ is / how important getting good estimates is??}
+For a given $r_\text{em}$, the extremal $g$ are found by using the Golden-Section bracketing method of \cite{optimize.jl} to extremize $g(\vartheta)$, with the assumption that extremal $g$ approximately coincide with extremal $\alpha$. Informed by this, we use $\vartheta \in [ -\pi/2, 3\pi/4 )$ to ensure the maxima and minima are far from the boundaries of the domain. The importance of accurately calculating $g_\text{min}$ and $g_\text{max}$ must be reiterated: small errors here will dramatically alter the shape of the transfer functions close to $g^\ast \rightarrow 0$ and $g^\ast \rightarrow 1$. In practice, it is useful to employ a truncation of $\sim 10^{-6}g^\ast$ either side of the 
+domain to remedy numerical limitations. This is discussed in the following section in further detail, in the context of integrating transfer functions.
 
-The Jacobian is more conveniently calculated as
+Finally, the Jacobian is more conveniently calculated as
 \begin{equation}
     \left\lvert 
     \pderiv{(\alpha, \beta)}{(r_\text{em}, g^\ast)} 
@@ -284,7 +285,8 @@ where the derivatives have previously been determined using a stenciling approac
 
 \begin{figure}
     \centering
-    \caption{\todo{caption}}
+    \includegraphics[width=0.95\linewidth]{figures/transfer-functions.plots.pdf}
+    \caption{Transfer functions of a fixed $r_\text{em}$ for different observer inclinations $\theta_\text{obs}$. Panel a) Kerr spacetime with $a=0.998$ and $r_\text{em} = 4$ (see also \citealp{bambi_testing_2017}, their Figure 1). Panel b) Schwarzschild spacetime with $r_\text{em} = 11$.}
     \label{fig:transfer-functions}
 \end{figure}
 
@@ -312,14 +314,14 @@ Integrating $\d F(E)$ to calculate line-profiles is described in detail in \cite
 \end{equation}
 The constant of proportionality is determined from evaluating the integrand at $h$ or $1 - h$ respectively.
 
-We use $h = 2 \times 10^{-8}$, and evaluate the integral over $\d g^\ast$ using a 7$^\text{th}$ order Gauss-Kronrod quadrature scheme, which avoids evaluating the integral directly at $h$ and $1 - h$ \citep{}. Finer grids for $r_\text{em}$ and $g^\ast$ are constructed to help with stability, and rebinned into the desired grid. 
+We use $h = 2 \times 10^{-6}$, and evaluate the integral over $\d g^\ast$ using a 7$^\text{th}$ order Gauss-Kronrod quadrature scheme, which avoids evaluating the integral directly at $h$ and $1 - h$ \citep{}. Finer grids for $r_\text{em}$ and $g^\ast$ are constructed to help with stability, and rebinned into the desired output grid. 
 
-The method for numerically integrating the transfer functions is as follows: the limits of the integral are chosen $(r_\text{in}, r_\text{out})$, and limits of the output space similarly $(E_\text{min}, E_\text{max})$, $(t_\text{min}, t_\text{max})$. Any evaluation of \eqref{eq:transfer-integration} that is outside of the energy and time limits is ignored. To ensure the approximate methods remain accurate, a fine grid in $r$ and $g$ is constructed\footnote{The grid in $r$ should be irregularly spaced, e.g. $\sim 1 / r$, whereas the grid in $g$ should be linear.}. The integration over $\d r_\text{em}$ is performed using a trapezoidal interpolation, which is sufficient in both accuracy and performance with the finer bins. Since the integration over $\d t$ has the selection effect of binning, we assign the flux $F(E)$ into time bin $t$ by considering $t$ over the width of $g^\ast$ on the fine grid. In full:
+The method for numerically integrating the transfer functions is as follows: the limits of the integral are chosen $(r_\text{in}, r_\text{out})$, and limits of the output space similarly $(E_\text{min}, E_\text{max})$, $(t_\text{min}, t_\text{max})$. Any evaluation of \eqref{eq:transfer-integration} that is outside of the energy and time limits is ignored. To ensure the approximate methods remain accurate, a fine grid in $r$ and $g$ is constructed\footnote{The grid in $r$ should be irregularly spaced, e.g. $\sim 1 / r$, whereas the grid in $g$ should be linear. This reflects that the majority of the variation in $f$ occurs at small $r$.}. The integration over $\d r_\text{em}$ is performed using a trapezoidal interpolation, which is sufficient in both accuracy and performance with the finer bins. Since the integration over $\d t$ has the selection effect of binning, we assign the flux $F(E)$ into time bin $t$ by considering $t$ over the width of $g^\ast$ on the fine grid. In full:
 \begin{enumerate}
     \item Interpolate the values of the transfer function, $f$, $t$, and $g_\text{min}$, and $g_\text{max}$, for the current radius $r_i$.
-    \item Calculate the trapezoidal integration weight for the radial coordinate, in effect $\omega_i = \Delta r_i r_i \varepsilon(r_i)$.
+    \item Calculate the trapezoidal integration weight for the radial coordinate $\omega_i = \Delta r_i r_i$.
     \item For each bin in the fine $g$ grid, integrate $f$ over this bin. Record $t_\text{min} = t(g_\text{min})$ and $t_\text{max} = t(g_\text{max})$.
-    \item Add $\omega_i F(E, t)$ to the bin corresponding to $E = gE_\text{line}$, and $t$. If either $\Delta E$ or $\Delta t$ straddles an output bin, the flux must be weighted appropriately and divided into those bins. 
+    \item Add $\omega_i F_i(E, t)$ to the bin corresponding to $E = gE_\text{line}$, and $t$. If either $\Delta E$ or $\Delta t$ straddles an output bin, the flux must be weighted appropriately and divided into those bins. 
 \end{enumerate}
 
 By formulating the integration with the time component, we can use the same transfer function table to compute both line-profiles and reverberation lags efficiently, with arbitrary intensity functions $I_\text{em}$. We note that extensions to $I_\text{em}$ that require, for example, the photon emission angle on the disc, are trivial to include.
