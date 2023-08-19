@@ -286,9 +286,9 @@ where the derivatives are determined using a stenciling approach to determine th
 
 \subsubsection{Partially obscured transfer functions}
 
-For thick discs, it is possible that the disc obscures itself \citep{taylor_x-ray_2018} \todo{check reference}. Certain $r_\text{em}$ may therefore not be visible to an observer, and other $r_\text{em}$ only partially visible (see Figure \ref{fig:transfer-parameterisation}b). The extremal redshift is still to be calculated over the whole ring, whether partially obscured or not, for the purpose of transforming to $g^\ast$. Therefore, we make use of a ``datum plane'' when calculating the transfer functions; that is, an infinite plane at the coordinate height of the disc at $r_\text{em}$. This guides the root-finder when solving for the impact parameters and redshift. We then subsequently trace a separate geodesic to determine if a given coordinate on the disc is visible to the observer or not. This is illustrated in Figure \ref{fig:datum-plane-tracing}.
+For thick discs, it is possible that the disc obscures itself \citep{taylor_x-ray_2018} \todo{check reference}. Certain $r_\text{em}$ may therefore not be visible to an observer, and other $r_\text{em}$ only partially visible (see Figure \ref{fig:transfer-parameterisation}b). The extremal redshift is calculated over the whole ring, whether partially obscured or not, for the purpose of transforming to $g^\ast$. Therefore, we make use of a ``datum plane'' when calculating the transfer functions; that is, an infinite plane at the coordinate height of the disc at $r_\text{em}$. This guides the root-finder when solving for the impact parameters and redshift. We then subsequently trace a separate geodesic to determine if a given coordinate on the disc is visible to the observer or not. This is illustrated in Figure \ref{fig:datum-plane-tracing}.
 
-\todo{Furthermore, issues related to stenciling close to obscured radii are thereby entirely mitigated.}
+For partially obscured emission radii, the benefits of using AD for calculating the Jacobian are further realized: \todo{issues related to stenciling close to obscured radii are thereby entirely mitigated.}
 
 
 \begin{figure}

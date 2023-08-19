@@ -29,12 +29,12 @@ function four_velocity(m::AbstractMetric, r, θ, l)
 end
 
 # Eq (9)
-function fluid_emissivity(C, n, ν, α, νp = 1)
+function fluid_emissivity(C, n, ν, α; νp = 1)
     C * n * (ν / νp)^(-α)
 end
 
 # Eq (11)
-function fluid_absorptivity(C, n, ν, α, A, β = 2.5, νp = 1)
+function fluid_absorptivity(C, n, ν, α, A; β = 2.5, νp = 1)
     A * C * n * (ν / νp)^(-(β + α))
 end
 
@@ -59,13 +59,17 @@ function Gradus.fluid_velocity(m::AbstractMetric, d::AnalyticDiscTest, x, r_isco
 end
 
 function Gradus.fluid_absorption_emission(::AbstractMetric, d::AnalyticDiscTest, x, ν, u)
-    C = 1
+    # i really don't know what to set for these
+    # "physical values" so i am just setting C to make sure the 
+    # flux is approximately correct
+    C = 0.6595290281485077e-5
     n₀ = 1
+    νp = 1
     cosθ = cos(x[3])
     n = number_density(x[2], cosθ, d.h, n₀)
 
-    jν = fluid_emissivity(C, n, ν, d.α)
-    αν = fluid_absorptivity(C, n, ν, d.α, d.A)
+    jν = fluid_emissivity(C, n, ν, d.α; νp = νp)
+    αν = fluid_absorptivity(C, n, ν, d.α, d.A; νp = νp)
 
     αν, jν
 end
@@ -75,26 +79,29 @@ function do_trace(m, x, disc)
         m,
         x,
         disc,
-        20000.0,
+        2x[2],
         verbose = true,
         fov = 4.0,
         image_width = 128,
         image_height = 128,
         trace = Gradus.TraceRadiativeTransfer(I₀ = 0.0),
         pf = PointFunction((m, gp, t) -> gp.aux[1]),
-        # chart = Gradus.chart_for_metric(m; closest_approach = 1.4)
+        chart = Gradus.chart_for_metric(m, 2x[2]),
     )
 end
 
-m = KerrMetric(1.0, 0.9)
-x = SVector(0.0, 10000.0, deg2rad(60), 0.0)
+M = 1.0
+m = KerrMetric(M, 0.9)
+x = SVector(0.0, 10_000.0, deg2rad(60), 0.0)
 
 test1 = AnalyticDiscTest(A = 0.0, α = -3.0, h = 0.0, l₀ = 0.0)
 test2 = AnalyticDiscTest(A = 0.0, α = -2.0, h = 0.0, l₀ = 1.0)
 m_test2 = KerrMetric(1.0, 0.0)
 test3 = AnalyticDiscTest(A = 0.0, α = 0.0, h = 10.0 / 3, l₀ = 1.0)
-test4 = AnalyticDiscTest(A = 0.2, α = 0.0, h = 10.0 / 3, l₀ = 1.0)
-test5 = AnalyticDiscTest(A = 2.0, α = 0.0, h = 100.0 / 3, l₀ = 1.0)
+# similarly here, not sure what A should be set to, but there must
+# be an order magnitude difference between these two
+test4 = AnalyticDiscTest(A = 0.289e5, α = 0.0, h = 10.0 / 3, l₀ = 1.0)
+test5 = AnalyticDiscTest(A = 2.89e5, α = 0.0, h = 100.0 / 3, l₀ = 1.0)
 
 a1, b1, im1 = do_trace(m, x, test1)
 a2, b2, im2 = do_trace(m_test2, x, test2)
@@ -105,7 +112,7 @@ a5, b5, im5 = do_trace(m, x, test5)
 function plot_heatmap!(ax, x, y, im; kwargs...)
     S = sum(filter(!isnan, im))
     hm = heatmap!(ax, x, y, im' ./ S, colormap = :cubehelix; kwargs...)
-    s = Printf.@sprintf("%1.4f", S / 1e5)
+    s = Printf.@sprintf("%1.4f", S) #/ 1e5)
     text!(
         ax,
         (-14.5, 11),
