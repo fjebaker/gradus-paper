@@ -38,7 +38,7 @@ function RedshiftData(α, β, g, r, I)
     g✶ = Gradus.g_to_g✶.(g, gmin, gmax)
     points = [SVector(a, b) for (a, b) in zip(α, β)]
     gup, pup, gdown, pdown = splitbranches(g✶, points, imin, imax)
-    
+
     A = _make_branch(gup, pup)
     B = _make_branch(gdown, pdown)
 
@@ -122,7 +122,14 @@ function plot_branches(
         L"%$(r_str)"
     end
     if annotate
-        text!(ax, x2[1] + 0.2, y2[1] - 0.5, text = text, color = color, fontsize = SMALL_FONT_SIZE)
+        text!(
+            ax,
+            x2[1] + 0.2,
+            y2[1] - 0.5,
+            text = text,
+            color = color,
+            fontsize = SMALL_FONT_SIZE,
+        )
     end
 end
 
@@ -134,7 +141,8 @@ function calculate_redshift_data(m, x, d, r; kwargs...)
         m,
         fill(x, size(vs)),
         vs,
-        d isa AbstractThickAccretionDisc ? Gradus.PlaneDisc(Gradus.cross_section(d, SVector(0.0, r, π/2, 0.0))) : d,
+        d isa AbstractThickAccretionDisc ?
+        Gradus.PlaneDisc(Gradus.cross_section(d, SVector(0.0, r, π / 2, 0.0))) : d,
         x[2] * 2,
         ensemble = Gradus.EnsembleEndpointThreads(),
         save_on = false,
@@ -148,7 +156,7 @@ function calculate_redshift_data(m, x, d, r; kwargs...)
         x[2] * 2,
         ensemble = Gradus.EnsembleEndpointThreads(),
         save_on = false,
-    ) 
+    )
     is_visible(gp1, gp2) = abs(gp1.x[2] * sin(gp1.x[3]) - gp2.x[2] * sin(gp2.x[3])) < 1e-2
     I = @. is_visible(points2, points)
     RedshiftData(α, β, g, r, I)
