@@ -156,7 +156,7 @@ begin
         label = L"S / S_\text{tot}",
         labelsize = 24,
         ticks = [0, 0.5e-4, 1.0e-4, 1.5e-4, 2e-4],
-        tickformat = values -> [L"%$(dp1(x * 1e4)) \times 10^4" for x in values],
+        tickformat = values -> [L"%$(dp1(x * 1e4)) \times 10^{-4}" for x in values],
         tellheight = false,
         colormap = :cubehelix,
         height = 172,
