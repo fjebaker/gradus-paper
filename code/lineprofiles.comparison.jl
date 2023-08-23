@@ -1,6 +1,6 @@
 using CairoMakie, Makie, LaTeXStrings
 using Gradus
-using Relline
+using Relxill
 using SpectralFitting
 
 include("common.jl")
@@ -48,11 +48,11 @@ end
 x = SVector(0.0, 1000.0, deg2rad(40), 0.0)
 
 m = KerrMetric(M = 1.0, a = 0.998)
-g1 = range(0.05, 1.2, 500)
+g1 = range(0.05, 1.2, 500) |> collect
 flux, relline_flux = compute_lineprofiles(g1, m, x)
 
 m = KerrMetric(1.0, 0.0)
-g2 = range(0.4, 1.2, 500)
+g2 = range(0.4, 1.2, 500) |> collect
 flux2, relline_flux2 = compute_lineprofiles(g2, m, x)
 
 begin
@@ -74,7 +74,7 @@ function plot_lineprofile(ax1, ax2, x, f1, f2, c1, c2)
 
     hidexdecorations!(ax1, grid = false)
 
-    ylims!(ax2, -0.025, 0.025)
+    ylims!(ax2, -0.015, 0.015)
     xlims!(ax2, extrema(x)...)
     linkxaxes!(ax2, ax1)
 end
