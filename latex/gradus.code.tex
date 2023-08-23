@@ -13,7 +13,7 @@ The AD in our code is from the ForwardDiff.jl package \citep{RevelsLubinPapamark
 
 \subsection{Parallelism and ensembles}
 
-Our code makes use of Julia's heterogeneity and concurrency to run in multi-threaded and distributed environments, with GPU-offloading via DiffEqGPU.jl and the various supported backends (CUDA.jl \ref{}, Metal.jl \ref{}, AMDGPU.jl \ref{}). Precision is user-defined and inferred from user defined types: single precision floating point arithmetic may be desirable or even required for GPU computing, whereas arbitrary precision `big floats' may be required for some asymptotically near-horizon computations.
+Our code makes use of Julia's heterogeneity and concurrency to run in multi-threaded and distributed environments, with GPU-offloading via DiffEqGPU.jl \citep{}, and the various supported backends (CUDA.jl \ref{}, Metal.jl \ref{}, AMDGPU.jl \ref{}). Precision is user-defined and inferred from user defined types: single precision floating point arithmetic may be desirable or even required for GPU computing, whereas arbitrary precision `big floats' may be required for some asymptotically near-horizon computations.
 
 
 \todo{a little talk about the threading strategies etc.}
@@ -38,11 +38,10 @@ Point functions for composable results
 \subsection{Performance}
 \label{sec:performance}
 
-GPU vs CPU and when one is one better than the other
-
-Performance vs e.g. Bambi's NK and other work
+\todo{GPU vs CPU and when one is one better than the other
+Performance vs e.g. Bambi's NK and other work}
 
 \subsection{Simulation products}
 
-What we can export, and how they can be exported / used in e.g. XSPEC
+\todo{What we can export, and how they can be exported / used in e.g. XSPEC}
 

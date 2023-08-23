@@ -57,7 +57,7 @@
 
 %%%%%%%%%%%%%%%%%%% TITLE PAGE %%%%%%%%%%%%%%%%%%%
 
-\title[Gradus.jl]{Gradus.jl: extensible spacetime agnostic general relativistic ray-tracing through automatic differentiation}
+\title[Gradus.jl]{Gradus.jl: extensible and spacetime agnostic general relativistic ray-tracing for reverberation modelling through automatic differentiation}
 
 % The list of authors, and the short list which is used in the headers.
 % If you need two or more lines of authors, add an extra line using \newauthor
@@ -107,6 +107,8 @@ keyword1 -- keyword2 -- keyword3
 
 \section{Test problems}
 
+\todo{explain why we compare those integrators}
+
 \subsection{Integration accuracy and stability}
 
 Since our method for integration does not use the constants of motion directly, the stability of the integrator may be gauged by sampling invariant quantities along the trajectory. In Figure \ref{fig:dot-stability} is shown the value the invariant of $v_\mu v^\mu$ for a geodesic that spirals into a maximally spinning black hole. The magnitude of the invariant is shown for a sample of integration algorithms, along with the solving time for the geodesic. Note this solving time includes the time to initialize the integrator, calculate the full trajectory (with interpolants), and package the solution structure. When tracing multiple geodesics, much of the initialization time may be avoided by reusing allocated memory -- see Section \ref{sec:performance}.
@@ -145,18 +147,24 @@ Figure \ref{fig:deflection-angle} shows the deflection angle as a function of im
 
 \subsection{Line profiles}
 
-Figure \ref{fig:relline-comparison} compares the line profiles computed using the transfer functions of \Gradus and the \relline model of \cite{dauser_broad_2010}
-
-Bambi's various metrics and relline, self consistency between methods
-
-
+Transfer functions are integrated as described in Section \ref{sec:transfer-function-integration}, neglecting the timing components. Figure \ref{fig:relline-comparison} compares the line profiles computed using the transfer functions of \Gradus and the \relline model of \cite{dauser_broad_2010}\footnote{We compare against the \relline model distributed in the Relxill package \url{http://www.sternwarte.uni-erlangen.de/~dauser/research/relxill/}, which is the latest version (v2.3 with table v0.5a) at time of writing.}. We see good agreement to within $\sim 1\%$ accuracy, with all features collocated.
 
 \begin{figure}
 	\centering
 	\includegraphics[width=0.99\linewidth]{figures/lineprofiles.comparison.pdf}
-	\caption{\todo{caption}}
+	\caption{Comparison of line profiles calculated by integrating transfer functions with emissivity $I_\text{em} = \varepsilon(r_\text{em}) = r_\text{em}^{-3}$ using \Gradus and \relline. The transfer functions are calculated for an observer at $r_\text{obs} = 1000\rg$ and $\theta_\text{obs} = 40^\circ$, and integrated between $r_\text{in} = r_\text{ISCO}$ and $r_\text{out} = 50 \rg$. Left panel is the the maximally spinning Kerr spacetime, whereas the right panel is the Schwarzschild spacetime.}
 	\label{fig:relline-comparison}
 \end{figure}
+
+Our code permits a consistency check by binning geodesics on the image plane, with the appropriate weighting. This method may also be used to compute line profiles for accretion geometry that does not lend itself to the transfer function parameterization. In Figure \ref{fig:line-profile-ssd}, we compute a number of line profiles for the SSD, using both the binning and transfer integration approach.
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.99\linewidth]{figures/lineprofiles.ssd.pdf}
+	\caption{Line profiles for the SSD with $\dot{M} / \dot{M}_\text{Edd} = 0.3$ for different observer inclinations $\theta_\text{obs}$ and emissivity $I_\text{em} = \varepsilon(r_\text{em}) = r_\text{em}^{-3}$. The transfer functions are calculated as in Figure \ref{fig:relline-comparison}, and integrated over the same limits. The light-grey lines correspond to the geometric thin disc ($\dot{M} / \dot{M}_\text{Edd} = 0$), and differ only for steep inclinations due to obscuration of inner $r_\text{em}$. Left panel is the the maximally spinning Kerr spacetime, whereas the right panel is the Schwarzschild spacetime.}
+	\label{fig:line-profile-ssd}
+\end{figure}
+
 
 \subsection{Lag-frequency spectra}
 
@@ -167,25 +175,24 @@ Ingram's code? Jiachen's code
 \begin{figure}
 	\centering
 	\includegraphics[width=0.97\linewidth]{figures/transfer-functions.2d.pdf}
-	\caption{\todo{caption + slit is the gap between upper and lower branch contributions:: idea, interpolate when  in h or 1-h}}
+	\caption{\todo{caption + slit is the gap between upper and lower branch contributions:: idea, interpolate when in h or 1-h}}
 	\label{fig:lag-frequency-transfer-functions}
 \end{figure}
 
 \subsection{Analytic radiative transfer model}
 
-Do some of that \citep{gold_verification_2020} paper with all the test problems
-
-\ref{fig:gold-test-problems}
+\cite{gold_verification_2020} specify an analytic model for testing radiative transfer codes (their Section 3.2, with results shown in their Figure 2 and 3). We have implemented their model and traced the radiative transfer problems with \Gradus, shown in Figure \ref{fig:gold-test-problems}. We find good agreement with the published results for all test problems.
 
 \begin{figure*}
 	\centering
-	\includegraphics[width=0.97\linewidth]{figures/radiative-transfer.gold.pdf}
-	\caption{\todo{caption, also the values are not using the correct physical parameters from the Gold paper yet}}
+	\includegraphics[width=0.99\linewidth]{figures/radiative-transfer.gold.pdf}
+	\caption{Intensity images calculated with \Gradus of the radiative transfer analytic test models specified in \citet{gold_verification_2020} with resolution $128 \times 128$ pixels, and impact parameters ranging between $-15\, \rg$ and $15\, \rg$. The test cases correspond to the test parameters in their Table 1. The colouring is the intensity for the geodesic corresponding to that pixel normalized over the total intensity .}
 	\label{fig:gold-test-problems}
 \end{figure*}
 
 \subsection{Other spacetimes}
 
+\todo{Bambi's various metrics and relline, self consistency between methods}
 \todo{iron line profiles for Johannsen Psaltis}
 \todo{geodesic motion of kerr newman}
 
@@ -204,7 +211,7 @@ We encourage the community to contact us with interesting problems that may be t
 \section*{Acknowledgements}
 This work is supported by the UKRI AIMLAC CDT funded by grant EP/S023992/1.
 
-We thank Cosimo Bambi and Jiachen Jiang for sharing their software for testing purposes. FB thanks Rosie for her debugging assistance, and Shaun Baker for invaluable software design discussions. All figures created using Makie.jl \citep{DanischKrumbiegel2021}.
+We thank Jiachen Jiang, Cosimo Bambi and Askar Abdikamalov for sharing their software for comparisons. FB thanks Rosie for her expert debugging assistance, and Shaun for invaluable software discussions. All figures created using Makie.jl \citep{DanischKrumbiegel2021}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Data Availability}

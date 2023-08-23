@@ -208,6 +208,8 @@ The covariant intensity $\mathcal{I}$ is related to the observed intensity $I_\n
 
 \subsection{Emissivity profiles}
 
+\todo{equation that relates ionizing flux to intensity}
+
 The emissivity of a disc is defined as the flux emitted from the disc, such that the emissivity profile is the flux as a function of the disc coordinates \citep{wilkins_understanding_2012}. For reflection, the flux emitted is proportional to the flux received from the illuminating corona \citep{laor_line_1991}. As axis-symmetry of the accretion disc emissivity profile is usually manifest, the emissivity profile is a function of the radial coordinate on the accretion disc and given by
 \begin{equation}
     \varepsilon (r, \d r) = \frac{\mathcal{N}(r, \d r)}{\gamma A(r, \d r)} I(g),
@@ -261,7 +263,7 @@ where $r_\text{em}$ is the emission radius on the disc, and
 \begin{equation}
     g^\ast := \frac{g - g_\text{min}}{g_\text{max} - g_\text{min}} \in [0, 1],
 \end{equation}
-is a rescaled dimensionless redshift parameter, and the extremal $g$ is calculated over a given $r_\text{em}$. This $g^\ast$ parameterization is double-valued everywhere except at $g^\ast = 0$ and $g^\ast = 1$, illustrated in Figure \ref{fig:transfer-parameterisation}. The transfer functions $f$ are then ostensibly a change-of-variable Jacobian, re-parameterizing the projected image of the disc from $(\alpha, \beta)$ to $(r_\text{em}, g^\ast)$. The additional elliptical envelope in $g$ supresses the singular values of the Jacobian as $g^\ast$ becomes $0$ or $1$, permitting numerical integration of the transfer function with fewer issues. To avoid the double-valued degeneracy when integrating, the transfer functions are in practice split into an ``upper'' and ``lower'' branch, between extremal $g^\ast$, shown in Figure \ref{fig:transfer-functions} with the light-travel time of the geodesic similarly constructed. Furthermore, with the disc projection given in terms of quantities on the disc allows physical emission models to be specified in the local emitting frame.
+is a rescaled dimensionless redshift parameter, and the extremal $g$ is calculated over a given $r_\text{em}$. This $g^\ast$ parameterization is double-valued everywhere except at $g^\ast = 0$ and $g^\ast = 1$, illustrated in Figure \ref{fig:transfer-parameterisation}. The transfer functions $f$ are then ostensibly a change-of-variable Jacobian, re-parameterizing the projected image of the disc from $(\alpha, \beta)$ to $(r_\text{em}, g^\ast)$. The additional elliptical envelope in $g$ supresses the singular values of the Jacobian as $g^\ast$ becomes $0$ or $1$, permitting numerical integration of the transfer function with fewer issues. To avoid the double-valued degeneracy when integrating, the transfer functions are in practice split into an ``upper'' and ``lower'' branch, between extremal $g^\ast$, shown in Figure \ref{fig:transfer-functions} with the light-travel time of the geodesic similarly constructed. Furthermore, the disc projection given in terms of quantities on the disc allows physical emission models to be specified in local emitting frame.
 
 \subsubsection{Calculating transfer functions}
 
@@ -291,14 +293,15 @@ For thick discs, it is possible that the disc obscures itself \citep{taylor_x-ra
 For partially obscured emission radii, the benefits of using AD for calculating the Jacobian are further realized: \todo{issues related to stenciling close to obscured radii are thereby entirely mitigated.}
 
 
-\begin{figure}
+\begin{figure*}
     \centering
-    \includegraphics[width=0.95\linewidth]{figures/transfer-functions.plots.pdf}
-    \caption{Transfer functions of a fixed $r_\text{em}$ for different observer inclinations $\theta_\text{obs}$. Panel a) Kerr spacetime with $a=0.998$ and $r_\text{em} = 4$ (see also \citealp{bambi_testing_2017}, their Figure 1). Panel b) Schwarzschild spacetime with $r_\text{em} = 11$.}
+    \includegraphics[width=0.99\linewidth]{figures/transfer-functions.plots.pdf}
+    \caption{Transfer functions of a fixed $r_\text{em}$ for different observer inclinations $\theta_\text{obs}$ and $r_\text{obs} = 10^3 \rg$. Panel a) Kerr spacetime with $a=0.998$ and $r_\text{em} = 4$ (see also \citealp{bambi_testing_2017}, their Figure 1). Panel b) Schwarzschild spacetime with $r_\text{em} = 11$.\todo{update caption}}
     \label{fig:transfer-functions}
-\end{figure}
+\end{figure*}
 
 \subsection{Integrating transfer functions}
+\label{sec:transfer-function-integration}
 
 Integrating $\d F(E)$ to calculate line-profiles is described in detail in \cite{dauser_broad_2010}, including the Green's function formalism that adds additional flexibility in the definition of $I_\text{em}$. We extend the transfer function integration to include the geodesic coordinate time, integrating $f$ as
 
@@ -328,7 +331,7 @@ The method for numerically integrating the transfer functions is as follows: the
 \begin{enumerate}
     \item Interpolate the values of the transfer function, $f$, $t$, and $g_\text{min}$, and $g_\text{max}$, for the current radius $r_i$.
     \item Calculate the trapezoidal integration weight for the radial coordinate $\omega_i = \Delta r_i r_i$.
-    \item For each bin in the fine $g$ grid, integrate $f$ over this bin. Record $t_\text{min} = t(g_\text{min})$ and $t_\text{max} = t(g_\text{max})$.
+    \item For each bin in the fine $g$ grid, integrate $f$ over this bin. Record $t_\text{min} = t(g_\text{min})$ and $t_\text{max} = t(g_\text{max})$. Note that depending on the interpolation scheme, if $f$ is a function of $g$ instead of $g^\ast$, a $g / (g_\text{max} - g_\text{min})$ change-of-variable factor must be included in the integrand.
     \item Add $\omega_i F_i(E, t)$ to the bin corresponding to $E = gE_\text{line}$, and $t$. If either $\Delta E$ or $\Delta t$ straddles an output bin, the flux must be weighted appropriately and divided into those bins. 
 \end{enumerate}
 

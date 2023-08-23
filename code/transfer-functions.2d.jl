@@ -11,12 +11,12 @@ function continuum_time(m, x, model)
     @show gp.x[1]
 end
 
-function calculate_2d_transfer_function(m, x, d, model)
-    prof = @time emissivity_profile(m, d, model; n_samples = 1000)
-    radii = Gradus.Grids._inverse_grid(Gradus.isco(m), 150.0, 73)
+function transfer_branches(m, x, d, radii)
     d = GeometricThinDisc(0.0, d.outer_radius, π / 2)
     itb = @time Gradus.interpolated_transfer_branches(m, x, d, radii; verbose = true)
+end
 
+function calculate_2d_transfer_function(m, x, model, itb, prof, radii)
     bins = collect(range(0.0, 1.5, 500))
     tbins = collect(range(0, 100.0, 500))
 
@@ -26,11 +26,12 @@ function calculate_2d_transfer_function(m, x, d, model)
         prof,
         itb,
         radii,
+        # range(4.0, 15.0, 2),
         bins,
         tbins;
         t0 = t0,
         Nr = 3000,
-        h = 1e-12,
+        h = 1e-8,
     )
 
     flux[flux.==0] .= NaN
@@ -43,10 +44,17 @@ m = KerrMetric(M = 1.0, a = 0.998)
 d = GeometricThinDisc(Gradus.isco(m), 10000.0, π / 2)
 model = LampPostModel(h = 10.0, θ = deg2rad(0.01))
 
-x = SVector(0.0, 1e6, deg2rad(45), 0.0)
-E1, t1, f1 = calculate_2d_transfer_function(m, x, d, model)
-x = SVector(0.0, 1e6, deg2rad(80), 0.0)
-E2, t2, f2 = calculate_2d_transfer_function(m, x, d, model)
+prof = @time emissivity_profile(m, d, model; n_samples = 1000)
+radii = Gradus.Grids._inverse_grid(Gradus.isco(m), 150.0, 73)
+
+x1 = SVector(0.0, 1e4, deg2rad(45), 0.0)
+x2 = SVector(0.0, 1e4, deg2rad(80), 0.0)
+
+itb1 = transfer_branches(m, x1, d, radii)
+itb2 = transfer_branches(m, x2, d, radii)
+
+E1, t1, f1 = calculate_2d_transfer_function(m, x1, model, itb1, prof, radii)
+E2, t2, f2 = calculate_2d_transfer_function(m, x2, model, itb2, prof, radii)
 
 begin
     fig = Figure(resolution = (500, 550))
@@ -67,8 +75,9 @@ begin
     )
     ylims!(ax2, nothing, 1.2)
 
-    hm = heatmap!(ax1, t2, E2, log.(abs.(f2')))
-    heatmap!(ax2, t1, E1, log.(abs.(f1')))
+    cmap = :thermal
+    hm = heatmap!(ax1, t2, E2, log.(abs.(f2')), colormap = cmap)
+    heatmap!(ax2, t1, E1, log.(abs.(f1')), colormap = cmap)
 
     # Colorbar(ga[1,2], hm)
     hidexdecorations!(ax1, grid = false)
