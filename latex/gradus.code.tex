@@ -1,15 +1,32 @@
 %% DESCRIPTION OF THE CODE
 \section{Description of the code}
 
-\Gradus is implemented in the Julia programming language \citep{Bezanson_Julia_A_fresh_2017}. The code is available through popular package managers, with rudimentary bindings for a wide variety of languages, including Python via \texttt{pip} and JuliaCall \citep{}.
+\Gradus is implemented in the Julia programming language \citep{Bezanson_Julia_A_fresh_2017}. We use the DifferentialEquations.jl ODE solving library and ForwardDiff.jl for forward-mode automatic differentiation \citep{todo}. The code is available via the \texttt{Pkg} Julia package manger in a registry maintained by members of the University of Bristol astrophysics group\footnote{\url{https://github.com/astro-group-bristol/AstroRegistry/}}. There are also rudimentary bindings to a wide variety of languages, including Python via \texttt{pip} \citep{}.
 
-\Gradus aims to have a single expressive high-level API for a variety of GRRT problems, with sensible defaults and optional fine-grained control. The code is accompanied by website documentation\footnote{\url{https://astro-group-bristol.github.io/Gradus.jl/}}, with short tutorials and examples designed to provide a feature-rich overview whilst simultaneously demonstrating how to construct custom simulations and how to integrate \Gradus in a user's model. We encourage readers who are interesting in learning up-to-date information about the code and our methods to consult the documentation, as the documentation strives to be the most accurate description of the code as it is maintained, detailing algorithm specific choices and implementations, and is built as part of our continuous deployment (CD). The source code is written to be read by contributors and users alike to invite extension, and to be explicit about our methods, and their benefits and limitations.
+\Gradus aims to have a single expressive high-level API for a variety of GRRT problems, with sensible defaults and optional fine-grained control. The code is accompanied by website documentation\footnote{\url{https://astro-group-bristol.github.io/Gradus.jl/}}, with short tutorials and examples designed to provide a feature-rich overview whilst simultaneously demonstrating how to construct custom simulations and how to integrate \Gradus in user models. We encourage readers who are interesting in learning up-to-date information about the code and our methods to consult the documentation, as the documentation strives to be the most accurate description of the code as it is maintained. The documentation details all algorithm specific choices and implementations, and is built as part of our continuous integration (CI). The source code is written to be read by contributors and users alike to invite extension, to be explicit about our methods, and their benefits and limitations.
 
-In our discussion of the numerical methods, we note the current default ODE integration algorithm is Tsitouras Runge-Kutta 5/4. \Gradus vendors many additional ODE solvers and numerical algorithms from the Julia SciML ecosystem, with both adaptive and fixed time steps.
+\Gradus is extensively tested with a suite of unit and end-to-end tests. The tests are constructed both by comparing numerical algorithms to specific analytic counterparts, and by saving snapshots of results in the literature to compare against. The development cycle of \Gradus is thereby expedited, allowing changes to the codebase to be made with the confidence that no previous result will be broken.
 
-\Gradus maintains a catalogue of predefined metrics, including the Kerr spacetime, Morris-Thorne wormhole, Johannsen-Psaltis metric, the Einstein-Maxwell Dilaton-Axion metric \todo{citations for these}. The Kerr-Newman metric is also implemented, complete with the ability to specify the electromagnetic potential vector, from which external accelerations $a^\mu$ in \eqref{eq:geodesic_equation} are calculated. \Gradus also allows for 1st order specification of the geodesic ODE system, where such a system is known. This is already implemented for the Kerr spacetime, and used primarily as a self-consistency check with the second-order implementation.
+In our discussion of the numerical methods, we note the current default ODE integration algorithm is Tsitouras Runge-Kutta 5/4. \Gradus vendors additional ODE solvers and numerical algorithms from the Julia SciML ecosystem, with both adaptive and fixed time steps, that may provide performance or accuracy improvements for specific problems.
 
-The AD in our code is from the ForwardDiff.jl package \citep{RevelsLubinPapamarkou2016}, and may be used when calculating any quantity or observable to simultaneously determine gradients.
+\Gradus maintains a catalogue of predefined metrics, including the Kerr spacetime, Morris-Thorne wormhole, Johannsen-Psaltis metric, the Einstein-Maxwell Dilaton-Axion metric \todo{citations for these}, and the Kerr-Newman metric, complete with the ability to specify the electromagnetic potential vector, from which external accelerations $a^\mu$ in \eqref{eq:geodesic_equation} are calculated. \Gradus also has limited support for 1st order specification of the geodesic ODE system, where such a system is known. This is implemented for the Kerr spacetime, and used primarily as a self-consistency check with the second-order implementation.
+
+\subsection{Extensibility}
+
+Our implementations of the numerical methods, as well as the numerical methods themselves, are conceptually simple and consequently generalize well. The design of \Gradus prioritizes useability and extensibility, which comes at a small performance cost: our aim is not to implement the fastest, semi-analytic solutions to specific problems, but rather to have an optimal and interpretable codebase for exploring problems related to general relativity. The abstractions in \Gradus have been carefully designed to allow users to implement and explore their models quickly. To this end, we also include a number of visualization and plotting recipes to provide some intuition for the problem space.
+
+\Gradus is also designed to allow simple one-line changes to propagate through the simulations. Once a certain problem has been configured, changing the line defining e.g. the spacetime is all that is required to to rerun the simulation with a new metric. This design is possible with Julia's just-in-time compilation and multiple dispatch paradigm, and brings additional benefits: different number types may be used through the whole library, permitting arbitrary precision floating point operations, or the propagation of AD gradient information through an entire simulation \cite{forward_diff}. Our code can calculate derivatives of any physical product with respect to the input parameters, and is therefore optimal for use in model fitting.
+
+
+
+\todo{New accretion geometry 
+including the $\alpha$-disc of \cite{shakura_black_1973}
+
+Additional quantities to trace
+
+Accretion disc geometries
+Point functions for composable results
+}
 
 \subsection{Parallelism and ensembles}
 
@@ -17,22 +34,6 @@ Our code makes use of Julia's heterogeneity and concurrency to run in multi-thre
 
 
 \todo{a little talk about the threading strategies etc.}
-
-\subsection{Extensibility}
-
-The design of \Gradus has prioritized useability and extensibility. With Julia's multiple-dispatch, a user may overload specific functions in \Gradus with their own custom types to bootstrap arbitrary models and routines into any stage of ray-tracing process, with a rich integration callback system vendored from DifferentialEquations.jl.
-
-New spacetimes are straightforward to define, requiring only the parameters of the spacetime and a function implementing the non-zero matrix elements of the metric at a given coordinate. This in also allows numerically computed matrix fields to be traced. Code examples and walkthroughs are available in the \Gradus documentation.
-
-\todo{New accretion geometry 
-including the $\alpha$-disc of \cite{shakura_black_1973}, and maybe ADAF
-}
-
-
-Additional quantities to trace
-
-Accretion disc geometries
-Point functions for composable results
 
 
 \subsection{Performance}

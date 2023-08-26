@@ -203,7 +203,7 @@ such that for the particular case of null geodesics through a time-like medium
     \left. \frac{\d s}{\d \lambda} \right\rvert_\lambda = - \left. v_\mu u^\mu \right\rvert_\lambda.
 \end{equation}
 
-The covariant intensity $\mathcal{I}$ is related to the observed intensity $I_\nu = \mathcal{I} \nu^3$, derived using Liouville's theorem. The intensity is therefore calculated by selecting $\nu_\text{obs} = E$ at the observer, and integrating \eqref{eq:covariant-radiative-transfer} along a given geodesic. 
+The covariant intensity $\mathcal{I}$ is related to the observed intensity $I_\nu = \mathcal{I} \nu^3$, derived using Liouville's theorem \citep{todo}. The intensity is therefore calculated by selecting $\nu_\text{obs} = E$ at the observer, and integrating \eqref{eq:covariant-radiative-transfer} along a given geodesic. 
 
 
 \subsection{Emissivity profiles}
@@ -237,12 +237,14 @@ When axis-symmetry does not apply, we have developed a method for calculating th
 
 A particular observable that is frequently calculated with GRRT is the flux coming from a particular model of an accreting black hole. The infinitesimal flux is
 \begin{equation}
+\label{eq:infinitesimal-flux}
 \d F(E, t) = I\left(E, t\right)\, \d \Omega,
 \end{equation}
 for observed energy $E$, time $t$, intensity $I$ and solid angle $\d \Omega$ on the observer's sky.
 
 Using Liouville's theorem -- that the number density of photons in phase space is conserved -- the observed and emitted intensities are related by
 \begin{equation}
+\label{eq:liouville-theorem}
     I\left( E, t \right) = g^3 I_\text{em}\left(E_\text{em}, t_\text{em}\right).
 \end{equation}
 \todo{is this $t_\text{em}$ or just $t$??}
@@ -288,7 +290,7 @@ where the derivatives are determined using a stenciling approach to determine th
 
 \subsubsection{Partially obscured transfer functions}
 
-For thick discs, it is possible that the disc obscures itself \citep{taylor_x-ray_2018} \todo{check reference}. Certain $r_\text{em}$ may therefore not be visible to an observer, and other $r_\text{em}$ only partially visible (see Figure \ref{fig:transfer-parameterisation}b). The extremal redshift is calculated over the whole ring, whether partially obscured or not, for the purpose of transforming to $g^\ast$. Therefore, we make use of a ``datum plane'' when calculating the transfer functions; that is, an infinite plane at the coordinate height of the disc at $r_\text{em}$. This guides the root-finder when solving for the impact parameters and redshift. We then subsequently trace a separate geodesic to determine if a given coordinate on the disc is visible to the observer or not. This is illustrated in Figure \ref{fig:datum-plane-tracing}.
+For thick discs, it is possible that the disc obscures itself \citep{taylor_x-ray_2018} \todo{check reference}. Certain $r_\text{em}$ may therefore not be visible to an observer, and other $r_\text{em}$ only partially visible (see Figure \ref{fig:transfer-parameterisation}b). The extremal redshift is calculated over the whole ring, whether partially obscured or not, for the purpose of transforming to $g^\ast$. Therefore, we make use of a ``datum plane'' when calculating the transfer functions; that is, an infinite plane at the coordinate height of the disc at $r_\text{em}$. This guides the root-finder when solving for the impact parameters and redshift. We then subsequently trace a separate geodesic to determine if a given coordinate on the disc is visible to the observer or not. This is illustrated in Figure \ref{fig:datum-plane-tracing} for the SSD disc, assuming the disc rotates cylindrically with Keplerian circular velocities.
 
 For partially obscured emission radii, the benefits of using AD for calculating the Jacobian are further realized: \todo{issues related to stenciling close to obscured radii are thereby entirely mitigated.}
 
@@ -303,7 +305,7 @@ For partially obscured emission radii, the benefits of using AD for calculating 
 \subsection{Integrating transfer functions}
 \label{sec:transfer-function-integration}
 
-Integrating $\d F(E)$ to calculate line-profiles is described in detail in \cite{dauser_broad_2010}, including the Green's function formalism that adds additional flexibility in the definition of $I_\text{em}$. We extend the transfer function integration to include the geodesic coordinate time, integrating $f$ as
+Integrating $\d F(E)$ to calculate line-profiles is described in detail in \cite{dauser_broad_2010}, including the Green's function formalism that adds additional flexibility in the definition of $I_\text{em}$. The transfer functions are split into the aforementioned upper and lower branches at extremal $g^\ast$, and each branch is integrated separately, with the total summed in the final result. We extend the transfer function integration to include the geodesic coordinate time, integrating $f$ as
 
 % \begin{strip}
 % \rule[-1ex]{\columnwidth}{0.7pt}\rule[-1ex]{0.7pt}{1.5ex}
@@ -319,21 +321,27 @@ Integrating $\d F(E)$ to calculate line-profiles is described in detail in \cite
 % \vbox{\vspace{2em}}
 % \hfill\rule[1ex]{0.7pt}{1.5ex}\rule[2.3ex]{\columnwidth}{0.7pt}
 % \end{strip}
-\noindent and $g = g( r_\text{em}, g^\ast, t')$ implicitly. The integrand remains in practice singular at $g^\ast \rightarrow (0, 1)$, and therefore the integration is performed over $g^\ast \in [h, 1 - h]$. Outside of this domain, the limits of the integrand can be taken to approximate the edges of the bin, as in \cite{dauser_broad_2010},
+\noindent and $g = g( r_\text{em}, g^\ast, t')$ implicitly. This allows us to construct high resolution lag transfer functions of \cite{reynolds_x-ray_1999} with little additional computational time (see Section \ref{sec:lag-transfer-functions}). 
+
+The integrand for each branch remains in practice singular at $g^\ast \rightarrow (0, 1)$, and therefore the integration is performed over $g^\ast \in [h, 1 - h]$. Outside of this domain, the limits of the integrand can be taken to approximate the edges of the bin, as in \cite{dauser_broad_2010},
 \begin{equation}
    F_\text{edge}(E,t) \propto 2\left( \sqrt{E_\text{max}} - \sqrt{E_\text{min}} \right).
 \end{equation}
 The constant of proportionality is determined from evaluating the integrand at $h$ or $1 - h$ respectively.
 
-We use $h = 2 \times 10^{-6}$, and evaluate the integral over $\d g^\ast$ using a 7$^\text{th}$ order Gauss-Kronrod quadrature scheme, which avoids evaluating the integral directly at $h$ and $1 - h$ \citep{}. Finer grids for $r_\text{em}$ and $g^\ast$ are constructed to help with stability, and rebinned into the desired output grid. 
+We use $h = 2 \times 10^{-6}$, and evaluate the integral over $\d g^\ast$ using a 7$^\text{th}$ order Gauss-Kronrod quadrature scheme, which avoids evaluating the integral directly at $h$ and $1 - h$ \citep{}. Finer grids for $r_\text{em}$ and $g^\ast$ are constructed to help with numerical accuracy and stability, with the finer bins subsequently rebinned into the desired output grid\footnote{The grid in $r$ should be irregularly spaced, e.g. $\sim 1 / r$, whereas the grid in $g$ should be linear. This reflects that the majority of the variation in $f$ occurs at small $r$.}.
 
-The method for numerically integrating the transfer functions is as follows: the limits of the integral are chosen $(r_\text{in}, r_\text{out})$, and limits of the output space similarly $(E_\text{min}, E_\text{max})$, $(t_\text{min}, t_\text{max})$. Any evaluation of \eqref{eq:transfer-integration} that is outside of the energy and time limits is ignored. To ensure the approximate methods remain accurate, a fine grid in $r$ and $g$ is constructed\footnote{The grid in $r$ should be irregularly spaced, e.g. $\sim 1 / r$, whereas the grid in $g$ should be linear. This reflects that the majority of the variation in $f$ occurs at small $r$.}. The integration over $\d r_\text{em}$ is performed using a trapezoidal interpolation, which is sufficient in both accuracy and performance with the finer bins. Since the integration over $\d t$ has the selection effect of binning, we assign the flux $F(E)$ into time bin $t$ by considering $t$ over the width of $g^\ast$ on the fine grid. In full:
+The method for numerically integrating the time-dependent transfer functions is as follows: the limits of the integral are chosen $(r_\text{in}, r_\text{out})$, and limits of the output space similarly $(E_\text{min}, E_\text{max})$, $(t_\text{min}, t_\text{max})$. Any evaluation of \eqref{eq:transfer-integration} that is outside of the energy and time limits is discarded.  The integration over $\d r_\text{em}$ is simply performed using a trapezoidal scheme, as it is sufficient in both accuracy and performance with the finer bins. 
+
+The $\d g^\ast$ quadrature scheme evaluates $F(E)$ for each branch over a small output bin in $g$, such that $t$ is determined by evaluating $t(g^\ast)$ at the limits of the bin, also for each branch. These approximations mandate that the integration is performed over a fine $g$ grid. In full:
 \begin{enumerate}
     \item Interpolate the values of the transfer function, $f$, $t$, and $g_\text{min}$, and $g_\text{max}$, for the current radius $r_i$.
-    \item Calculate the trapezoidal integration weight for the radial coordinate $\omega_i = \Delta r_i r_i$.
+    \item Calculate the trapezoidal integration weight for the radial coordinate $\omega_i = \Delta r_i r_i$. Any other quantities that only depend on $r_\text{em}$ may similarly be factored into this weight, e.g. if $I_\text{em} = I_\text{em}(r_\text{em})$.
     \item For each bin in the fine $g$ grid, integrate $f$ over this bin. Record $t_\text{min} = t(g_\text{min})$ and $t_\text{max} = t(g_\text{max})$. Note that depending on the interpolation scheme, if $f$ is a function of $g$ instead of $g^\ast$, a $g / (g_\text{max} - g_\text{min})$ change-of-variable factor must be included in the integrand.
-    \item Add $\omega_i F_i(E, t)$ to the bin corresponding to $E = gE_\text{line}$, and $t$. If either $\Delta E$ or $\Delta t$ straddles an output bin, the flux must be weighted appropriately and divided into those bins. 
+    \item Add $\omega_i F_i(E, t)$ to the bin corresponding to $E = gE_\text{line}$, and $t(g^\ast)$ for each branch. If either $\Delta E$ or $\Delta t$ straddles an output bin, the flux must be weighted appropriately and divided into those bins.
 \end{enumerate}
 
 By formulating the integration with the time component, we can use the same transfer function table to compute both line-profiles and reverberation lags efficiently, with arbitrary intensity functions $I_\text{em}$. We note that extensions to $I_\text{em}$ that require, for example, the photon emission angle on the disc, are trivial to include.
+
+These transfer function integration methods may be checked for consistency against slower but simpler direct binning of the image plane via Eq. \eqref{eq:infinitesimal-flux} and Eq. \eqref{eq:liouville-theorem}.
 
