@@ -143,6 +143,15 @@ Figure \ref{fig:deflection-angle} shows the deflection angle as a function of im
 
 \subsection{Emissivity curves}
 
+We calculate a number of emissivity profiles that have been published in the literature as a test of the numerical methods in Section \ref{sec:emissivity-profiles}. In Figure \ref{fig:emissivity-profiles} are shown the emissivity profiles for the lamp post corona at different heights, including the time difference due to the Shapiro delay. Our results are consistent with other authors \citep{wilkins_understanding_2012,dauser_irradiation_2013}.
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.99\linewidth]{figures/emissivity.point-source.pdf}
+	\caption{\todo{caption}}
+	\label{fig:emissivity-profiles}
+\end{figure}
+
 \todo{Wilkins and Fabian with lamp post and moving corona, gonzalez 2017}
 
 \subsection{Line profiles}
@@ -156,7 +165,7 @@ Transfer functions are integrated as described in Section \ref{sec:transfer-func
 	\label{fig:relline-comparison}
 \end{figure}
 
-Our code permits a consistency check by binning geodesics on the image plane, with the appropriate weighting. This method may also be used to compute line profiles for accretion geometry that does not lend itself to the transfer function parameterization. In Figure \ref{fig:line-profile-ssd}, we compute a number of line profiles for the SSD, using both the binning and transfer integration approach.
+Our code permits a consistency check by binning geodesics on the image plane, with the appropriate weighting. This method may also be used to compute line profiles for accretion geometry that does not lend itself to the transfer function parameterization. In Figure \ref{fig:line-profile-ssd}, we compute a number of line profiles for the SSD, using both the binning and transfer integration approach. \todo{finish this section}
 
 \begin{figure}
 	\centering
@@ -171,7 +180,7 @@ Our code permits a consistency check by binning geodesics on the image plane, wi
 
 \citep{reynolds_x-ray_1999,wilkins_origin_2013,cackett_modelling_2014}
 
-Ingram's code? Jiachen's code
+\todo{Ingram's code? Jiachen's code}
 
 \begin{figure}
 	\centering
@@ -201,6 +210,10 @@ Ingram's code? Jiachen's code
 
 \todo{working on spectral and timing models (Baker et al. in prep) for use in XSPEC and beyond}
 
+\todo{working on propagating gradient information from models into spectral fitting pipelines}
+
+\todo{including radiative transfer information in the transfer functions}
+
 \section{Conclusions}
 
 We encourage the community to contact us with interesting problems that may be tackled using \Gradus as we are happy to assist with new applications of the code.
@@ -212,7 +225,7 @@ We encourage the community to contact us with interesting problems that may be t
 \section*{Acknowledgements}
 This work is supported by the UKRI AIMLAC CDT funded by grant EP/S023992/1.
 
-We thank Jiachen Jiang, Cosimo Bambi and Askar Abdikamalov for sharing their software for comparisons. FB thanks Rosie for her expert debugging assistance, and Shaun for invaluable software discussions. All figures created using Makie.jl \citep{DanischKrumbiegel2021}.
+We thank Jiachen Jiang, Cosimo Bambi and Askar Abdikamalov for sharing their software for comparisons. FB thanks Rosie for her expert debugging assistance, and Shaun for invaluable software discussions. All figures created using Makie.jl \citep{DanischKrumbiegel2021}, using the color scheme of \cite{wong_points_2011}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Data Availability}

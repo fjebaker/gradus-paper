@@ -82,6 +82,7 @@ Along with the invariance of four-momenta (c.f. Eq. \eqref{eq:velocity_constrain
 
 For emitters, one determines these momenta from an initial velocity tangent vector pointing along a direction on the local sky, parameterized by local angles $(\Upsilon, \Psi)$, as in Figure \ref{fig:observer-coordinates}. Using simple geometry and projecting the local angles onto a Cartesian coordinate system gives momenta
 \begin{equation}
+    \label{eq:local-angle-to-velocity}
     \frac{v_{(i)}}{v_{(t)}} = \frac{1}{v_{(t)}}
     \left[\pderiv{(x, y, z)}{(r, \theta, \phi)}\right]
     \left(
@@ -96,6 +97,7 @@ where the partial derivative term denotes the cartesian to spherical coordinate 
 
 For both observers and emitters, we must identify a local frame, where the natural choice is the locally non-rotating frame (LNRF) \citep{bardeen_rotating_1972} \todo{check citation + explain significance}. The transformation from local to global coordinates is
 \begin{equation}
+    \label{eq:local-to-global-velocity}
     v_\mu = \e^{(\nu)}_{\phantom{(\nu)}\mu}\  v_{(\nu)}
 \end{equation}
 where the basis vectors $\e^{(\nu)}_{\phantom{(\nu)}\mu}$ (or tetrad) are found using the theorem of Gram-Schmidt (\citealp{schmidt_uber_1989}, Appendix \ref{appendix:gram-schmidt}). The formalism may be extended for an observer or emitter in motion, where their velocity modifies the mapping by a local Lorenz transformation, $\Lambda^{(\kappa)}_{\phantom{(\kappa)}(\nu)}$, as 
@@ -161,6 +163,7 @@ Chart intersection is found using either an interpolating root-solver with \text
 
 
 \subsection{Computing observables}
+\label{sec:computing-observables}
 
 We consider \textit{observables} to be any physical quantity calculated from a simulation that is evaluated using some or all of the points along a geodesic. Often only the start and end point of a geodesic are required to calculate some physical quantity, and under such circumstances it is computational beneficial to avoid allocating space for the full solutions.
 
@@ -173,54 +176,37 @@ where $v_\mu$ are the photon momenta, and $u^\mu$ the velocity of the emitting (
 
 Observables that require multiple points along the geodesic to be determined may either be calculated coincidentally with the geodesic equation, or subsequently re-traced along the ray. Such quantities include polarization / parallel transport or radiative transfer / optical depth. Calculating the quantities simultaneously has the benefit that the error tolerance in the step size estimation of the integrator is sensitive to changes in the observable. The benefit of the latter is that for a given set of metric parameters and observer inclination, the geodesics trajectories are unchanged, allowing the observable to be more efficiently recalculated with new parameters.
 
-\subsection{Covariant radiative transfer}
-
-The intensity of a given geodesic is an observable that can be either calculated coincident with the geodesic trajectory, or retraced once the trajectory is determined.
-
-The covariant formulation of the radiative transfer equation calculates the emissions and extinction in aframe co-moving with the geodesic \citep{fuerst_radiation_2004,younsi_general_2012}. The generalized form of the differential equation with respect to the affine parameter $\lambda$ is
-\begin{equation}
-    \label{eq:covariant-radiative-transfer}
-    \frac{\d \mathcal{I}}{\d \lambda} = \left. \frac{\d s}{\d \lambda} \right\rvert_\lambda \left( -\alpha_\nu \mathcal{I} + \frac{j_\nu}{\nu^3} \right),
-\end{equation}
-where $\mathcal{I}$ is the invariant intensity, $s$ is the proper length traversed by the geodesic, and $\alpha_\nu$ and $j_\nu$ are the frequency $\nu$ dependent absorption and emissivity coefficients respectively, as measured in the local frame. The frequency $\nu$ is related to the observed frequency via the redshift
-\begin{equation}
-    g = \frac{\nu_\text{obs}}{\nu},
-\end{equation}
-In general, both coefficients $\alpha_nu$ and $j_\nu$ are also functions of the position $x^\mu$. 
-
-The $\d s / \d \lambda$ derivative term is calculated by projecting the geodesic momentum $v_\mu$ onto the velocity $u^\mu$ of the medium, using the projection tensor
-\begin{equation}
-    \mathrm{P}^{\mu\nu} := g^{\mu\nu} + u^\mu u^\nu.
-\end{equation}
-The path length derivative is 
-\begin{align}
-    \left. \frac{\d s}{\d \lambda} \right\rvert_\lambda
-    &= - \left. \left\lVert \mathrm{P}^{\mu\nu} v_\mu\right\rVert\, \right\rvert_\lambda,\\
-    &= - \left. \sqrt{v_\mu v^\mu + \left(v_\mu u^\mu\right)^2 \left(2 + u^\mu u_\mu\right)} \, \right\rvert_\lambda,
-\end{align}
-such that for the particular case of null geodesics through a time-like medium
-\begin{equation}
-    \left. \frac{\d s}{\d \lambda} \right\rvert_\lambda = - \left. v_\mu u^\mu \right\rvert_\lambda.
-\end{equation}
-
-The covariant intensity $\mathcal{I}$ is related to the observed intensity $I_\nu = \mathcal{I} \nu^3$, derived using Liouville's theorem \citep{todo}. The intensity is therefore calculated by selecting $\nu_\text{obs} = E$ at the observer, and integrating \eqref{eq:covariant-radiative-transfer} along a given geodesic. 
-
 
 \subsection{Emissivity profiles}
+\label{sec:emissivity-profiles}
 
-\todo{equation that relates ionizing flux to intensity}
-
-The emissivity of a disc is defined as the flux emitted from the disc, such that the emissivity profile is the flux as a function of the disc coordinates \citep{wilkins_understanding_2012}. For reflection, the flux emitted is proportional to the flux received from the illuminating corona \citep{laor_line_1991}. As axis-symmetry of the accretion disc emissivity profile is usually manifest, the emissivity profile is a function of the radial coordinate on the accretion disc and given by
+The emissivity profile is the illumination pattern on an accretion disc, with the emissivity $\varepsilon$ being proportional to the illuminating flux absorbed per unit area \citep{laor_line_1991,wilkins_understanding_2012}. The source of illumination is thought to be a luminous corona with a given emission spectrum and morphology. The corona is often assumed to be a point source on the spin axis of the black hole, and that the illuminating flux on the disc is therefore axis symmetric \citep{fukumura_accretion_2007}, though extended sources are possible \citep{gonzalez_probing_2017}. \todo{there must be another reference here?} For these point sources, the emissivity profile is a function of the radial coordinate on the disc. The flux is approximated as the number of geodesics striking an annulus of the disc, along with some intensity function representing the emission spectrum of the corona, such that 
 \begin{equation}
-    \varepsilon (r, \d r) = \frac{\mathcal{N}(r, \d r)}{\gamma A(r, \d r)} I(g),
+    \varepsilon (r, \d r) = \frac{\mathcal{N}(r, \d r)}{\gamma \tilde{A}(r, \d r)} I(g),
 \end{equation}
-where $\mathcal{N}$ is the photon count in an annulus $r + \d r$, $I$ is the intensity of the illuminating flux as a function of redshift $g$, $A$ is the relativistically corrected (proper) area of the annulus, and $\gamma$ is the Lorentz factor account for contraction of the annulus due to the velocity of the disc.
+where $\mathcal{N}$ is the geodesic count in an annulus $r + \d r$, $I$ is the intensity of the illuminating flux as a function of redshift $g$, $\tilde{A}$ is the relativistically corrected (proper) area of the annulus due to spacetime curvature, and $\gamma$ is the Lorentz factor that accounts for area contraction of the annulus due to the velocity of the disc. The orbital profile of the disc is assumed to follow Keplerian circular orbits in the equatorial plane.
+
+The corrections are calculated as follows: for an infinitesimal area $\d A = \d r \d\phi$, the \textit{proper area} is calculated directly from the metric,
+\begin{equation}
+    \d\tilde{A} = \sqrt{g_{rr} g_{\phi\phi}}\, \d r\, \d \phi,
+\end{equation}
+which is the area as measured by a stationary observer in the disc, whereas the relativistic Lorentz factor is calculated as
+\begin{equation}
+    \gamma = \frac{1}{\sqrt{1 - \left(v^{(i)}\right)^2}},
+\end{equation}
+where $v^{(i)}$ are the spatial components of the angular velocity in the LNRF. These components are calculated with the tetrad basis as
+\begin{equation}
+    v^{(i)} = \frac{\utensor{\e}{(i)}{\mu}\, v^\mu}{\utensor{\e}{(t)}{\sigma}\, v^\sigma},
+\end{equation}
+where the special case of circular orbits only has $v^{(\phi)}$ non-zero.
 
 The intensity function for the illuminating corona is usually assumed to be a powerlaw $I(g) = g^{-\Gamma}$ with varying photon index $\Gamma$ \citep{gonzalez_probing_2017}.
 
-An alternative method for calculating the flux from point sources is detailed in \cite{dauser_irradiation_2013}, where the axis-symmetry is further exploited. This method determines the radii of the annuli by tracing photons that are emitted at equally spaced angles $\Delta \theta$ in the source frame, and using the radial coordinate of geodesics where they intersect the disc $\Delta r$ as a proxy for the reciprocal number density. Since in three spatial dimensions, the poloidal coordinate must be distributed as a $\sin \theta$ distribution for isotropic emission, $\varepsilon$ is weighted similarly\footnote{Instead of equally spaced $\theta$, one may instead sample $\theta \sim \cos (1 - 2 \mathcal{U})$, where $\mathcal{U}$ is a uniform distribution $\mathcal{U}(0,1)$. In this case, there is no $\sin \theta$ weight in $\varepsilon$. This result may be shown using the inverse-CDF or Smirnov transform method.}
+The emission from the corona is assumed to be locally isotropic in the rest frame of the corona. This is numerically determined by sampling $(\Upsilon, \Phi)$ evenly on a sphere, and transforming via \eqref{eq:local-angle-to-velocity} and \eqref{eq:local-to-global-velocity} to find the initial velocity of the geodesic. Those geodesics that intersect with the disc are then used to calculate the emissivity.
+
+An alternative method for calculating the flux from point sources is detailed in \cite{dauser_irradiation_2013}, where the axis-symmetry is further exploited. This method determines the radii of the annuli by tracing photons that are emitted at equally spaced angles $\Delta \Upsilon$ in the source frame, and using the radial coordinate of geodesics where they intersect the disc $\Delta r$ as a proxy for the reciprocal number density. Since in three spatial dimensions, the poloidal coordinate must be distributed as a $\sin \Upsilon$ distribution for isotropic emission, $\varepsilon$ is weighted similarly\footnote{Instead of equally spaced $\Upsilon$, one may instead sample $\Upsilon \sim \cos (1 - 2 \mathcal{U})$, where $\mathcal{U}$ is a uniform distribution $\mathcal{U}(0,1)$. In this case, there is no $\sin \Upsilon$ weight in $\varepsilon$. This result may be shown using the inverse-CDF or Smirnov transform method.}
 \begin{equation}
-    \varepsilon(r, \Delta r) = \frac{\sin \theta}{\gamma A(r, \Delta r)} I(g).
+    \varepsilon(r, \Delta r) = \frac{\sin \Upsilon}{\gamma \tilde{A}(r, \Delta r)} I(g).
 \end{equation}
 The differences between these two methods is shown in Figure \ref{fig:coronal-tracing}. It should be noted that the latter method converges faster than the (Monte-Carlo) sampling of $\mathcal{N}$, and captures the behaviour at small $r$ close to the ISCO faithfully. However, since this method is specialized for point sources, extended corona require an approximate rebinning algorithm to reconstruct the emissivity profile taking into account the overlap between the annuli determined from different source points.
 
@@ -231,9 +217,17 @@ The differences between these two methods is shown in Figure \ref{fig:coronal-tr
     \label{fig:coronal-tracing}
 \end{figure}
 
-When axis-symmetry does not apply, we have developed a method for calculating the emissivity field as a function of $(r, \phi)$ on the disc. Here the point of intersection on the disc become the generators of a Delauney tesselation, such that the Voronoi (proper) area may be used as a proxy for $\mathcal{N} / A$ (see Appendix \ref{appendix:voronoi}) in the limit of high sample count.
+When axis-symmetry does not apply, we have developed a method for calculating the emissivity field as a function of $(r, \phi)$ on the disc. Here the points of intersection on the disc become the generators of a Delauney tesselation, such that the (relativistically corrected) Voronoi area may be used as a proxy for $\mathcal{N} /\tilde{A}$ (see Appendix \ref{appendix:voronoi}) in the limit of high sample count.
 
 \subsection{Transfer functions}
+\label{sec:transfer-functions}
+
+\begin{figure*}
+    \centering
+    \includegraphics[width=0.95\linewidth]{figures/transfer-function.parameterization.pdf}
+    \caption{Concentric rings of radius $r_\text{em}$ and contours of constant dimensionless redshift $g^\ast$ on disc in the equatorial plane, projected on the image plane of a distant observer at $\theta_\text{obs} = 75^\circ$. The central singularity is described by the Kerr metric with $a = 0.998$. The innermost thick black line is the projection of the ISCO. Note the contours of $g^\ast$ are double valued for any given $r_\text{em}$. Panel a) geometrically thin disc. Panel b) SSD with $\dot{M} / \dot{M}_\text{Edd} = 0.3$, with obscuration of some of the inner radii. The edge of the ISCO is here only partially visible.}
+    \label{fig:transfer-parameterisation}
+\end{figure*}
 
 A particular observable that is frequently calculated with GRRT is the flux coming from a particular model of an accreting black hole. The infinitesimal flux is
 \begin{equation}
@@ -249,13 +243,6 @@ Using Liouville's theorem -- that the number density of photons in phase space i
 \end{equation}
 \todo{is this $t_\text{em}$ or just $t$??}
 Integrating over $\d \Omega$ is equivalent to integrating over the image plane $\d \alpha \d \beta$, which in practical terms is binning the geodesic in each pixel by $E$ and $t$. In this formulation, for any change in $I_\text{em}$, the geodesic calculation would have to be recomputed, or a large table of values related to each geodesic stored, to finite precision. The sampling over the image plane similarly plays an important role, especially in increasing efficiency, since most of the variation in $I_\text{em}$ is sourced close to the ISCO, which can be under-resolved on coarse image planes. This may lead to oversampling regions of low or zero variation further out on the disc.
-
-\begin{figure*}
-    \centering
-    \includegraphics[width=0.95\linewidth]{figures/transfer-function.parameterization.pdf}
-    \caption{Concentric rings of radius $r_\text{em}$ and contours of constant dimensionless redshift $g^\ast$ on disc in the equatorial plane, projected on the image plane of a distant observer at $\theta_\text{obs} = 75^\circ$. The central singularity is described by the Kerr metric with $a = 0.998$. The innermost thick black line is the projection of the ISCO. Note the contours of $g^\ast$ are double valued for any given $r_\text{em}$. Panel a) geometrically thin disc. Panel b) SSD with $\dot{M} / \dot{M}_\text{Edd} = 0.3$, with obscuration of some of the inner radii. The edge of the ISCO is here only partially visible.}
-    \label{fig:transfer-parameterisation}
-\end{figure*}
 
 To elide this problems, and to be able to succinctly cache geodesic computation, the relativistic effects are often encoded in so-called \emph{transfer functions}, first introduced in \cite{cunningham_effects_1975},
 \begin{equation}
@@ -298,7 +285,7 @@ For partially obscured emission radii, the benefits of using AD for calculating 
 \begin{figure*}
     \centering
     \includegraphics[width=0.99\linewidth]{figures/transfer-functions.plots.pdf}
-    \caption{Transfer functions of a fixed $r_\text{em}$ for different observer inclinations $\theta_\text{obs}$ and $r_\text{obs} = 10^3 \rg$. Panel a) Kerr spacetime with $a=0.998$ and $r_\text{em} = 4$ (see also \citealp{bambi_testing_2017}, their Figure 1). Panel b) Schwarzschild spacetime with $r_\text{em} = 11$.\todo{update caption}}
+    \caption{Transfer functions $f$ and timing $t$ for fixed $r_\text{em}$ for different observer inclinations $\theta_\text{obs}$ and $r_\text{obs} = 10^3 \rg$. Panels a) and b) Schwarzschild spacetime with equatorial thin disc and $r_\text{em} = 11\, \rg$. Panels c) and d) Maximally spinning Kerr spacetime $a=0.998$ with equatorial thin disc and $r_\text{em} = 4 \, \rg$ (see also \citealp{bambi_testing_2017}, their Figure 1). Panel e) and f) Maximally spinning Kerr spacetime $a=0.998$, with SSD $\dot{M} / \dot{M}_\text{Edd} = 0.3$ and $r_\text{em} = 4\, \rg$, showing obscuration at steep inclination.}
     \label{fig:transfer-functions}
 \end{figure*}
 
@@ -345,3 +332,34 @@ By formulating the integration with the time component, we can use the same tran
 
 These transfer function integration methods may be checked for consistency against slower but simpler direct binning of the image plane via Eq. \eqref{eq:infinitesimal-flux} and Eq. \eqref{eq:liouville-theorem}.
 
+\subsection{Covariant radiative transfer}
+
+The intensity of a given geodesic is an observable that can be either calculated coincident with the geodesic trajectory, or retraced once the trajectory is determined.
+
+The covariant formulation of the radiative transfer equation calculates the emissions and extinction in aframe co-moving with the geodesic \citep{fuerst_radiation_2004,younsi_general_2012}. The generalized form of the differential equation with respect to the affine parameter $\lambda$ is
+\begin{equation}
+    \label{eq:covariant-radiative-transfer}
+    \frac{\d \mathcal{I}}{\d \lambda} = \left. \frac{\d s}{\d \lambda} \right\rvert_\lambda \left( -\alpha_\nu \mathcal{I} + \frac{j_\nu}{\nu^3} \right),
+\end{equation}
+where $\mathcal{I}$ is the invariant intensity, $s$ is the proper length traversed by the geodesic, and $\alpha_\nu$ and $j_\nu$ are the frequency $\nu$ dependent absorption and emissivity coefficients respectively, as measured in the local frame. The frequency $\nu$ is related to the observed frequency via the redshift
+\begin{equation}
+    g = \frac{\nu_\text{obs}}{\nu},
+\end{equation}
+In general, both coefficients $\alpha_nu$ and $j_\nu$ are also functions of the position $x^\mu$. 
+
+The $\d s / \d \lambda$ derivative term is calculated by projecting the geodesic momentum $v_\mu$ onto the velocity $u^\mu$ of the medium, using the projection tensor
+\begin{equation}
+    \mathrm{P}^{\mu\nu} := g^{\mu\nu} + u^\mu u^\nu.
+\end{equation}
+The path length derivative is 
+\begin{align}
+    \left. \frac{\d s}{\d \lambda} \right\rvert_\lambda
+    &= - \left. \left\lVert \mathrm{P}^{\mu\nu} v_\mu\right\rVert\, \right\rvert_\lambda,\\
+    &= - \left. \sqrt{v_\mu v^\mu + \left(v_\mu u^\mu\right)^2 \left(2 + u^\mu u_\mu\right)} \, \right\rvert_\lambda,
+\end{align}
+such that for the particular case of null geodesics through a time-like medium
+\begin{equation}
+    \left. \frac{\d s}{\d \lambda} \right\rvert_\lambda = - \left. v_\mu u^\mu \right\rvert_\lambda.
+\end{equation}
+
+The covariant intensity $\mathcal{I}$ is related to the observed intensity $I_\nu = \mathcal{I} \nu^3$, derived using Liouville's theorem \citep{todo}. The intensity is therefore calculated by selecting $\nu_\text{obs} = E$ at the observer, and integrating \eqref{eq:covariant-radiative-transfer} along a given geodesic. 
