@@ -62,7 +62,7 @@ function Gradus.fluid_absorption_emission(::AbstractMetric, d::AnalyticDiscTest,
     # i really don't know what to set for these
     # "physical values" so i am just setting C to make sure the 
     # flux is approximately correct
-    C = 0.6595290281485077e-5
+    C = 6.6025e-6
     n₀ = 1
     νp = 1
     cosθ = cos(x[3])
@@ -92,7 +92,7 @@ end
 
 M = 1.0
 m = KerrMetric(M, 0.9)
-x = SVector(0.0, 10_000.0, deg2rad(60), 0.0)
+x = SVector(0.0, 1000.0, deg2rad(60), 0.0)
 
 test1 = AnalyticDiscTest(A = 0.0, α = -3.0, h = 0.0, l₀ = 0.0)
 test2 = AnalyticDiscTest(A = 0.0, α = -2.0, h = 0.0, l₀ = 1.0)
