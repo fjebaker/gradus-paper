@@ -3,13 +3,20 @@ using Gradus
 
 include("common.jl")
 
+
+function plot_reduced!(ax, x, y; kwargs...)
+    N = trunc(Int, length(x) / 1000)
+    I = 1:N:lastindex(x)
+    lines!(ax, x[I], y[I]; kwargs...)
+end
+
 function plot_exponent!(ax, x, y; kwargs...)
     dydx = diff(y) ./ diff(x)
     x = x[2:end]
     y = y[2:end]
     em_index = @. dydx * x / y
 
-    lines!(ax, x[1:end-1], -em_index[1:end-1]; kwargs...)
+    plot_reduced!(ax, x[1:end-1], -em_index[1:end-1]; kwargs...)
 end
 
 function calculate_emissivity(m, disc, model; kwargs...)
@@ -17,8 +24,9 @@ function calculate_emissivity(m, disc, model; kwargs...)
         m,
         disc,
         model;
-        n_samples = 20_000,
+        n_samples = 70_000,
         chart = Gradus.chart_for_metric(m, closest_approach = 1.01),
+        kwargs...
     )
     isco = Gradus.isco(m)
     I = @. prof.radii >= isco
@@ -34,16 +42,16 @@ end
 m = KerrMetric(1.0, 0.998)
 d = GeometricThinDisc(0.0, 1000.0, π / 2)
 
-model1 = LampPostModel(h = 5.0)
+model1 = LampPostModel(h = 2.0)
 X1, Y1, T1 = @time calculate_emissivity(m, d, model1)
 
-model2 = LampPostModel(h = 10.0)
+model2 = LampPostModel(h = 3.0)
 X2, Y2, T2 = @time calculate_emissivity(m, d, model2)
 
-model3 = LampPostModel(h = 20.0)
+model3 = LampPostModel(h = 10.0)
 X3, Y3, T3 = @time calculate_emissivity(m, d, model3)
 
-model4 = LampPostModel(h = 50.0)
+model4 = LampPostModel(h = 30.0)
 X4, Y4, T4 = @time calculate_emissivity(m, d, model4)
 
 begin
@@ -63,7 +71,7 @@ begin
             value == 1 ? "1" : rich("10", superscript("$(trunc(Int,log10(value)))")) for
             value in values
         ],
-        yminorticks = IntervalsBetween(9),
+        yminorticks = [1e-4, 1e-2, 1e-1, 1e1, 1e2, 1e4],
         ylabel = L"\varepsilon \,\, \text{arb.}",
     )
     ax2 = Axis(
@@ -87,6 +95,9 @@ begin
         xminorgridvisible = true,
         xtickformat = values -> ["$(trunc(Int, v))" for v in values],
         xticks = [1, 10, 100],
+        yticks = [0, 2, 4, 6],
+        yminorticks = [1, 3, 5],
+        yminorgridvisible = true,
         ytickformat = values -> ["    $(trunc(Int, v))" for v in values],
         ylabel = L"\alpha",
     )
@@ -106,10 +117,10 @@ begin
     c3 = popfirst!(palette)
     c4 = popfirst!(palette)
 
-    l1 = lines!(ax1, X1, Y1, color = c1)
-    l2 = lines!(ax1, X2, Y2, color = c2)
-    l3 = lines!(ax1, X3, Y3, color = c3)
-    l4 = lines!(ax1, X4, Y4, color = c4)
+    l1 = plot_reduced!(ax1, X1, Y1, color = c1)
+    l2 = plot_reduced!(ax1, X2, Y2, color = c2)
+    l3 = plot_reduced!(ax1, X3, Y3, color = c3)
+    l4 = plot_reduced!(ax1, X4, Y4, color = c4)
 
     # hlines!(ax_exponent, [3.0], color = :black, linewidth = 1.0, linestyle = :dash)
     plot_exponent!(ax_exponent, X1, Y1, color = c1)
@@ -126,10 +137,10 @@ begin
         padding = (0, 0, 0, 0),
     )
 
-    lines!(ax2, X1, T1)
-    lines!(ax2, X2, T2)
-    lines!(ax2, X3, T3)
-    lines!(ax2, X4, T4)
+    plot_reduced!(ax2, X1, T1)
+    plot_reduced!(ax2, X2, T2)
+    plot_reduced!(ax2, X3, T3)
+    plot_reduced!(ax2, X4, T4)
 
     hidexdecorations!(ax1, grid = false, minorgrid = false)
     rowgap!(ga, 10)
@@ -139,9 +150,9 @@ begin
     xlims!(ax_exponent, nothing, 300)
     ylims!(ax2, nothing, 400)
     ylims!(ax2, nothing, 400)
-    ylims!(ax1, 5e-5, nothing)
+    ylims!(ax1, 1e-5, nothing)
 
-    ylims!(ax_exponent, -0.2, 4.2)
+    ylims!(ax_exponent, -0.2, 6.2)
 
     Label(
         ga[2, 1, Right()],
