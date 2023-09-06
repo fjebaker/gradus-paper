@@ -59,7 +59,7 @@ begin
 
     ga = fig[1, 1] = GridLayout()
     ax1 = Axis(
-        ga[2, 1],
+        ga[1, 1],
         xscale = log10,
         yscale = log10,
         xminorgridvisible = true,
@@ -95,8 +95,8 @@ begin
         xminorgridvisible = true,
         xtickformat = values -> ["$(trunc(Int, v))" for v in values],
         xticks = [1, 10, 100],
-        yticks = [0, 2, 4, 6],
-        yminorticks = [1, 3, 5],
+        yminorticks = [0, 2, 4, 6],
+        yticks = [1, 3, 5],
         yminorgridvisible = true,
         ytickformat = values -> ["    $(trunc(Int, v))" for v in values],
         ylabel = L"\alpha",
@@ -129,7 +129,7 @@ begin
     plot_exponent!(ax_exponent, X4, Y4, color = c4)
 
     Legend(
-        ga[1, 1],
+        ga[2, 1],
         [l1, l2, l3, l4],
         map(_height, [model1, model2, model3, model4]),
         orientation = :horizontal,
@@ -145,7 +145,7 @@ begin
     hidexdecorations!(ax1, grid = false, minorgrid = false)
     rowgap!(ga, 10)
 
-    rowsize!(ga, 2, Auto(1.3))
+    rowsize!(ga, 1, Auto(1.3))
 
     xlims!(ax_exponent, nothing, 300)
     ylims!(ax2, nothing, 400)

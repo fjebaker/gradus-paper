@@ -142,7 +142,7 @@ function calculate_redshift_data(m, x, d, r; kwargs...)
         fill(x, size(vs)),
         vs,
         d isa AbstractThickAccretionDisc ?
-        Gradus.PlaneDisc(Gradus.cross_section(d, SVector(0.0, r, π / 2, 0.0))) : d,
+        Gradus.DatumPlane(Gradus.cross_section(d, SVector(0.0, r, π / 2, 0.0))) : d,
         x[2] * 2,
         ensemble = Gradus.EnsembleEndpointThreads(),
         save_on = false,
