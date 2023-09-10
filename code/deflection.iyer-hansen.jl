@@ -121,6 +121,6 @@ begin
     xlims!(ax2, -20, 20)
 
     resize_to_layout!(fig)
+    @savefigure(fig)
     fig
-    # @savefigure(fig)
 end

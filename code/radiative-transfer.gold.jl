@@ -81,7 +81,8 @@ function do_trace(m, x, disc)
         disc,
         2x[2],
         verbose = true,
-        fov = 4.0,
+        αlims = (-15, 15),
+        βlims = (-15, 15),
         image_width = 128,
         image_height = 128,
         trace = Gradus.TraceRadiativeTransfer(I₀ = 0.0),
@@ -170,6 +171,6 @@ begin
     colgap!(ga, 8)
 
     resize_to_layout!(fig)
-    fig
     @savefigure(fig)
+    fig
 end

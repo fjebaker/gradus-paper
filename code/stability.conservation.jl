@@ -63,8 +63,8 @@ begin
         aspect = DataAspect(),
         xticks = LinearTicks(4),
         yticks = LinearTicks(4),
-        xlabel = L"x\, [\rg]",
-        ylabel = L"y\, [\rg]",
+        xlabel = L"x\, [r_\text{g}]",
+        ylabel = L"y\, [r_\text{g}]",
     )
     ylims!(ax1, -5, 2)
     xlims!(ax1, -2, 13)
@@ -94,7 +94,7 @@ begin
         yscale = log10,
         xscale = log10,
         ylabel = L"\text{abs} \left(\, g_{\mu\nu} v^\mu v^\nu  \,  \right)",
-        xlabel = L"r\, [\rg]",
+        xlabel = L"r\, [r_\text{g}]",
         xtickformat = values -> ["$(trunc(Int, v))" for v in values],
     )
 
@@ -121,6 +121,6 @@ begin
     text!(ax2, (6000, 4e-5), text = "c", font = :bold, fontsize = 20)
 
     resize_to_layout!(fig)
-    fig
     @savefigure(fig)
+    fig
 end

@@ -5,13 +5,13 @@ include("common.jl")
 
 function calculate_lineprofile(m, x, d; β₀ = 2.0, with_bins = true)
     gs = collect(range(0.05, 1.4, 300))
-    plane = PolarPlane(GeometricGrid(); Nr = 1000, Nθ = 1300, r_max = 10 * 50.0)
+    plane = PolarPlane(GeometricGrid(); Nr = 1000, Nθ = 1000, r_max = 2 * 50.0)
     _, y1 = if with_bins
         @time lineprofile(
             m,
             x,
             d,
-            algorithm = BinnedLineProfile(),
+            method = BinningMethod(),
             maxrₑ = 50.0,
             plane = plane,
             bins = gs,
@@ -24,7 +24,7 @@ function calculate_lineprofile(m, x, d; β₀ = 2.0, with_bins = true)
         m,
         x,
         d,
-        algorithm = CunninghamLineProfile(),
+        method = TransferFunctionMethod(),
         β₀ = β₀,
         maxrₑ = 50.0,
         numrₑ = 120,
@@ -47,38 +47,38 @@ s = KerrMetric(1.0, 0.0)
 @info "1"
 x1 = SVector(0.0, 1000.0, deg2rad(70), 0.0)
 thick_bin_1, thick_xfm_1 =
-    calculate_lineprofile(m, x1, ShakuraSunyaev(m; eddington_ratio = 0.3))
+    calculate_lineprofile(m, x1, ShakuraSunyaev(m; eddington_ratio = 0.3), with_bins = false)
 _, thin_xfm_1 =
-    calculate_lineprofile(m, x1, GeometricThinDisc(0.0, 100000.0, π / 2), with_bins = false)
+    calculate_lineprofile(m, x1, ThinDisc(0.0, 100000.0), with_bins = false)
 
 s_thick_bin_1, s_thick_xfm_1 =
-    calculate_lineprofile(s, x1, ShakuraSunyaev(m; eddington_ratio = 0.3))
+    calculate_lineprofile(s, x1, ShakuraSunyaev(m; eddington_ratio = 0.3), with_bins = false)
 _, s_thin_xfm_1 =
-    calculate_lineprofile(s, x1, GeometricThinDisc(0.0, 100000.0, π / 2), with_bins = false)
+    calculate_lineprofile(s, x1, ThinDisc(0.0, 100000.0), with_bins = false)
 
 @info "2"
-x2 = SVector(0.0, 1000.0, deg2rad(40), 0.0)
+x2 = SVector(0.0, 1000.0, deg2rad(45), 0.0)
 thick_bin_2, thick_xfm_2 =
-    calculate_lineprofile(m, x2, ShakuraSunyaev(m; eddington_ratio = 0.3))
+    calculate_lineprofile(m, x2, ShakuraSunyaev(m; eddington_ratio = 0.3), with_bins = false)
 _, thin_xfm_2 =
-    calculate_lineprofile(m, x2, GeometricThinDisc(0.0, 100000.0, π / 2), with_bins = false)
+    calculate_lineprofile(m, x2, ThinDisc(0.0, 100000.0), with_bins = false)
 
 s_thick_bin_2, s_thick_xfm_2 =
-    calculate_lineprofile(s, x2, ShakuraSunyaev(m; eddington_ratio = 0.3))
+    calculate_lineprofile(s, x2, ShakuraSunyaev(m; eddington_ratio = 0.3), with_bins = false)
 _, s_thin_xfm_2 =
-    calculate_lineprofile(s, x2, GeometricThinDisc(0.0, 100000.0, π / 2), with_bins = false)
+    calculate_lineprofile(s, x2, ThinDisc(0.0, 100000.0), with_bins = false)
 
 @info "3"
 x3 = SVector(0.0, 1000.0, deg2rad(20), 0.0)
 thick_bin_3, thick_xfm_3 =
-    calculate_lineprofile(m, x3, ShakuraSunyaev(m; eddington_ratio = 0.3))
+    calculate_lineprofile(m, x3, ShakuraSunyaev(m; eddington_ratio = 0.3), with_bins = false)
 _, thin_xfm_3 =
-    calculate_lineprofile(m, x3, GeometricThinDisc(0.0, 100000.0, π / 2), with_bins = false)
+    calculate_lineprofile(m, x3, ThinDisc(0.0, 100000.0), with_bins = false)
 
 s_thick_bin_3, s_thick_xfm_3 =
-    calculate_lineprofile(s, x3, ShakuraSunyaev(m; eddington_ratio = 0.3))
+    calculate_lineprofile(s, x3, ShakuraSunyaev(m; eddington_ratio = 0.3), with_bins = false)
 _, s_thin_xfm_3 =
-    calculate_lineprofile(s, x3, GeometricThinDisc(0.0, 100000.0, π / 2), with_bins = false)
+    calculate_lineprofile(s, x3, ThinDisc(0.0, 100000.0), with_bins = false)
 
 begin
     palette = Iterators.Stateful(Iterators.Cycle(Makie.wong_colors()))
@@ -125,7 +125,7 @@ begin
     Legend(
         ga[1, 1:2],
         [l1, l2, l3],
-        [L"70^\circ", L"40^\circ", L"20^\circ"],
+        [L"70^\circ", L"45^\circ", L"20^\circ"],
         orientation = :horizontal,
         framevisible = false,
         padding = (0, 0, 0, 0),
@@ -136,6 +136,6 @@ begin
     linkyaxes!(ax1, ax2)
     xlims!(ax2, 0.4, maximum(s_thin_xfm_2[1]))
 
-    fig
     @savefigure(fig)
+    fig
 end

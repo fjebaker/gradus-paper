@@ -23,7 +23,7 @@ end
 ε(r) = r^(-3)
 
 function compute_lineprofiles(gs, m::KerrMetric, x)
-    d = GeometricThinDisc(0.0, 500.0, π / 2)
+    d = ThinDisc(0.0, 500.0)
     redshift = ConstPointFunctions.redshift(m, x)
     # maximal integration radius
     maxrₑ = 50.0
@@ -114,6 +114,6 @@ begin
     rowgap!(ga, 15)
 
     resize_to_layout!(fig)
-    fig
     @savefigure(fig)
+    fig
 end

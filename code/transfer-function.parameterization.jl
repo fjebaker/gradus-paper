@@ -142,7 +142,7 @@ function calculate_redshift_data(m, x, d, r; kwargs...)
         fill(x, size(vs)),
         vs,
         d isa AbstractThickAccretionDisc ?
-        Gradus.DatumPlane(Gradus.cross_section(d, SVector(0.0, r, π / 2, 0.0))) : d,
+        Gradus.DatumPlane(Gradus.cross_section(d, r)) : d,
         x[2] * 2,
         ensemble = Gradus.EnsembleEndpointThreads(),
         save_on = false,
@@ -238,7 +238,7 @@ end
 
 m = KerrMetric(1.0, 0.998)
 x = SVector(0.0, 10_000.0, deg2rad(75), 0.0)
-d = GeometricThinDisc(0.0, 1000.0, π / 2)
+d = ThinDisc(0.0, 1000.0)
 
 g✶s = [0.01, 0.05, 0.1, 0.2, 0.3, 0.4, 0.6, 0.8, 0.95]
 
@@ -287,6 +287,6 @@ begin
     text!(ax1, -13, 10, text = "a", fontsize = LARGE_FONT_SIZE, font = :bold)
     text!(ax2, -13, 10, text = "b", fontsize = LARGE_FONT_SIZE, font = :bold)
 
-    fig
     @savefigure(fig)
+    fig
 end

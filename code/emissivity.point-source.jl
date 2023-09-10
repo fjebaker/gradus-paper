@@ -26,7 +26,7 @@ function calculate_emissivity(m, disc, model; kwargs...)
         model;
         n_samples = 70_000,
         chart = Gradus.chart_for_metric(m, closest_approach = 1.01),
-        kwargs...
+        kwargs...,
     )
     isco = Gradus.isco(m)
     I = @. prof.radii >= isco
@@ -40,7 +40,7 @@ end
 
 
 m = KerrMetric(1.0, 0.998)
-d = GeometricThinDisc(0.0, 1000.0, π / 2)
+d = ThinDisc(0.0, 1000.0)
 
 model1 = LampPostModel(h = 2.0)
 X1, Y1, T1 = @time calculate_emissivity(m, d, model1)
@@ -176,6 +176,6 @@ begin
         font = :bold,
     )
 
-    fig
     @savefigure(fig)
+    fig
 end

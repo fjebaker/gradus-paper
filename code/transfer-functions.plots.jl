@@ -47,7 +47,7 @@ function plot_tf!(ax1, ax2, angle, X, Y, T; toff = 0.4, color = :black, K0 = 0)
 end
 
 m = KerrMetric(M = 1.0, a = 0.998)
-d = GeometricThinDisc(0.0, 100.0, π / 2)
+d = ThinDisc(0.0, 100.0)
 angles = [3, 35, 50, 65, 74, 85]
 
 data1 = @time calculate_transfer_functions(m, d, angles, 4.0)
@@ -149,6 +149,6 @@ begin
     ylims!(ax1, nothing, 0.319)
     ylims!(ax3b, nothing, 1021.0)
 
-    fig
     @savefigure(fig)
+    fig
 end

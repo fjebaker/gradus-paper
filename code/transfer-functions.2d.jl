@@ -12,7 +12,7 @@ function continuum_time(m, x, model)
 end
 
 function transfer_branches(m, x, d, radii)
-    d = GeometricThinDisc(0.0, d.outer_radius, π / 2)
+    d = ThinDisc(0.0, d.outer_radius)
     itb = @time Gradus.interpolated_transfer_branches(m, x, d, radii; verbose = true)
 end
 
@@ -41,7 +41,7 @@ end
 
 
 m = KerrMetric(M = 1.0, a = 0.998)
-d = GeometricThinDisc(Gradus.isco(m), 10000.0, π / 2)
+d = ThinDisc(Gradus.isco(m), 10000.0)
 model = LampPostModel(h = 10.0, θ = deg2rad(0.01))
 
 prof = @time emissivity_profile(m, d, model; n_samples = 1000)
@@ -84,6 +84,6 @@ begin
     rowgap!(ga, 10)
     linkxaxes!(ax2, ax1)
 
-    fig
     @savefigure(fig)
+    fig
 end

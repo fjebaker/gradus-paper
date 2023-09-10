@@ -17,13 +17,13 @@ end
 
 function plot_paths_xz!(ax, sols; N = 700, kwargs...)
     for sol in sols
-        x, y, z = Gradus._extract_path(sol, N)
+        x, y, z = Gradus._extract_path(sol, N, t_span = 1000.0)
         lines!(ax, x, z; kwargs...)
     end
 end
 
 m = KerrMetric(a = 0.998)
-d = GeometricThinDisc(Gradus.isco(m), 1000.0, π / 2)
+d = ThinDisc(Gradus.isco(m), 1000.0)
 
 model = LampPostModel(θ = 1e-6)
 sols = tracegeodesics(
@@ -31,7 +31,7 @@ sols = tracegeodesics(
     model,
     d,
     2000.0,
-    n_samples = 64,
+    n_samples = 70,
     sampler = EvenSampler(BothHemispheres(), GoldenSpiralGenerator()),
 )
 
@@ -55,7 +55,7 @@ begin
         ga[1, 1],
         aspect = DataAspect(),
         yticks = LinearTicks(3),
-        ylabel = L"z\, [\rg]",
+        ylabel = L"z\, [r_\text{g}]",
     )
     xlims!(ax, -10, 10)
     ylims!(ax, 0, 10)
@@ -67,8 +67,8 @@ begin
         ga[2, 1],
         aspect = DataAspect(),
         yticks = LinearTicks(3),
-        xlabel = L"x\,[\rg]",
-        ylabel = L"z\, [\rg]",
+        xlabel = L"x\,[r_\text{g}]",
+        ylabel = L"z\, [r_\text{g}]",
     )
     xlims!(ax2, -10, 10)
     ylims!(ax2, 0, 10)
@@ -99,6 +99,6 @@ begin
     Label(ga[1, 1, Right()], "a", padding = (10, 00, 170, 0), font = :bold, fontsize = 20)
     Label(ga[2, 1, Right()], "b", padding = (10, 00, 170, 0), font = :bold, fontsize = 20)
 
+    @savefigure(fig)
     fig
-    #@savefigure(fig)
 end

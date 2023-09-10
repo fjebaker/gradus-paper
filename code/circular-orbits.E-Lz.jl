@@ -99,6 +99,6 @@ begin
     colgap!(layout, 0)
 
     resize_to_layout!(fig)
-    fig
     @savefigure(fig)
+    fig
 end
