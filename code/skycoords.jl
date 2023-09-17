@@ -221,7 +221,7 @@ angle_between(a::SkyRay, b::SkyRay, l) = FiniteArc(a.θ, a.ϕ, b.θ, b.ϕ, l)
 
 begin
     # palette = Iterators.Stateful(Iterators.Cycle(ColorSchemes.tab10.colors))
-    palette = Iterators.Stateful(Iterators.Cycle(Makie.wong_colors()))
+    palette = _default_palette()
 
     dim = 15
     fig = Figure(resolution = (650, 450))

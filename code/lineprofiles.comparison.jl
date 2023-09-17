@@ -80,7 +80,7 @@ function plot_lineprofile(ax1, ax2, x, f1, f2, c1, c2)
 end
 
 begin
-    palette = Iterators.Stateful(Iterators.Cycle(Makie.wong_colors()))
+    palette = _default_palette()
     fig = Figure(resolution = (530, 400))
 
     ga = fig[1, 1] = GridLayout()

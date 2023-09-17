@@ -81,7 +81,7 @@ _, s_thin_xfm_3 =
     calculate_lineprofile(s, x3, ThinDisc(0.0, 100000.0), with_bins = false)
 
 begin
-    palette = Iterators.Stateful(Iterators.Cycle(Makie.wong_colors()))
+    palette = _default_palette()
     fig = Figure(resolution = (530, 380))
     ga = fig[1, 1] = GridLayout()
 

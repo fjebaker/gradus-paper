@@ -274,9 +274,9 @@ begin
     hidedecorations!(ax1)
     hidedecorations!(ax2)
 
-    palette = Iterators.Stateful(Iterators.Cycle(Makie.wong_colors()))
+    palette = _default_palette()
     plot_parameterization!(ax1, data1, radial1, minor_radial1, g✶s, palette)
-    palette = Iterators.Stateful(Iterators.Cycle(Makie.wong_colors()))
+    palette = _default_palette()
     plot_parameterization!(ax2, data2, radial2, minor_radial2, g✶s, palette)
 
     linkyaxes!(ax1, ax2)

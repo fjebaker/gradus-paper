@@ -8,6 +8,10 @@ macro savefigure(fig)
     end
 end
 
+function _default_palette()
+    Iterators.Stateful(Iterators.Cycle(Makie.wong_colors()))
+end
+
 function _save_figure(fig, filename)
     if filename[end-2:end] == ".jl"
         filename = filename[1:end-3] * ".pdf"

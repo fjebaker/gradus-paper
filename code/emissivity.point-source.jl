@@ -110,7 +110,7 @@ begin
     vlines!(ax2, isco, color = :black, linewidth = 2.0)
     vlines!(ax_exponent, isco, color = :black, linewidth = 2.0)
 
-    palette = Iterators.Stateful(Iterators.Cycle(Makie.wong_colors()))
+    palette = _default_palette()
 
     c1 = popfirst!(palette)
     c2 = popfirst!(palette)

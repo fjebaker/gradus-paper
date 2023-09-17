@@ -36,7 +36,7 @@ rs4 = collect(range(3.0, 50.0, 300))
 push!(rs4, 450.0)
 
 begin
-    palette = Iterators.Stateful(Iterators.Cycle(Makie.wong_colors()))
+    palette = _default_palette()
 
     fig = Figure(resolution = (500, 400))
     layout = fig[1, 1] = GridLayout()

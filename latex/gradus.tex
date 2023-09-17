@@ -175,7 +175,7 @@ Our code permits a consistency check by binning geodesics on the image plane, wi
 \end{figure}
 
 
-\subsection{Lag transfer functions}
+\subsection{Reverberation lags}
 \label{sec:lag-transfer-functions}
 
 \citep{reynolds_x-ray_1999,wilkins_origin_2013,cackett_modelling_2014}
@@ -188,6 +188,40 @@ Our code permits a consistency check by binning geodesics on the image plane, wi
 	\caption{\todo{caption + slit is the gap between upper and lower branch contributions:: idea, interpolate when in h or 1-h}}
 	\label{fig:lag-frequency-transfer-functions}
 \end{figure}
+
+\subsubsection{Lag-frequency spectra}
+
+Summing the two dimensional transfer functions over the energy axis for a given energy range yields an impulse response $\psi(t)$, describing the time evolution of the observed flux. This impulse response depends on the properties of the illuminating corona, accretion disc, spacetime, and inclination of the observer. Examples for different lamp post heights over the full energy range are shown in the top panel of Figure \ref{fig:reverberation-thin}.
+
+Following \cite{cackett_modelling_2014}, we define the \textit{response fraction} $R$ as the ratio of reflected to continuum flux. The impulse response in the Fourier domain is then the rescaled Fourier transform
+\begin{equation}
+	\mathscr{F}_\psi(f) := R \int_{0}^\infty \psi(t) \e^{-2\pi i f t} \d t.
+\end{equation}
+The phase difference between the reflected and continuum flux is 
+\begin{equation}
+	\phi(f) = \tan^{-1} \left( 
+		\frac{\Im{\mathscr{F}_\psi}}{1 + \Re{\mathscr{F}_\psi}} 
+	\right),
+\end{equation}
+where $\Im{\mathscr{F}_\psi}$ and $\Re{\mathscr{F}_\psi}$ are the imaginary and real components of $\mathscr{F}_\psi$ respectively. The imaginary component represents the lag contribution to the phase difference. Since the driving signal is present in both bands, it adds no lag contribution, but serves to dilute the phase difference and therefore the real component of the signal through the $+1$ in the denominator \citep{cackett_modelling_2014}. \todo{expand on this}
+
+The time lag is defined as 
+\begin{equation}
+	\tau(f) := \frac{\phi}{2 \pi f},
+\end{equation}
+and relates the observed time lag to the Fourier frequency of the driving signal (lower panel of Figure \ref{fig:reverberation-thin}).
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.98\linewidth]{figures/reverberation.thin-disc.pdf}
+	\caption{\todo{TODO + move legend}}
+	\label{fig:reverberation-thin}
+\end{figure}
+
+We note a slight disagreement with \cite{cackett_modelling_2014} in the $h = 10$ and $h=20$ case, due to a weak-field approximation after $100\, \rg$, which the authors employ for performance. At $\theta_\text{obs} = 45^\circ$ inclination, the time difference due to the weak-field approximation between the reflected and continuum band increases with $h$, resulting in their continuum component arriving \textit{early}. This results in a shift of the impulse response towards later $t$, and therefore a greater low frequency lag and a shift of the peak of the negative lag to lower $f$.
+\todo{maybe put this in an appendix and explain better with figures??}
+
+
 
 \subsection{Analytic radiative transfer model}
 

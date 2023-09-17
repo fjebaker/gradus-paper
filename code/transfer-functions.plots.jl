@@ -73,19 +73,19 @@ begin
     ax3 = Axis(ga[3, 1], xlabel = L"g^\ast", ylabel = L"f", yticks = LinearTicks(4))
     ax3b = Axis(ga[3, 2], xlabel = L"g^\ast", ylabel = L"t", yticks = LinearTicks(4))
 
-    palette = Iterators.Stateful(Iterators.Cycle(Makie.wong_colors()))
+    palette = _default_palette()
     for (angle, (X, Y, T)) in zip(angles, data1)
         color = popfirst!(palette)
         plot_tf!(ax2, ax2b, angle, X, Y, T; color = color)
     end
 
-    palette = Iterators.Stateful(Iterators.Cycle(Makie.wong_colors()))
+    palette = _default_palette()
     for (angle, (X, Y, T)) in zip(angles, data2)
         color = popfirst!(palette)
         plot_tf!(ax1, ax1b, angle, X, Y, T; color = color, toff = 1.0)
     end
 
-    palette = Iterators.Stateful(Iterators.Cycle(Makie.wong_colors()))
+    palette = _default_palette()
     for (angle, (X, Y, T)) in zip(angles, data3)
         color = popfirst!(palette)
         plot_tf!(ax3, ax3b, angle, X, Y, T; color = color, toff = 0.3, K0 = 2)
