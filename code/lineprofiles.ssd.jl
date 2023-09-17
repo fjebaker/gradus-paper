@@ -46,39 +46,57 @@ s = KerrMetric(1.0, 0.0)
 
 @info "1"
 x1 = SVector(0.0, 1000.0, deg2rad(70), 0.0)
-thick_bin_1, thick_xfm_1 =
-    calculate_lineprofile(m, x1, ShakuraSunyaev(m; eddington_ratio = 0.3), with_bins = false)
-_, thin_xfm_1 =
-    calculate_lineprofile(m, x1, ThinDisc(0.0, 100000.0), with_bins = false)
+thick_bin_1, thick_xfm_1 = calculate_lineprofile(
+    m,
+    x1,
+    ShakuraSunyaev(m; eddington_ratio = 0.3),
+    with_bins = false,
+)
+_, thin_xfm_1 = calculate_lineprofile(m, x1, ThinDisc(0.0, 100000.0), with_bins = false)
 
-s_thick_bin_1, s_thick_xfm_1 =
-    calculate_lineprofile(s, x1, ShakuraSunyaev(m; eddington_ratio = 0.3), with_bins = false)
-_, s_thin_xfm_1 =
-    calculate_lineprofile(s, x1, ThinDisc(0.0, 100000.0), with_bins = false)
+s_thick_bin_1, s_thick_xfm_1 = calculate_lineprofile(
+    s,
+    x1,
+    ShakuraSunyaev(m; eddington_ratio = 0.3),
+    with_bins = false,
+)
+_, s_thin_xfm_1 = calculate_lineprofile(s, x1, ThinDisc(0.0, 100000.0), with_bins = false)
 
 @info "2"
 x2 = SVector(0.0, 1000.0, deg2rad(45), 0.0)
-thick_bin_2, thick_xfm_2 =
-    calculate_lineprofile(m, x2, ShakuraSunyaev(m; eddington_ratio = 0.3), with_bins = false)
-_, thin_xfm_2 =
-    calculate_lineprofile(m, x2, ThinDisc(0.0, 100000.0), with_bins = false)
+thick_bin_2, thick_xfm_2 = calculate_lineprofile(
+    m,
+    x2,
+    ShakuraSunyaev(m; eddington_ratio = 0.3),
+    with_bins = false,
+)
+_, thin_xfm_2 = calculate_lineprofile(m, x2, ThinDisc(0.0, 100000.0), with_bins = false)
 
-s_thick_bin_2, s_thick_xfm_2 =
-    calculate_lineprofile(s, x2, ShakuraSunyaev(m; eddington_ratio = 0.3), with_bins = false)
-_, s_thin_xfm_2 =
-    calculate_lineprofile(s, x2, ThinDisc(0.0, 100000.0), with_bins = false)
+s_thick_bin_2, s_thick_xfm_2 = calculate_lineprofile(
+    s,
+    x2,
+    ShakuraSunyaev(m; eddington_ratio = 0.3),
+    with_bins = false,
+)
+_, s_thin_xfm_2 = calculate_lineprofile(s, x2, ThinDisc(0.0, 100000.0), with_bins = false)
 
 @info "3"
 x3 = SVector(0.0, 1000.0, deg2rad(20), 0.0)
-thick_bin_3, thick_xfm_3 =
-    calculate_lineprofile(m, x3, ShakuraSunyaev(m; eddington_ratio = 0.3), with_bins = false)
-_, thin_xfm_3 =
-    calculate_lineprofile(m, x3, ThinDisc(0.0, 100000.0), with_bins = false)
+thick_bin_3, thick_xfm_3 = calculate_lineprofile(
+    m,
+    x3,
+    ShakuraSunyaev(m; eddington_ratio = 0.3),
+    with_bins = false,
+)
+_, thin_xfm_3 = calculate_lineprofile(m, x3, ThinDisc(0.0, 100000.0), with_bins = false)
 
-s_thick_bin_3, s_thick_xfm_3 =
-    calculate_lineprofile(s, x3, ShakuraSunyaev(m; eddington_ratio = 0.3), with_bins = false)
-_, s_thin_xfm_3 =
-    calculate_lineprofile(s, x3, ThinDisc(0.0, 100000.0), with_bins = false)
+s_thick_bin_3, s_thick_xfm_3 = calculate_lineprofile(
+    s,
+    x3,
+    ShakuraSunyaev(m; eddington_ratio = 0.3),
+    with_bins = false,
+)
+_, s_thin_xfm_3 = calculate_lineprofile(s, x3, ThinDisc(0.0, 100000.0), with_bins = false)
 
 begin
     palette = _default_palette()

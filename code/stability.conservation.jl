@@ -81,6 +81,9 @@ begin
         ygridvisible = false,
         ytickformat = values -> ["$(trunc(Int, v / 1e3)) μs" for v in values],
     )
+    translate!(axmini.scene, 0, 0, 10)
+    # this needs separate translation as well, since it's drawn in the parent scene
+    translate!(axmini.elements[:background], 0, 0, 9)
 
     hidexdecorations!(axmini)
 

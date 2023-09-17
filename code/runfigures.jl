@@ -1,12 +1,25 @@
-include("circular-orbits.E-Lz.jl")
-include("deflection.iyer-hansen.jl")
-include("emissivity.coronal-traces.jl")
-include("emissivity.point-source.jl")
-include("lineprofiles.comparison.jl")
-include("lineprofiles.ssd.jl")
-include("radiative-transfer.gold.jl")
-include("skycoords.jl")
-include("stability.conservation.jl")
-include("transfer-function.parameterization.jl")
-include("transfer-functions.2d.jl")
-include("transfer-functions.plots.jl")
+macro buildfigure(path)
+    quote
+        @info "Building figure: " * $(path)
+        @time include($path)
+    end |> esc
+end
+
+# on my laptop it takes about 20 minutes to build all of the figures 
+# so set this script running, go for a coffee, and then come back
+# and compile the LaTeX document :)
+
+@buildfigure("circular-orbits.E-Lz.jl")
+@buildfigure("deflection.iyer-hansen.jl")
+@buildfigure("emissivity.coronal-traces.jl")
+@buildfigure("emissivity.point-source.jl")
+@buildfigure("lineprofiles.comparison.jl")
+@buildfigure("lineprofiles.ssd.jl")
+@buildfigure("radiative-transfer.gold.jl")
+@buildfigure("reverberation.lag-energy.jl")
+@buildfigure("reverberation.thin-disc.jl")
+@buildfigure("skycoords.jl")
+@buildfigure("stability.conservation.jl")
+@buildfigure("transfer-function.parameterization.jl")
+@buildfigure("transfer-functions.2d.jl")
+@buildfigure("transfer-functions.plots.jl")

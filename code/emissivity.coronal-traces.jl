@@ -79,21 +79,24 @@ begin
     hidexdecorations!(ax, grid = false)
     rowgap!(ga, 10)
 
-    ax3 = Axis(
+    axmini = Axis(
         ga[2, 1],
         width = Relative(0.35),
         height = Relative(0.5),
         halign = 0.1,
         aspect = DataAspect(),
     )
-    xlims!(ax3, 0.00, 0.002)
-    ylims!(ax3, 4.9992, 5.0)
-    hidedecorations!(ax3)
+    translate!(axmini.scene, 0, 0, 10)
+    # this needs separate translation as well, since it's drawn in the parent scene
+    translate!(axmini.elements[:background], 0, 0, 9)
+    xlims!(axmini, 0.00, 0.002)
+    ylims!(axmini, 4.9992, 5.0)
+    hidedecorations!(axmini)
 
-    plot_paths_xz!(ax3, sols_all, color = :lightgray)
-    plot_paths_xz!(ax3, sols_selected)
+    plot_paths_xz!(axmini, sols_all, color = :lightgray)
+    plot_paths_xz!(axmini, sols_selected)
 
-    text!(ax3, (0.0016, 4.99942), text = L"\Delta \theta")
+    text!(axmini, (0.0016, 4.99942), text = L"\Delta \theta")
     text!(ax2, sols_selected[1].u[end][2], 0.0, text = L"\Delta r")
 
     Label(ga[1, 1, Right()], "a", padding = (10, 00, 170, 0), font = :bold, fontsize = 20)

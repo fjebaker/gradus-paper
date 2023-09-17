@@ -3,14 +3,6 @@ using Gradus
 
 include("common.jl")
 
-function continuum_time(m, x, model)
-    pos, _ = Gradus.sample_position_velocity(m, model)
-    target = SVector(pos[2:end]...)
-    _, _, gp, _ =
-        Gradus.optimize_for_target(target, m, x, chart = Gradus.chart_for_metric(m, 2x[2]))
-    @show gp.x[1]
-end
-
 function transfer_branches(m, x, d, radii)
     d = ThinDisc(0.0, d.outer_radius)
     itb = @time Gradus.interpolated_transfer_branches(m, x, d, radii; verbose = true)
@@ -75,8 +67,8 @@ begin
     )
     ylims!(ax2, nothing, 1.2)
 
-    cmap = :thermal
-    hm = heatmap!(ax1, t2, E2, log.(abs.(f2')), colormap = cmap)
+    cmap = :batlow
+    hm = heatmap!(ax1, t2, E2, log.(abs.(f2')), colormap = cmap, levels = 7)
     heatmap!(ax2, t1, E1, log.(abs.(f1')), colormap = cmap)
 
     # Colorbar(ga[1,2], hm)
