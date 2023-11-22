@@ -105,11 +105,6 @@ begin
 
     linkxaxes!(ax_exponent, ax1, ax2)
 
-    isco = Gradus.isco(m)
-    vlines!(ax1, isco, color = :black, linewidth = 2.0)
-    vlines!(ax2, isco, color = :black, linewidth = 2.0)
-    vlines!(ax_exponent, isco, color = :black, linewidth = 2.0)
-
     palette = _default_palette()
 
     c1 = popfirst!(palette)
@@ -147,12 +142,16 @@ begin
 
     rowsize!(ga, 1, Auto(1.3))
 
-    xlims!(ax_exponent, nothing, 300)
-    ylims!(ax2, nothing, 400)
-    ylims!(ax2, nothing, 400)
-    ylims!(ax1, 1e-5, nothing)
+    xlims!(ax_exponent, 0.9, 300)
+    ylims!(ax2, 6, 400)
+    ylims!(ax1, 1e-5, 1e4)
 
     ylims!(ax_exponent, -0.2, 6.2)
+
+    isco = Gradus.isco(m)
+    lines!(ax1, [isco, isco], [1e-5, 1e4], color = :black, linewidth = 2.0)
+    lines!(ax_exponent, [isco, isco], [-1, 1e4], color = :black, linewidth = 2.0)
+    lines!(ax2, [isco, isco], [6, 1e4], color = :black, linewidth = 2.0)
 
     Label(
         ga[2, 1, Right()],

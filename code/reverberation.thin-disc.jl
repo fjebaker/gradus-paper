@@ -148,8 +148,7 @@ begin
         color = color,
     )
 
-    hlines!(ax2, [0], color = :black)
-
+    lines!(ax2, [1e-5, 1], [0, 0], color = :black)
 
     xx = collect(range(1e-5, 1, 1000))
     yy = @. 1 / (2 * π * x)

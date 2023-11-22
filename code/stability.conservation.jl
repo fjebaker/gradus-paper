@@ -46,7 +46,7 @@ sol = tracegeodesics(m, x, v, 20_000.0)
 
 using BenchmarkTools
 import BenchmarkTools: median
-if !isdefined(Main, :t1)
+if any(i -> !isdefined(Main, i), (:t1, :t2, :t3, :t4))
     @info "Running benchmark"
     t1 = @benchmark tracegeodesics(m, x, v, 20_000.0)
     t2 = @benchmark tracegeodesics(m, x, v, 20_000.0, solver = Gradus.Feagin10())

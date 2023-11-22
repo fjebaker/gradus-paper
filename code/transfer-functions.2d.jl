@@ -67,7 +67,7 @@ begin
     )
     ylims!(ax2, nothing, 1.2)
 
-    cmap = :batlow
+    cmap = :devon
     hm = heatmap!(ax1, t2, E2, log.(abs.(f2')), colormap = cmap, levels = 7)
     heatmap!(ax2, t1, E1, log.(abs.(f1')), colormap = cmap)
 

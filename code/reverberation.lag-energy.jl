@@ -120,8 +120,8 @@ begin
 
     vspan!(
         axmini,
-        [lims1[1], lims2[1], lims3[1], lims4[1]],
-        [lims1[2], lims2[2], lims3[2], lims4[2]],
+        10 .^ [lims1[1], lims2[1], lims3[1], lims4[1]],
+        10 .^ [lims1[2], lims2[2], lims3[2], lims4[2]],
         color = [(c, 0.4) for c in [color1, color2, color3, color4]],
     )
     lines!(axmini, freq, τ, color = color1)

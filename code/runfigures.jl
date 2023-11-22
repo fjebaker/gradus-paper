@@ -10,10 +10,12 @@ end
 # and compile the LaTeX document :)
 
 @buildfigure("circular-orbits.E-Lz.jl")
+@buildfigure("continuum-time.figure.jl")
+@buildfigure("continuum-time.weak-field.jl")
 @buildfigure("deflection.iyer-hansen.jl")
 @buildfigure("emissivity.coronal-traces.jl")
 @buildfigure("emissivity.point-source.jl")
-@buildfigure("lineprofiles.comparison.jl")
+# @buildfigure("lineprofiles.comparison.jl") # broken
 @buildfigure("lineprofiles.ssd.jl")
 @buildfigure("radiative-transfer.gold.jl")
 @buildfigure("reverberation.lag-energy.jl")
