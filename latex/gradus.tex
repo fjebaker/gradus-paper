@@ -51,6 +51,67 @@
 \usepackage{cuted}
 \setlength{\stripsep}{0ex}
 
+\usepackage{tcolorbox}
+\usepackage{listings}
+%%
+%% Julia definition (c) 2020 Daichi Furukawa
+%%
+\lstdefinelanguage{Julia}{%
+  morekeywords={abstract, ans, baremodule, begin, break, const, continue, do,%
+    elseif, else, end, export, finally, for, function, global, if, import,%
+    let, local, macro, module, mutable, primitive, quote, return, struct, try,%
+    type, using, var, where, while},%
+  % Types
+  morekeywords=[2]{Any, Array, Bool, BigInt, BigFloat, Char, DataType, Enum,%
+    Expr, Float16, Float32, Float64, Function, Inf, Inf16, Inf32, Int8, Int16,%
+    Int32, Int64, Int128, Matrix, Missing, Module, Nan, NaN16, NaN32, Nothing,%
+    Some, Symbol, Tuple, Type, UInt8, UInt16, UInt32, UInt64, UInt128, Union,%
+    UnionAll, Val, Vararg, Vector, VecOrMat, im},%
+  % Constants
+  morekeywords=[3]{ARGS, C_NULL, DEPOT_PATH, ENDIAN_BOM, ENV, LOAD_PATH,%
+    PROGRAM_FILE, Sys.ARCH, Sys.BINDIR, Sys.CPU_THREADS, Sys.KERNEL,%
+    Sys.MACHINE, Sys.WORD_SIZE, false, stderr, stdin, stdout, true, missing, nothing},%
+  % Macros
+  morekeywords=[4]{@NamedTuple, @allocated, @assert, @boundscheck, @deprecate,%
+    @elapsed, @enum, @eval, @generated, @gensym, @goto, @isdefined, @inbouds,%
+    @inline, @label, @noinline, @nospecialize, @polly, @propagate_inbounds,%
+    @pure, @specialize, @simd, @time, @timed, @timev, @static, @v_str, @view,%
+    @views},%
+  sensitive=true,%
+  morecomment=[l]\#,%
+  morestring=[b]',%
+  morestring=[b]",%
+  morecomment=[s]{"""}{"""},% used for documentation text
+                            % (mulitiline strings)
+  morestring=[s]{r"}{"},% regular expression literal
+  morestring=[s]{r"""}{"""},%
+  morestring=[s]{raw"}{"},% raw string literals
+  morestring=[s]{raw"""}{"""},%
+  morestring=[s]{L"}{"},% LaTeX strings
+  morestring=[s]{L"""}{"""}%
+}%
+
+\lstset{
+    frame=single,
+    % frameround=tttt,
+    xleftmargin=2.4em,
+    xrightmargin=1.3em,
+    aboveskip=3mm,
+    belowskip=1.0mm,
+    backgroundcolor=\color{gray!3},
+    showstringspaces=false,
+    columns=flexible,
+    basicstyle={\small\ttfamily},
+    numbers=left,
+    breaklines=true,
+    breakatwhitespace=true,
+    tabsize=4,
+    keywordstyle = \bfseries\color{blue},
+    stringstyle = \color{magenta},
+    commentstyle = \color{green!70!black},
+    language=Julia,
+}
+
 %%%%% AUTHORS - PLACE YOUR OWN COMMANDS HERE %%%%%
 
 \input{custom-commands.tex}
@@ -218,7 +279,7 @@ and relates the observed time lag to the Fourier frequency of the driving signal
 	\label{fig:reverberation-thin}
 \end{figure}
 
-We note a slight disagreement with \cite{cackett_modelling_2014} in the $h = 10$ and $h=20$ case, due to a weak-field approximation after $100\, \rg$, which the authors employ for performance. At $\theta_\text{obs} = 45^\circ$ inclination, the time difference due to the weak-field approximation between the reflected and continuum band increases with $h$, resulting in their continuum component arriving \textit{early}. This results in a shift of the impulse response towards later $t$, and therefore a greater low frequency lag and a shift of the peak of the negative lag to lower $f$.
+We note a slight disagreement with \cite{cackett_modelling_2014} in the $h = 10$ and $h=20$ case, due to a weak-field approximation after $100\, \rg$, which the authors employ for performance. At $\theta_\text{obs} = 45^\circ$ inclination, the time difference due to the weak-field approximation between the reflected and continuum band increases with $h$, resulting in their continuum component arriving \textit{early}. This results in a shift of the impulse response towards later $t$, and therefore a greater low frequency lag and a shift of the peak of the negative lag to lower $f$ (see Appendix \ref{appendix:continuum-time} for more detail).
 \todo{maybe put this in an appendix and explain better with figures??}
 
 \subsubsection{Lag-energy spectra}
@@ -243,6 +304,12 @@ We note a slight disagreement with \cite{cackett_modelling_2014} in the $h = 10$
 \end{figure*}
 
 \subsection{Other spacetimes}
+
+Research into the appearance of compact singularities in modified gravity theories is often focused on the shadow of the singularity or the photon rings.
+
+\cite{bambi_testing_2017,abdikamalov_testing_2020} have created a suite of codes \texttt{ABHModels}\footnote{\todo{add link}} for studying the iron line and reflection spectra from accreting black holes in the Johannsen metric. This metric is constructed by taking a higher order multipole expansion of the spherical harmonics of the metric \citep{johannsen_regular_2013}. Their codes are able to calculate lineprofiles and black-body disc spectra for the various deformation parameters of the Johannsen metric. Their code is however limited to a choice of a single deformation parameter, due to the method by which they construct their geodesic implementation. 
+
+We compare the line profiles for the Johannsen metric in Figure \ref{fig:compare-johannsen}.
 
 \todo{Bambi's various metrics and relline, self consistency between methods}
 \todo{iron line profiles for Johannsen Psaltis}
@@ -297,6 +364,8 @@ No new data or analyses have been created for this work. The code to reproduce t
 \input{gradus.appendix.gram-schmidt.tex}
 \input{gradus.appendix.circular-orbits.tex}
 \input{gradus.appendix.deflection-angle.tex}
+\input{gradus.appendix.integrator-error.tex}
+\input{gradus.appendix.continuum-time.tex}
 
 % \section{Some extra material}
 
