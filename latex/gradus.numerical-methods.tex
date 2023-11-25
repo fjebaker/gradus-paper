@@ -1,6 +1,6 @@
 \section{Numerical methods}
 
-For simplicity, we will here focus on static, axisymmetric spacetimes in the Boyer-Lindquist coordinates. Such a spacetime has a metric of the form 
+For simplicity, we focus on static, axisymmetric spacetimes in the Boyer-Lindquist coordinates. Such spacetimes have metrics of the form 
 \begin{equation}
 \label{eq:static_axisymmetric_metric}
     g_{\mu\nu} 
@@ -10,13 +10,13 @@ For simplicity, we will here focus on static, axisymmetric spacetimes in the Boy
     + g_{\phi\phi} \d \phi^2 
     + 2g_{t\phi} \d t \d \phi.
 \end{equation}
-We adopt $(-, +, +, +)$ signature and standard units $c = G = 1$. Greek indices ($\mu, \nu$) will be used to denote the four spacetime components, and Latin indices ($i, j$) for the three spatial components. We write partial derivatives with respect to the coordinates $x^\mu$ as $\partial_\mu := \partial / \partial x^\mu$.
+We adopt $(-, +, +, +)$ metric signature and standard units $c = G = 1$. Greek indices ($\mu, \nu$) denote the four spacetime components, and Latin indices ($i, j$) the three spatial components. We write partial derivatives with respect to the coordinates $x^\mu$ as $\partial_\mu := \partial / \partial x^\mu$.
 
 
 %% SECTION: GEODESIC INTEGRATION
 \subsection{Geodesic integration}
 
-The geodesic equation with coordinates $x^\mu$ is
+Using coordinates $x^\mu$, the geodesic equation with instantaneous external acceleration $a^\mu$ is written
 \begin{equation}
 \label{eq:geodesic_equation}
     \frac{\d^2 x^\mu}{\d \lambda^2}
@@ -25,7 +25,7 @@ The geodesic equation with coordinates $x^\mu$ is
     \vel{\sigma}
     = a^\mu,
 \end{equation}
-where $\lambda$ is the affine parameter, $v^\mu = \d x^\mu / \d \lambda$ is the four-velocity, and $a^\mu$ is some external acceleration. The effects of curvature on the trajectory are encoded in the Christoffel connections, 
+where $\lambda$ is the affine parameter and $v^\mu = \d x^\mu / \d \lambda$ is the four-velocity. The effects of spacetime curvature on the trajectory are encoded in the Christoffel connections, 
 \begin{equation}
 \label{eq:christoffel}
     \utensor{\Gamma}{\mu}{\nu\sigma}
@@ -34,14 +34,16 @@ where $\lambda$ is the affine parameter, $v^\mu = \d x^\mu / \d \lambda$ is the 
         \partial_{\nu}g_{\rho \sigma}
         + \partial_{\sigma}g_{\rho \nu}
         - \partial_{\rho}g_{\sigma \nu}
-    \right),
+    \right).
 \end{equation}
-determined solely by metric and derivatives thereof. For a given metric, the geodesic equation is a set of four coupled second order differential equations that may be solved for a choice of initial $x^\mu$ and $\vel{\mu}$. The convention is to choose an initial position with $x^t = 0$, whereas the velocity vector is additionally constrained by the invariance
+For a given metric, the geodesic equation is a set of four coupled second order differential equations that can be solved with a choice of initial $x^\mu$ and $\vel{\mu}$. We are free to to choose an initial position with $x^t = 0$, and are forced to constrain the velocity by the invariance
 \begin{equation}
 \label{eq:velocity_constraint}
     g_{\sigma\nu} \vel{\sigma} \vel{\nu} = \mu^2,
 \end{equation}
-where $\mu$ is the invariant mass. This invariance gives rise to three solution classes depending on the sign of $\mu^2$, namely $\mu^2 = 0$ corresponding to null-, $\mu^2 > 0$ to time-, and $\mu^2 < 0$ to space-like geodesics. Null geodesics are the trajectories of photons, time-like geodesics are the trajectories of massive particles, and space-like geodesics are the trajectories of exotic particles, such as tachyons. Specifying the three-vector $\vel{i}$ determines $\vel{t}$ by Eq. \eqref{eq:velocity_constraint}, rearranged as
+where $\mu$ is the invariant mass. This constraint gives rise to three solution classes depending on the sign of $\mu^2$, namely $\mu^2 = 0$ corresponding to null-, $\mu^2 > 0$ to time-, and $\mu^2 < 0$ to space-like geodesics. Null geodesics are the trajectories of photons, time-like geodesics are the trajectories of massive particles, and space-like geodesics are the trajectories of exotic particles, such as tachyons \citneeded. 
+
+It is sufficient to specify the three-vector $\vel{i}$ to determine $\vel{t}$ by rearranging Eq. \eqref{eq:velocity_constraint} as
 \begin{equation}
 \vel{t}  = \frac{-g_{t\phi} \vel{\phi} \pm
     \sqrt{-g_{ij} \vel{i} \vel{j} - \mu^2}
@@ -49,13 +51,9 @@ where $\mu$ is the invariant mass. This invariance gives rise to three solution 
 \end{equation}
 The choice of positive or negative root corresponds to the direction of time, wherein lies the ray-tracing \textit{trick}: a time-reversal symmetry in the metric allows us to trace from an observer back to the point of origin, and then \textit{reverse} time in order to calculate quantities as seen by the observer. \todo{explain better}
 
-The integration of the ODE system is performed numerically with an appropriate choice of algorithm. We favour the adaptive Tsitouras Runge-Kutta 5/4 \citep{tsitouras_rungekutta_2011}. This integrator is shown to be fast and robust, also providing free fourth-order interpolants of the resulting geodesics. The interpolants can be particularly useful if additional quantities need to be re-traced along a geodesic, or for accurately finding points of intersections.
+We integrate the ODE system numerically, favouring the adaptive Tsitouras Runge-Kutta pairs of order 5/4 \citep{tsitouras_rungekutta_2011}. This integrator is known to be fast and robust, and provides `free' fourth-order interpolants of the resulting geodesics. We use the interpolation when additional quantities need to be re-traced along a geodesic, for accurately calculating points of intersections, and for visualization purposes.
 
-Derivatives of the metric needed in Eq. \eqref{eq:christoffel} may be efficiently computed with AD. This brings versatility and ease, as new spacetimes need only to define the metric for the geodesic system to be computable, and AD ensures the derivatives are free of the pathologies of other e.g. stenciling methods used to compute derivatives. If the class of spacetime exhibits additional symmetries, these can be exploited to reduce computation further: metrics of the form \eqref{eq:static_axisymmetric_metric} can exploit $\partial_t g_{\mu\nu} = \partial{\phi} g_{\mu\nu} = 0$ and avoid calculating two columns of the Jacobian entirely.
-
-Sparsity is often symbolically inferable under simple operations. We use compile time Julia \texttt{@generated} functions, along with Symbolics.jl, to attempt to infer which terms in the Jacobian and Christoffel symbols can be avoided (if any), to generate optimal evaluation for a given class of metric. 
-%This was benchmarked against other packages that perform the sparsity detection generically, such as FastDifferentiation.jl, and find similar performance.
-
+Derivatives of the metric needed in Eq. \eqref{eq:christoffel} are efficiently computed with AD. This brings versatility, as new spacetimes need only define the metric for the geodesic ODE system to be solvable. If the class of spacetime exhibits additional symmetries, these can be exploited to reduce computation further: for example, metrics of the form \eqref{eq:static_axisymmetric_metric} exploit $\partial_t g_{\mu\nu} = \partial{\phi} g_{\mu\nu} = 0$ and avoid calculating two columns of the Jacobian entirely.
 
 \subsection{Observers and emitters}
 
