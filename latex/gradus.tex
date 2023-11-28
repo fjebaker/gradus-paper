@@ -54,6 +54,7 @@
 \newcommand{\stensor}[3]{#1_{#2}^{#3}}
 \newcommand{\deriv}[2]{\frac{\d #1}{\d #2}}
 \newcommand{\pderiv}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\risco}{r_\text{ISCO}}
 
 \newcommand{\vel}[1]{v^{#1}}
 \renewcommand{\vector}[1]{\mathbf{#1}}
@@ -323,21 +324,52 @@ that distance differing. This must be taken into account when comparing codes.
 \subsection{Special orbits and horizons}
 \label{sec:special-orbits}
 
-For many disc models, accreting matter is considered to follow Keplerian circular orbits in the equatorial plane $(x^\theta = \pi/2)$ of the central singularity \citep{shakura_black_1973}. These Keplerian circular orbits are stationary points of the Hamiltonian and constrained by $v^r = v^\theta = 0$. For static, axis-symmetric spacetimes, these orbits may be studied analytically (e.g. \citealp{johannsen_regular_2013}, with a variation of their derivation and extension for $a^\mu \neq 0$ in Appendix \ref{appendix:circular-orbits}).
+Of particular interest when studying accreting processes are the Keplerian
+circular orbits, confined to the equatorial plane f$(x^\theta = \pi/2)$ in
+axis-symmetric spacetimes. A subset of the Keplerian orbits are the circular
+orbits, and are therefore relevant in analytical models of accretion discs
+\citep{shakura_black_1973}. These circular orbits are stationary points of the
+geodesic Hamiltonian, and constrained by $v^r = v^\theta = 0$.  These orbits are
+often studied analytically, and have a general solution for metrics of the form
+\citep{eq:static_axisymmetric_metric} (e.g. \citealp{johannsen_regular_2013},
+We provide a derivation with some extension towards $a^\mu \neq 0$ in Appendix
+\ref{appendix:circular-orbits}).
 
-In general relativity, circular orbits are classified as either stable or unstable \citep{wilkins_bound_1972,bardeen_rotating_1972}. There exists an innermost stable circular orbit (ISCO) radius, below which orbits are energetically hyperbolic: small perturbations will send the test particle escaping to infinity or spiralling into the central singularity.  Stability of an orbit depends on the sign of $\d E / \d x^r$, with $>0$ corresponding to energetically stable configurations, such that the ISCO is the critical point at which 
+Circular orbits are classified as either stable or unstable
+\citep{wilkins_bound_1972,bardeen_rotating_1972}. There exists an innermost
+stable circular orbit radius (ISCO, denoted $\risco$), below which orbits
+are energetically hyperbolic: small perturbations will send test particles
+escaping to infinity or spiralling into the central singularity. The stability of
+an orbit depends on the sign of $\d E / \d x^r$, with $>0$ corresponding to
+energetically stable configurations. The ISCO is the critical point at
+which 
 \begin{equation}
     \label{eq:isco-definition}
-    0 = \left. \frac{\d E}{\d x^r} \right\rvert_{x^r := r_\text{ISCO}}.
+    0 = \left. \frac{\d E}{\d x^r} \right\rvert_{x^r := \risco}.
 \end{equation}
-Stable circular orbits are only possible for radii $x^r \geq r_\text{ISCO}$. Within the ISCO is the so-called \textit{plunging region} where $v^r \neq 0$. 
+Stable circular orbits are only possible for radii $x^r \geq \risco$.
+Within the ISCO is the so-called \textit{plunging region} where $v^r \neq 0$.
+\citneeded
 
-
-Orbits may also be determined purely from the integration of geodesics, by mandating a stability measure and optimizing the initial velocity vector until some heuristic measure is a minimum. For example, let $\mathscr{M}$ measure the eccentricity of an orbit in the equatorial plane. For a given radius $x^r$, the velocity corresponding to a circular orbit is $v^\mu = v^t \partial_t + v^\phi \partial_\phi $. With \eqref{eq:velocity_constraint}, the circular orbit velocity may be found through
+Stable orbits may also be determined purely from the numerical integration of
+geodesics, by mandating a stability measure and optimizing the initial velocity
+vector until some heuristic measure is a minimum. For example, let $\mathscr{M}$
+measure the eccentricity of an orbit in the equatorial plane. For a given radius
+$x^r$, the velocity corresponding to a circular orbit is $v^\mu = v^t \partial_t
++ v^\phi \partial_\phi $. With \eqref{eq:velocity_constraint}, the circular
+orbit velocity may be found through
 \begin{equation}
     \underset{v^\phi}{\arg \min}\ \ \mathscr{M}(x^r, v^\phi),
 \end{equation}
-using a numerical optimizer. We use the Nelder-Mead simplex method as our preferred optimization algorithm for exploring the $v^\phi$ parameter space \citep{nelder_simplex_1965}. Due to only integrating finite windings of the orbit, this approach may find both unstable and stable orbits. These may be distinguished by inspecting $E$ as a function of $x^r$, or similarly $E$ as a function of $L_z$ \citep{hackmann_charged_2013}, see Figure \ref{fig:e-lz-cusp}. The $r_\text{ISCO}$ is found by determining \eqref{eq:isco-definition} numerically, or by finding $x^r$ corresponding to the \textit{cusp} of the $E$ against $L_z$ plot.
+using a numerical optimizer. We use the Nelder-Mead simplex method as our
+preferred optimization algorithm for exploring the $v^\phi$ parameter space
+\citep{nelder_simplex_1965}. Due to only integrating finite windings of the
+orbit, this approach may find both unstable and stable orbits. These are 
+distinguished by inspecting $E$ as a function of $x^r$, or similarly $E$ as a
+function of $L_z$ \citep{hackmann_charged_2013}, see Figure \ref{fig:e-lz-cusp}.
+The $\risco$ is found by solving \eqref{eq:isco-definition} numerically, or
+by finding $x^r$ corresponding to the \emph{cusp} of the curve of  $E$ against
+$L_z$.
 
 \begin{figure}
     \centering
@@ -346,9 +378,18 @@ using a numerical optimizer. We use the Nelder-Mead simplex method as our prefer
     \label{fig:e-lz-cusp}
 \end{figure}
 
-The velocity of plunging region orbits may be numerically calculated by ``dropping'' a test particle from $r_\text{ISCO} -  \delta x^r$, and tracing for a large interval of proper time. The components of $v^\mu$ may then be interpolated over $x^r$ to approximate analytic solutions. Figure \ref{fig:circular-orbit-error} illustrates the accuracy of our numerical method for determining orbits.
+The velocities of orbits in the plunging region are numerically calculated by
+``dropping'' a test particle from $\risco -  \delta x^r$, and tracing for a
+large interval of proper time, until the fate of the geodesic is realized. The
+components of $v^\mu$ are then interpolated over $x^r$ to approximate analytic
+solutions. Figure \ref{fig:circular-orbit-error} illustrates the accuracy of our
+numerical method for determining such plunging orbits.
 
-The heuristic minimization is also used for other objective functions, such as for pinpointing geodesics that intersect a chosen point in the spacetime ($\mathscr{M}$ measures closest approach), or exhibit some specific desired features (e.g. $\mathscr{M}$ measures periodicity).
+This heuristic optimization technique is also used for other objective
+functions, such as for solving for the initial conditions of  geodesics that
+intersect a chosen point in the spacetime ($\mathscr{M}$ measures closest
+approach), or that exhibit some specific desired features (e.g. $\mathscr{M}$
+measures periodicity).
 
 \todo{solving for radii / horizons}
 We use root solvers from Roots.jl \citep{}. The default we use is their ``Order 0'' solver, a hybrid method that refines from secant to bracketing methods when possible.
@@ -672,7 +713,7 @@ Transfer functions are integrated as described in Section \ref{sec:transfer-func
 \begin{figure}
 	\centering
 	\includegraphics[width=0.99\linewidth]{figures/lineprofiles.comparison.pdf}
-	\caption{Comparison of line profiles calculated by integrating transfer functions with emissivity $I_\text{em} = \varepsilon(r_\text{em}) = r_\text{em}^{-3}$ using \Gradus and \relline. The transfer functions are calculated for an observer at $r_\text{obs} = 1000\rg$ and $\theta_\text{obs} = 40^\circ$, and integrated between $r_\text{in} = r_\text{ISCO}$ and $r_\text{out} = 50 \rg$. Left panel is the the maximally spinning Kerr spacetime, whereas the right panel is the Schwarzschild spacetime.}
+	\caption{Comparison of line profiles calculated by integrating transfer functions with emissivity $I_\text{em} = \varepsilon(r_\text{em}) = r_\text{em}^{-3}$ using \Gradus and \relline. The transfer functions are calculated for an observer at $r_\text{obs} = 1000\rg$ and $\theta_\text{obs} = 40^\circ$, and integrated between $r_\text{in} = \risco$ and $r_\text{out} = 50 \rg$. Left panel is the the maximally spinning Kerr spacetime, whereas the right panel is the Schwarzschild spacetime.}
 	\label{fig:relline-comparison}
 \end{figure}
 
