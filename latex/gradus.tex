@@ -407,53 +407,47 @@ Similar techniques used to calculate the radii special orbits are used to
 determine the event horizon radius. Under axis-symmetry, the event horizon is
 the set of the $(r, \theta)$ coordinates that satisfy
 \begin{equation}
-    \todo{equation}
-\end{equation}
-For a set of equally spaced $\theta$, we determine $r$ by solving for the roots
-of the equation using the Roots.jl package\citneeded .
-
-\subsection{Charts and horizons}
-
-A chart is used to terminate geodesic integration to avoid continuing
-computation when the fate of a given geodesic is determined. In practical terms,
-the chart is defined by a set of boundaries, and used to classify the outcome of
-an integration. As a motivating example, consider a chart with an inner and
-outer boundary: the inner boundary is a coordinate singularity of the metric,
-$r_s$ (i.e. an event horizon), whereas the outer boundary is treated as the
-\textit{effective infinity}, $r_\infty$. Geodesics at the inner boundary are
-classified as lost behind the coordinate singularity, whereas those that reach
-the outer boundary are considered to escape to infinity with no further
-deviation to their trajectory. Additional boundaries of the chart may be used to
-represent accretion geometry: by terminating the integration when the geodesic
-crosses such a boundary, we consider the geodesic to have intersected the
-surface of the accretion disc. 
-
-The event horizon radius, $r_s$, used as the default inner boundary, may be
-calculated for a metric of the form \eqref{eq:static_axisymmetric_metric} by
-solving
-\begin{equation}
     \label{eq:event_horizon}
     0 = \left. \frac{1}{g_{rr}} \right\rvert_{x^r = r_s}.
 \end{equation}
-For axisymmetric metrics, $g_{rr}$ may be a function of both $x^r$ and
-$x^\theta$, in which case the inner boundary of the chart is a function of the
-poloidal coordinate. If no analytic function for $r_s$ is known, it may be
-numerically approximated using root solving methods.
+For a set of equally spaced $\theta$, we determine $r$ by solving for the roots
+of the equation. If the roots are not analytically tractable, we fallback to
+using the numerical algorithms of the Roots.jl package\citneeded.
 
-In practice, close to the inner radius the adaptive time step of an ODE
-integrator tends to shrink dramatically due to near-singular derivatives,
-causing the integration to slow to almost a standstill. This may be avoided by
-scaling the inner horizon with the choice of constant $\mathcal{K} > 0$, such
-that $\tilde{r}_s = (1 + \mathcal{K}) r_s$, terminating the integration early
-when $x^r \leq \tilde{r}_s$. This constant may be adjusted depending on how
-vital it is for a geodesic to be able to glance the event horizon. We have
-chosen $\mathcal{K} = 10^{-2}$ by default, as it dramatically improves
-integration time without impacting the majority of simulations. 
+\subsection{Charts and horizons}
 
-Chart intersection is found using either an interpolating root-solver with
-\texttt{ContinuousCallback} or a per-point test with \texttt{DiscreteCallback}
-from DifferentialEquations.jl \citep{}.
+The chart defines the boundary of the integration used by the integrator to
+terminate the computation when the fate of a given geodesic is known. In
+practical terms, the chart is a set of callbacks in the integrator that mark the
+union of a set of boundaries, intersection with which classifies the outcome of
+an integration (e.g. geodesic is within the horizon, escaped to infinity, intersected with
+disc, and so on). In the majority of cases, the inner and outer boundary of the integration
+chart are the event horizon $r_s$ and some \emph{effective infinity} $r_\infty$
+respectively. In the latter case, the geodesic is assumed to escape the
+potential of the singularity without further deviation it their trajectory.
 
+The geometry of an accretion disc or object is also expressed as a boundary of
+the chart. By terminating the integration when the geodesic crosses such a
+boundary, we consider the geodesic to have intersected the surface of the
+accretion disc, and mark it accordingly. The marks are later used to group
+geodesic solutions together when calculating physical quantities and
+observables.
+
+Close to the inner radius the adaptive time step of certain ODE integrator
+algorithms tends to shrink dramatically due to near-singular derivatives,
+causing the integration to slow to almost a standstill, and therefore becomes
+very computationally expensive. We avoid this by scaling the inner horizon
+with the choice of a constant $\mathcal{K} > 0$, such that $\tilde{r}_s = (1 +
+\mathcal{K}) r_s$, terminating the integration when $x^r \leq
+\tilde{r}_s$. This constant may be adjusted depending on the interest
+in probing that region of the spacetime. We choose $\mathcal{K} =
+10^{-2}$ by default to improve performance without no impact on the majority of
+simulations.
+
+The points of intersection with a Chart are found using either the interpolating
+root-solver in \texttt{ContinuousCallback} or a per-point test with
+\texttt{DiscreteCallback}, both made available from DifferentialEquations.jl
+\citneeded.
 
 \subsection{Computing observables}
 \label{sec:computing-observables}
