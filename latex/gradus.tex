@@ -1,4 +1,4 @@
-% mnras_template.tex 
+% mnras_template.tex
 %
 % LaTeX template for creating an MNRAS paper
 %
@@ -65,7 +65,7 @@
 
 %%%%%%%%%%%%%%%%%%% TITLE PAGE %%%%%%%%%%%%%%%%%%%
 
-\title[Gradus.jl]{Gradus.jl: general relativistic ray-tracing and reverberation modelling through automatic differentiation}
+\title[Gradus.jl]{General relativistic ray-tracing and reverberation modelling through automatic differentiation with Gradus.jl}
 \author[F. J. E. Baker et al.]{
 F. J. E. Baker,$^{1}$\thanks{E-mail: fergus.baker@bristol.ac.uk (FB)}
 and A. J. Young$^{1}$
@@ -101,22 +101,20 @@ keyword1 -- keyword2 -- keyword3
 \section{Introduction}
 
 \notes{
-In the era of quantitative, precision observational tests of General Relativity in the strong field regime it is necessary to have a fast and flexible method to compute the observational properties of accreting black hole systems. We have developed an open-source integrator 
+In the era of quantitative, precision observational tests of General Relativity in the strong field regime it is necessary to have a fast and flexible method to compute the observational properties of accreting black hole systems. We have developed an open-source integrator
 \Gradus\footnote{Open-source and available under MIT license at \url{https://github.com/astro-group-bristol/Gradus.jl}.} for this purpose. In the remainder of the paper we describe how the software works, comparing with previous work in the literature, and outlining the new capabilities of \Gradus.
 
 % Maybe some history of the problem with key references
 Transfer functions \citep{cunningham_effects_1975} % An example reference
 
-Julia is a high-performance... with SciML and DifferentialEquations.jl, a state-of-the-art ecosystem and workhorse for solving differential equations. 
+Julia is a high-performance... with SciML and DifferentialEquations.jl, a state-of-the-art ecosystem and workhorse for solving differential equations.
 }
 
 \todo{goerge and fabian for reflection of xrays off cold ad}
 
-\subsection{A short review of general relativistic ray tracing}
-
 \todo{
 \begin{itemize}
-    \item review other softwares
+    \item some references to other softwares
     \item where does Gradus fit into the field (extensibility / maintainability / prototyping models)
     \item define SSD as Shakura Sunyaev disc
 \end{itemize}
@@ -124,7 +122,7 @@ Julia is a high-performance... with SciML and DifferentialEquations.jl, a state-
 
 The trajectory of light in curved space may be determined by reformulating the
 Hamilton-Jacobi equations of motion as a first-order ordinary differential
-equation (ODE) system. 
+equation (ODE) system.
 
 A second-order ODE system may alternatively be formulated directly from the
 geodesic equation; a method which is pedagogically simpler, but computationally
@@ -139,33 +137,25 @@ agnostic method for computing geodesics.
 \section{Numerical methods}
 
 For simplicity, we focus on static, axisymmetric spacetimes in the
-Boyer-Lindquist coordinates. Such spacetimes have metrics of the form 
+Boyer-Lindquist coordinates. Such spacetimes have metrics of the form
 \begin{equation}
 \label{eq:static_axisymmetric_metric}
-    g_{\mu\nu} 
-    = g_{tt} \d t^2 
-    + g_{rr} \d r^2 
-    + g_{\theta\theta} \d \theta^2 
-    + g_{\phi\phi} \d \phi^2 
+    g_{\mu\nu}
+    = g_{tt} \d t^2
+    + g_{rr} \d r^2
+    + g_{\theta\theta} \d \theta^2
+    + g_{\phi\phi} \d \phi^2
     + 2g_{t\phi} \d t \d \phi.
 \end{equation}
-We adopt $(-, +, +, +)$ metric signature and standard units $c = G = 1$. Greek
-indices ($\mu, \nu$) denote the four spacetime components, and Latin indices
-($i, j$) the three spatial components. We write partial derivatives with
+We adopt $(-, +, +, +)$ metric signature in our code, and standard units $c = G
+= 1$. Greek indices ($\mu, \nu$) denote the four spacetime components, and Latin
+indices ($i, j$) the three spatial components. We write partial derivatives with
 respect to the coordinates $x^\mu$ as $\partial_\mu := \partial / \partial
 x^\mu$.
 
-We integrate the differential equation systems principally with the adaptive
-Tsitouras Runge-Kutta pairs of order 5/4 \citep{tsitouras_rungekutta_2011}.
-This integrator is known to be fast and robust, and provides `free'
-fourth-order interpolants of the resulting solutions. We use the interpolation
-when additional quantities need to be re-calculated along a given trajectory,
-for accurately calculating points of intersections, and for visualization
-purposes, as will be discussed throughout this section.
-
 \subsection{Geodesic integration}
 
-Using coordinates $x^\mu$, the geodesic equation with instantaneous external
+Using coordinates $x^\mu$, the geodesic equation with under external
 acceleration $a^\mu$ is written
 \begin{equation}
 \label{eq:geodesic_equation}
@@ -177,53 +167,69 @@ acceleration $a^\mu$ is written
 \end{equation}
 where $\lambda$ is the affine parameter and $v^\mu = \d x^\mu / \d \lambda$ is
 the four-velocity. The effects of spacetime curvature on the trajectory are
-encoded in the Christoffel connections, 
+encoded in the Christoffel connections,
 \begin{equation}
 \label{eq:christoffel}
     \utensor{\Gamma}{\mu}{\nu\sigma}
-    := \frac{1}{2} g^{\mu\rho} 
+    := \frac{1}{2} g^{\mu\rho}
     \left(
         \partial_{\nu}g_{\rho \sigma}
         + \partial_{\sigma}g_{\rho \nu}
         - \partial_{\rho}g_{\sigma \nu}
-    \right).
+    \right),
 \end{equation}
-For a given metric, the geodesic equation is a set of four coupled second order
-differential equations that can be solved with a choice of initial $x^\mu$ and
-$\vel{\mu}$. We are free to to choose an initial position with $x^t = 0$, and
-are forced to constrain the velocity by the invariance
+with the indices to be read as ``the acceleration in direction $\mu$ of the vector
+$\nu$ travelling in direction $\sigma$''. \todo{check this}
+
+For a given metric, the geodesic equation may be expressed as an initial value
+problem; a set of four coupled second-order differential equations that can be
+solved with a choice of initial $x^\mu$ and $\vel{\mu}$. We are free to to
+choose an initial 3-position $x^i$ with $x^t = 0$ by convention, and constrain
+the velocity by the invariance
 \begin{equation}
 \label{eq:velocity_constraint}
     g_{\sigma\nu} \vel{\sigma} \vel{\nu} = \mu^2,
 \end{equation}
 where $\mu$ is the invariant mass. This constraint gives rise to three solution
-classes depending on the sign of $\mu^2$, namely $\mu^2 = 0$ corresponding to
-null-, $\mu^2 > 0$ to time-, and $\mu^2 < 0$ to space-like geodesics. Null
-geodesics are the trajectories of photons, time-like geodesics are the
-trajectories of massive particles, and space-like geodesics are the
-trajectories of exotic particles, such as tachyons \citneeded. 
+classes depending on the sign of $\mu^2$; namely $\mu^2 = 0$ corresponding to
+\emph{null geodesics}, $\mu^2 > 0$ to \emph{time-like geodesics}, and $\mu^2 <
+0$ to \emph{space-like geodesics}. Null geodesics are the trajectories of
+photons, time-like geodesics are the trajectories of massive particles, and
+space-like geodesics are the trajectories of exotic ``faster-than-light''
+particles, such as tachyons
+\citneeded.
 
-Derivatives of the metric needed in Eq. \eqref{eq:christoffel} are efficiently
-computed with AD. This brings versatility, as new spacetimes need only define
-the metric for the geodesic ODE system to be solvable. If the class of
-spacetime exhibits additional symmetries, these can be exploited to reduce
-computation further: for example, metrics of the form
-\eqref{eq:static_axisymmetric_metric} exploit $\partial_t g_{\mu\nu} =
-\partial{\phi} g_{\mu\nu} = 0$ and avoid calculating two columns of the
-Jacobian entirely.
-
-It is sufficient to specify the three-vector $\vel{i}$ to determine $\vel{t}$
-by rearranging Eq. \eqref{eq:velocity_constraint} as
+As with the position, it is sufficient to specify the three-vector $\vel{i}$,
+and use \ref{eq:velocity_constraint} to determine $\vel{t}$ by rearranging
 \begin{equation}
 \vel{t}  = \frac{-g_{t\phi} \vel{\phi} \pm
     \sqrt{-g_{ij} \vel{i} \vel{j} - \mu^2}
 }{g_{tt}}.
 \end{equation}
+Sensible choices of $v^i$ will be discussed in the next section.
+
 The choice of positive or negative root corresponds to the direction of time,
 wherein lies the ray-tracing \textit{trick}: a time-reversal symmetry in the
-metric allows us to trace from an observer back to the point of origin, and
-then \textit{reverse} time in order to calculate quantities as seen by the
-observer. \todo{explain better}
+metric $t \rightarrow -t$, $\phi \rightarrow -\phi$ allows us to calculate
+geodesics in the forward direction as if they had travelled backwards. Photons
+can therefore be traced from an observer to the black hole, and calculations
+performed as if they had been emitted from the black hole and travelled towards
+the observer. This seemingly trivial comment cannot be understated in the
+implementation of GRRT, as it becomes a factor when determining dot products
+velocity vectors.
+
+Computing the geodesic equation requires some method of determining
+$\utensor{\Gamma}{\mu}{\nu\sigma}$. This is conventionally done analytically
+and implemented directly into the solving code, however our method is to
+compute the Jacobian of the metric ($\partial_{\sigma} g_{\mu \nu}$) needed in
+Eq. \eqref{eq:christoffel} with AD, thereby calculating
+$\utensor{\Gamma}{\mu}{\nu\sigma}$ \textit{on the fly}.  This brings
+versatility, as only an implementation of the metric is needed for the geodesic
+equation to be solved.  If the class of spacetime exhibits additional
+symmetries, these can be exploited to reduce computation further: for example,
+metrics of the form \eqref{eq:static_axisymmetric_metric} exploit $\partial_t
+g_{\mu\nu} = \partial{\phi} g_{\mu\nu} = 0$ (the principle Killing vectors) and
+avoid calculating two columns of the Jacobian entirely.
 
 \subsection{Observers and emitters}
 
@@ -242,39 +248,45 @@ observer. \todo{explain better}
     \label{fig:observer-coordinates}
 \end{figure}
 
-We calculate the initial velocity vector differently depending on whether we are
-considering an observer or an emitter. For observers, we are interested in the
-sparse set of emitted photons which reach an image plane representing the
-observer's field of view, and therefore parameterize the velocity vector using
-\emph{impact parameters} on the image plane. The parameters representing the
-local sky of an observer is shown in Fig.~\ref{fig:observer-coordinates}.
-Following \cite{cunningham_optical_1973}, one may then define a set of impact
-parameters from components of the local momenta
+We calculate the initial velocity $v^i$ differently depending on whether we are
+considering an \emph{observer} or an \emph{emitter}.
+
+For observers, we are interested in the sparse set of emitted photons which
+reach an image plane representing the observer's field of view, and therefore
+parameterize the velocity vector using \emph{impact parameters} on the image
+plane. The parameters representing the local sky are shown in
+Fig.~\ref{fig:observer-coordinates}, with the image plane drawn in yellow.
+Following \cite{cunningham_optical_1973}, one may then define a set of \emph{impact
+parameters} from components of the local momenta $v_{(i)}$
 \begin{align}
     \alpha &:=  x^r \frac{v_{(\phi)}}{v_{(r)}}, \\
     \beta &:= x^r \frac{v_{(\theta)}}{v_{(r)}},
 \end{align}
 using indices in parentheses to denote the vector components in the local
-frame. The choice of subscript ($r, \theta, \phi$) is to anticipate an
-identification between local and global bases, and to provide some intuition
-for the local frame.
+frame. The choice of subscript ($r, \theta, \phi$) is to anticipate identifying
+coordinate directions in the local and global (metric) bases, and to suggest
+some intuition for the meaning of directions in the local frame.
 
 Exploiting the invariance of four-momenta (c.f. Eq.
-\eqref{eq:velocity_constraint}), we obtain a curve of solutions for the local
-momenta of geodesics intersecting the image plane at specific $\alpha$ and
+\eqref{eq:velocity_constraint}), we obtain a curve of solutions along $x^r$ for
+the local momenta of geodesics intersecting the image plane at specific
+$\alpha$ and
 $\beta$
 \begin{align}
     \frac{v_{(r)}}{v_{(t)}} &= -\left( \sqrt{1 + \left(\frac{\alpha}{x^r}\right)^2 + \left(\frac{\beta}{x^r}\right)^2} \right)^{-1} = \mathscr{R}, \\
     \frac{v_{(\theta)}}{v_{(t)}} &= \mathscr{R} \frac{\beta}{x^r}, \\
     \frac{v_{(\phi)}}{v_{(t)}} &= \mathscr{R} \frac{\alpha}{x^r}.
 \end{align}
+Note the choice of sign in the root of $v_{(r)} / v_{(t)}$, chosen so the
+momentum points \emph{inwards} towards the black hole.
 
-The case for emitters is subtly different, where expressions for these momenta
-components are obtained by considering the direction of emission on the local
-sky. That is, by projecting an initial velocity tangent vector pointing in the
-direction of the angles $(\Upsilon, \Psi)$ onto the local momentum frame.  This
-is compactly written with an intermediary decomposition onto a Cartesian
-coordinate system as
+The case for emitters is subtly different, where we now consider azimuthal and
+polar angles in the local sky, denoted $\Upsilon$ and $\Psi$ respectively (see
+also Fig.~\ref{fig:observer-coordinates}). The momentum components are now
+obtained by considering the tangent vector pointing in some initial direction;
+that is, by projecting the initial velocity vector onto the local momentum
+frame. This projection is compactly expressed as a decomposition onto a
+Cartesian coordinate system
 \begin{equation}
     \label{eq:local-angle-to-velocity}
     \frac{v_{(i)}}{v_{(t)}} = \frac{1}{v_{(t)}}
@@ -287,39 +299,44 @@ coordinate system as
     \end{matrix}
     \right),
 \end{equation}
-where the partial derivative term denotes the cartesian to spherical coordinate
-Jacobian. The component $v_{(t)}$ is the negative of the energy in the local
-frame, and is conventionally set to $-v_{(t)}=E=1$ without loss of generality. 
+where the partial derivative matrix denotes the Cartesian to spherical
+coordinate Jacobian. Other authors will expand this Jacobian and write succinct
+trigonometric formulae \todo{examples or appendix?}. The component $v_{(t)}$ is
+the negative of the energy in the local frame, and may be set to $-v_{(t)}=E=1$
+without loss of generality.
 
-For both observers and emitters, we must identify a local frame, where the
-natural choice is the locally non-rotating frame (LNRF)
+The transformation between local and global frame depends on the choice of
+local frame. The natural choice is the \emph{locally non-rotating frame} (LNRF)
 \citep{bardeen_rotating_1972} \todo{check citation + explain significance}. The
-transformation from local to global coordinates is
+coordinate transformation from the LNRF is
 \begin{equation}
     \label{eq:local-to-global-velocity}
     v_\mu = \e^{(\nu)}_{\phantom{(\nu)}\mu}\  v_{(\nu)}
 \end{equation}
-where the basis vectors $\e^{(\nu)}_{\phantom{(\nu)}\mu}$ (or tetrad) are found
+where the local tetrad (basis vectors) $\e^{(\nu)}_{\phantom{(\nu)}\mu}$ are found
 using the theorem of Gram-Schmidt (\citealp{schmidt_uber_1989}, Appendix
-\ref{appendix:gram-schmidt}). The formalism may be extended for an observer or
-emitter in motion, where their velocity modifies the mapping by a local Lorenz
-transformation, $\Lambda^{(\kappa)}_{\phantom{(\kappa)}(\nu)}$, as 
+\ref{appendix:gram-schmidt}). The formalism may be extended for a local frame
+in motion, where the frame velocity modifies the mapping by a local Lorenz
+transformation, $\Lambda^{(\kappa)}_{\phantom{(\kappa)}(\nu)}$, as
 \begin{equation}
     v_\mu = \e^{(\nu)}_{\phantom{(\nu)}\mu}\  \Lambda^{(\kappa)}_{\phantom{(a)}(\nu)} v_{(\kappa)}.
 \end{equation}
 This Lorenz transformation may be absorbed into the tetrad with careful
-construction, using the velocity of the observer or emitter as
-$\utensor{\e}{(t)}{\mu}$, and orthogonalizing using the theorem of Gram-Schmidt.
+construction, mandating the velocity of the frame in the global coordinates as
+$\utensor{\e}{(t)}{\mu}$ and orthogonalizing using the theorem of Gram-Schmidt.
 
-As a note, the impact parameters are calculated from the constants of motion in
-\cite{cunningham_optical_1973}, with the assumption that the observer is
-situated in asymptotically flat space, whereas our calculations are specific to
-the location of the observer in the spacetime. We approximate asymptotically
-flat space by positioning our observer at radial distance $r_\text{obs} > 10^4
-\rg$, however codes that make use of the results in
-\cite{cunningham_optical_1973} will suffer an error of order
-$\sim1/r_\text{obs}$ due to the assumed asymptotic energy and local energy at
-that distance differing. This must be taken into account when comparing codes.
+These calculations may also be derived from the constants of motion that a
+spacetime admits, $E$, $L$, and the Carter constant $Q$. The analytic
+derivation of the LNRF and associated coordinate transformations is in
+\cite{cunningham_optical_1973}. The authors derive the impact parameters under
+the assumption that the observer is in asymptotically flat space, whereas our
+calculations do not make this assumption. This allows us to use the impact
+parameters anywhere in the spacetime, and approximate an asymptotically flat
+space by positioning our observer at a large radial distance, say $r_\text{obs}
+> 10^4 \rg$. This approximation incurs an error of order $\sim1/r_\text{obs}$
+when compared to results using analytic derivations due to the energy and
+angular momentum differing by a small amount in the global coordinates. This
+must be taken into account when comparing GRRT codes to many decimal places.
 
 \subsection{Special orbits and horizons}
 \label{sec:special-orbits}
@@ -342,7 +359,7 @@ are energetically hyperbolic: small perturbations will send test particles
 escaping to infinity or spiralling into the central singularity. The stability of
 an orbit depends on the sign of $\d E / \d x^r$, with $>0$ corresponding to
 energetically stable configurations. The ISCO is the critical point at
-which 
+which
 \begin{equation}
     \label{eq:isco-definition}
     0 = \left. \frac{\d E}{\d x^r} \right\rvert_{x^r := \risco}.
@@ -364,7 +381,7 @@ orbit velocity may be found through
 using a numerical optimizer. We use the Nelder-Mead simplex method as our
 preferred optimization algorithm for exploring the $v^\phi$ parameter space
 \citep{nelder_simplex_1965}. Due to only integrating finite windings of the
-orbit, this approach may find both unstable and stable orbits. These are 
+orbit, this approach may find both unstable and stable orbits. These are
 distinguished by inspecting $E$ as a function of $x^r$, or similarly $E$ as a
 function of $L_z$ \citep{hackmann_charged_2013}, see Figure \ref{fig:e-lz-cusp}.
 The $\risco$ is found by solving \eqref{eq:isco-definition} numerically, or
@@ -396,10 +413,10 @@ similar approach.
 
 \todo{The following are stubs that need expanding}
 The Keplerian orbits exhibit a number of other interesting radii that may be
-calculated from the energy of the orbit. 
+calculated from the energy of the orbit.
 
 The photon orbit is the radius for which $E / \mu = \infty$, which is the only
-radius for which null geodesic orbits are circular. 
+radius for which null geodesic orbits are circular.
 
 At $E / \mu = 1$ is the so-called \emph{marginally bound} orbit.
 
@@ -467,7 +484,7 @@ Observables that require multiple points along the geodesic to be determined may
 \subsection{Emissivity profiles}
 \label{sec:emissivity-profiles}
 
-The emissivity profile is the illumination pattern on an accretion disc, with the emissivity $\varepsilon$ being proportional to the illuminating flux absorbed per unit area \citep{laor_line_1991,wilkins_understanding_2012}. The source of illumination is thought to be a luminous corona with a given emission spectrum and morphology. The corona is often assumed to be a point source on the spin axis of the black hole, and that the illuminating flux on the disc is therefore axis symmetric \citep{fukumura_accretion_2007}, though extended sources are possible \citep{gonzalez_probing_2017}. \todo{there must be another reference here?} For these point sources, the emissivity profile is a function of the radial coordinate on the disc. The flux is approximated as the number of geodesics striking an annulus of the disc, along with some intensity function representing the emission spectrum of the corona, such that 
+The emissivity profile is the illumination pattern on an accretion disc, with the emissivity $\varepsilon$ being proportional to the illuminating flux absorbed per unit area \citep{laor_line_1991,wilkins_understanding_2012}. The source of illumination is thought to be a luminous corona with a given emission spectrum and morphology. The corona is often assumed to be a point source on the spin axis of the black hole, and that the illuminating flux on the disc is therefore axis symmetric \citep{fukumura_accretion_2007}, though extended sources are possible \citep{gonzalez_probing_2017}. \todo{there must be another reference here?} For these point sources, the emissivity profile is a function of the radial coordinate on the disc. The flux is approximated as the number of geodesics striking an annulus of the disc, along with some intensity function representing the emission spectrum of the corona, such that
 \begin{equation}
     \varepsilon (r, \d r) = \frac{\mathcal{N}(r, \d r)}{\gamma \tilde{A}(r, \d r)} I(g),
 \end{equation}
@@ -545,13 +562,13 @@ is a rescaled dimensionless redshift parameter, and the extremal $g$ is calculat
 
 Our method for calculating the transfer functions is a variation of the algorithms of other authors (\citealp{speith_photon_1995,bambi_testing_2017}, improved in \citealp{abdikamalov_public_2019}). The procedure is as follows: first, we find the impact parameters that map to a ring of radius $r_\text{em}$ on the accretion disc. In the case of simple axis-symmetric discs, the projection of a ring will be the boundary of a star-convex set on the image plane, and therefore a polar curve $\mathcal{R}(\vartheta)$, with $\alpha = \mathcal{R}(\vartheta) \cos(\vartheta)$ and $\beta = \mathcal{R}(\vartheta) \sin(\vartheta)$. For a given $\vartheta$, the offset on the image plane $\mathcal{R}$ is found by root-finding the difference between $r_\text{em}$ and the projected endpoint of the geodesic on the disc $r = x^r (\mathcal{R}) \sin x^\theta(\mathcal{R})$, using the same alternating root-finder as in Section \ref{sec:special-orbits}.
 
-For a given $r_\text{em}$, the extremal $g$ are found by using the Golden-Section bracketing method of \cite{optimize.jl} to extremize $g(\vartheta)$, with the assumption that extremal $g$ approximately coincide with extremal $\alpha$. Informed by this, we use $\vartheta \in [ -\pi/2, 3\pi/4 )$ to ensure the maxima and minima are far from the boundaries of the domain. The importance of accurately calculating $g_\text{min}$ and $g_\text{max}$ must be reiterated: small errors here will dramatically alter the shape of the transfer functions close to $g^\ast \rightarrow 0$ and $g^\ast \rightarrow 1$. In practice, it is useful to employ a truncation of $\sim 10^{-6}g^\ast$ either side of the 
+For a given $r_\text{em}$, the extremal $g$ are found by using the Golden-Section bracketing method of \cite{optimize.jl} to extremize $g(\vartheta)$, with the assumption that extremal $g$ approximately coincide with extremal $\alpha$. Informed by this, we use $\vartheta \in [ -\pi/2, 3\pi/4 )$ to ensure the maxima and minima are far from the boundaries of the domain. The importance of accurately calculating $g_\text{min}$ and $g_\text{max}$ must be reiterated: small errors here will dramatically alter the shape of the transfer functions close to $g^\ast \rightarrow 0$ and $g^\ast \rightarrow 1$. In practice, it is useful to employ a truncation of $\sim 10^{-6}g^\ast$ either side of the
 domain to remedy numerical limitations. This is discussed in the following section in further detail, in the context of integrating transfer functions.
 
 Finally, the Jacobian is more conveniently calculated as
 \begin{equation}
-    \left\lvert 
-    \pderiv{(\alpha, \beta)}{(r_\text{em}, g^\ast)} 
+    \left\lvert
+    \pderiv{(\alpha, \beta)}{(r_\text{em}, g^\ast)}
     \right\rvert
     =
     \left\lvert
@@ -560,7 +577,7 @@ Finally, the Jacobian is more conveniently calculated as
     \pderiv{r_\text{em}}{\beta}\pderiv{g^\ast}{\alpha}
     \right\rvert^{-1},
 \end{equation}
-where the derivatives are determined using a stenciling approach to determine the Jacobian term, or even just a fixed $\delta \alpha$ and $\delta \beta$. Unless the algorithm can adapt extremely well, this approach may introduce singular values, or risk large numerical error, at extremal $g$. We instead use AD to directly calculate the inverse of the Jacobian, which has the additional benefit that it only requires the evaluation of a single geodesic to compute, and is thus substantially faster. 
+where the derivatives are determined using a stenciling approach to determine the Jacobian term, or even just a fixed $\delta \alpha$ and $\delta \beta$. Unless the algorithm can adapt extremely well, this approach may introduce singular values, or risk large numerical error, at extremal $g$. We instead use AD to directly calculate the inverse of the Jacobian, which has the additional benefit that it only requires the evaluation of a single geodesic to compute, and is thus substantially faster.
 
 \subsubsection{Partially obscured transfer functions}
 
@@ -595,7 +612,7 @@ Integrating $\d F(E)$ to calculate line-profiles is described in detail in \cite
 % \vbox{\vspace{2em}}
 % \hfill\rule[1ex]{0.7pt}{1.5ex}\rule[2.3ex]{\columnwidth}{0.7pt}
 % \end{strip}
-\noindent and $g = g( r_\text{em}, g^\ast, t')$ implicitly. The Dirac delta functions are selecting the $E$ and $t$ bin respectively. This allows us to construct high resolution lag transfer functions of \cite{reynolds_x-ray_1999} with little additional computational time (see Section \ref{sec:lag-transfer-functions}). 
+\noindent and $g = g( r_\text{em}, g^\ast, t')$ implicitly. The Dirac delta functions are selecting the $E$ and $t$ bin respectively. This allows us to construct high resolution lag transfer functions of \cite{reynolds_x-ray_1999} with little additional computational time (see Section \ref{sec:lag-transfer-functions}).
 
 The integrand for each branch remains in practice singular at $g^\ast \rightarrow (0, 1)$, and therefore the integration is performed over $g^\ast \in [h, 1 - h]$. Outside of this domain, the limits of the integrand can be taken to approximate the edges of the bin, as in \cite{dauser_broad_2010},
 \begin{equation}
@@ -605,7 +622,7 @@ The constant of proportionality is determined from evaluating the integrand at $
 
 We use $h = 2 \times 10^{-6}$, and evaluate the integral over $\d g^\ast$ using a 7$^\text{th}$ order Gauss-Kronrod quadrature scheme, which avoids evaluating the integral directly at $h$ and $1 - h$ \citep{}. Finer grids for $r_\text{em}$ and $g^\ast$ are constructed to help with numerical accuracy and stability, with the finer bins subsequently rebinned into the desired output grid\footnote{The grid in $r$ should be irregularly spaced, e.g. $\sim 1 / r$, whereas the grid in $g$ should be linear. This reflects that the majority of the variation in $f$ occurs at small $r$.}.
 
-The method for numerically integrating the time-dependent transfer functions is as follows: the limits of the integral are chosen $(r_\text{in}, r_\text{out})$, and limits of the output space similarly $(E_\text{min}, E_\text{max})$, $(t_\text{min}, t_\text{max})$. Any evaluation of \eqref{eq:transfer-integration} that is outside of the energy and time limits is discarded.  The integration over $\d r_\text{em}$ is simply performed using a trapezoidal scheme, as it is sufficient in both accuracy and performance with the finer bins. 
+The method for numerically integrating the time-dependent transfer functions is as follows: the limits of the integral are chosen $(r_\text{in}, r_\text{out})$, and limits of the output space similarly $(E_\text{min}, E_\text{max})$, $(t_\text{min}, t_\text{max})$. Any evaluation of \eqref{eq:transfer-integration} that is outside of the energy and time limits is discarded.  The integration over $\d r_\text{em}$ is simply performed using a trapezoidal scheme, as it is sufficient in both accuracy and performance with the finer bins.
 
 The $\d g^\ast$ quadrature scheme evaluates $F(E)$ for each branch over a small output bin in $g$, such that $t$ is determined by evaluating $t(g^\ast)$ at the limits of the bin, also for each branch. These approximations mandate that the integration is performed over a fine $g$ grid. In full:
 \begin{enumerate}
@@ -632,13 +649,13 @@ where $\mathcal{I}$ is the invariant intensity, $s$ is the proper length travers
 \begin{equation}
     g = \frac{\nu_\text{obs}}{\nu},
 \end{equation}
-In general, both coefficients $\alpha_nu$ and $j_\nu$ are also functions of the position $x^\mu$. 
+In general, both coefficients $\alpha_nu$ and $j_\nu$ are also functions of the position $x^\mu$.
 
 The $\d s / \d \lambda$ derivative term is calculated by projecting the geodesic momentum $v_\mu$ onto the velocity $u^\mu$ of the medium, using the projection tensor
 \begin{equation}
     \mathrm{P}^{\mu\nu} := g^{\mu\nu} + u^\mu u^\nu.
 \end{equation}
-The path length derivative is 
+The path length derivative is
 \begin{align}
     \left. \frac{\d s}{\d \lambda} \right\rvert_\lambda
     &= - \left. \left\lVert \mathrm{P}^{\mu\nu} v_\mu\right\rVert\, \right\rvert_\lambda,\\
@@ -649,7 +666,7 @@ such that for the particular case of null geodesics through a time-like medium
     \left. \frac{\d s}{\d \lambda} \right\rvert_\lambda = - \left. v_\mu u^\mu \right\rvert_\lambda.
 \end{equation}
 
-The covariant intensity $\mathcal{I}$ is related to the observed intensity $I_\nu = \mathcal{I} \nu^3$, derived using Liouville's theorem \citep{todo}. The intensity is therefore calculated by selecting $\nu_\text{obs} = E$ at the observer, and integrating \eqref{eq:covariant-radiative-transfer} along a given geodesic. 
+The covariant intensity $\mathcal{I}$ is related to the observed intensity $I_\nu = \mathcal{I} \nu^3$, derived using Liouville's theorem \citep{todo}. The intensity is therefore calculated by selecting $\nu_\text{obs} = E$ at the observer, and integrating \eqref{eq:covariant-radiative-transfer} along a given geodesic.
 
 
 %%% DESCRIPTION OF THE CODE %%%%%%%%%%%%%%%%%%%%%%
@@ -661,7 +678,7 @@ The covariant intensity $\mathcal{I}$ is related to the observed intensity $I_\n
 
 \Gradus is extensively tested with a suite of unit and end-to-end tests. The tests are constructed both by comparing numerical algorithms to specific analytic counterparts, and by saving snapshots of results in the literature to compare against. The development cycle of \Gradus is thereby expedited, allowing changes to the codebase to be made with the confidence that no previous result will be broken.
 
-In our discussion of the numerical methods, we note the current default ODE integration algorithm is Tsitouras Runge-Kutta 5/4. \Gradus vendors additional ODE solvers and numerical algorithms from the Julia SciML ecosystem, with both adaptive and fixed time steps, that may provide performance or accuracy improvements for specific problems.
+In our discussion of the numerical methods, we note the current default ODE integration algorithm is Tsitouras Runge-Kutta 5/4 \citep{tsitouras_rungekutta_2011}. \Gradus vendors additional ODE solvers and numerical algorithms from the Julia SciML ecosystem, with both adaptive and fixed time steps, that may provide performance or accuracy improvements for specific problems.
 
 \Gradus maintains a catalogue of predefined metrics, including the Kerr spacetime, Morris-Thorne wormhole, Johannsen-Psaltis metric, the Einstein-Maxwell Dilaton-Axion metric \todo{citations for these}, and the Kerr-Newman metric, complete with the ability to specify the electromagnetic potential vector, from which external accelerations $a^\mu$ in \eqref{eq:geodesic_equation} are calculated. \Gradus also has limited support for 1st order specification of the geodesic ODE system, where such a system is known. This is implemented for the Kerr spacetime, and used primarily as a self-consistency check with the second-order implementation.
 
@@ -709,10 +726,10 @@ Since our method for integration does not use the constants of motion directly, 
 To test accuracy, we compare our numerical results with analytic values. The angular deflection is the difference in $x^\phi$ of a geodesic traveling from positive to negative infinity, that is
 \begin{equation}
 	\delta x^\phi :=
-		x^\phi_{+\infty} - x^\phi_{-\infty} 
+		x^\phi_{+\infty} - x^\phi_{-\infty}
 		- \pi,
 \end{equation}
-where the $-\pi$ is to account for radial change in the coordinate system between start and endpoint as the geodesic passes the origin \todo{is this right??}. Semi-analytic solutions for the deflection angle in the Kerr spacetime have been calculated for equatorial geodesics in \cite{iyer_lights_2009}, using elliptic integrals to find the coordinate differences. We follow their notation and denote the analytic deflection angle $\hat{\alpha}$, and present a compact summary of their calculations in Appendix \ref{appendix:deflection-angle}. 
+where the $-\pi$ is to account for radial change in the coordinate system between start and endpoint as the geodesic passes the origin \todo{is this right??}. Semi-analytic solutions for the deflection angle in the Kerr spacetime have been calculated for equatorial geodesics in \cite{iyer_lights_2009}, using elliptic integrals to find the coordinate differences. We follow their notation and denote the analytic deflection angle $\hat{\alpha}$, and present a compact summary of their calculations in Appendix \ref{appendix:deflection-angle}.
 
 Figure \ref{fig:deflection-angle} shows the deflection angle as a function of impact parameter $\alpha$ calculated using our code, along with the analytic deflection, and a measure of the error for different integration algorithms. Note the asymptotic behaviour of the error as $\lvert \alpha \rvert$ increases -- we account for this as related to the approximate observer at infinity in ray-tracing methods, catalyzed by the geometry of our observer introducing a small error at any finite $x^r$ when calculating the impact parameters relative to an $x^r = \infty$ observer. As can be expected, the error increases if $x^r_\text{start}$ is decreased.
 
@@ -783,15 +800,15 @@ Following \cite{cackett_modelling_2014}, we define the \textit{response fraction
 \begin{equation}
 	\mathscr{F}_\psi(f) := R \int_{0}^\infty \psi(t) \e^{-2\pi i f t} \d t.
 \end{equation}
-The phase difference between the reflected and continuum flux is 
+The phase difference between the reflected and continuum flux is
 \begin{equation}
-	\phi(f) = \tan^{-1} \left( 
-		\frac{\Im{\mathscr{F}_\psi}}{1 + \Re{\mathscr{F}_\psi}} 
+	\phi(f) = \tan^{-1} \left(
+		\frac{\Im{\mathscr{F}_\psi}}{1 + \Re{\mathscr{F}_\psi}}
 	\right),
 \end{equation}
 where $\Im{\mathscr{F}_\psi}$ and $\Re{\mathscr{F}_\psi}$ are the imaginary and real components of $\mathscr{F}_\psi$ respectively. The imaginary component represents the lag contribution to the phase difference. Since the driving signal is present in both bands, it adds no lag contribution, but serves to dilute the phase difference and therefore the real component of the signal through the $+1$ in the denominator \citep{cackett_modelling_2014}. \todo{expand on this}
 
-The time lag is defined as 
+The time lag is defined as
 \begin{equation}
 	\tau(f) := \frac{\phi}{2 \pi f},
 \end{equation}
@@ -832,7 +849,7 @@ We note a slight disagreement with \cite{cackett_modelling_2014} in the $h = 10$
 
 Research into the appearance of compact singularities in modified gravity theories is often focused on the shadow of the singularity or the photon rings.
 
-\cite{bambi_testing_2017,abdikamalov_testing_2020} have created a suite of codes \texttt{ABHModels}\footnote{\todo{add link}} for studying the iron line and reflection spectra from accreting black holes in the Johannsen metric. This metric is constructed by taking a higher order multipole expansion of the spherical harmonics of the metric \citep{johannsen_regular_2013}. Their codes are able to calculate lineprofiles and black-body disc spectra for the various deformation parameters of the Johannsen metric. Their code is however limited to a choice of a single deformation parameter, due to the method by which they construct their geodesic implementation. 
+\cite{bambi_testing_2017,abdikamalov_testing_2020} have created a suite of codes \texttt{ABHModels}\footnote{\todo{add link}} for studying the iron line and reflection spectra from accreting black holes in the Johannsen metric. This metric is constructed by taking a higher order multipole expansion of the spherical harmonics of the metric \citep{johannsen_regular_2013}. Their codes are able to calculate lineprofiles and black-body disc spectra for the various deformation parameters of the Johannsen metric. Their code is however limited to a choice of a single deformation parameter, due to the method by which they construct their geodesic implementation.
 
 We compare the line profiles for the Johannsen metric in Figure \ref{fig:compare-johannsen}.
 
@@ -848,7 +865,7 @@ We compare the line profiles for the Johannsen metric in Figure \ref{fig:compare
 
 \todo{including radiative transfer information in the transfer functions}
 
-We are working on a optimized thick disc spectral and reverberation model for use in spectral fitting programs based on our thick disc transfer functions and time-dependant transfer function integration. 
+We are working on a optimized thick disc spectral and reverberation model for use in spectral fitting programs based on our thick disc transfer functions and time-dependant transfer function integration.
 
 \section{Conclusions}
 
