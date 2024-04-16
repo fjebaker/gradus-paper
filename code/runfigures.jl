@@ -5,9 +5,10 @@ macro buildfigure(path)
     end |> esc
 end
 
-# on my laptop it takes about 20 minutes to build all of the figures 
+# on my laptop it takes about 20 minutes to build all of the figures
 # so set this script running, go for a coffee, and then come back
 # and compile the LaTeX document :)
+
 
 @buildfigure("circular-orbits.E-Lz.jl")
 @buildfigure("continuum-time.figure.jl")

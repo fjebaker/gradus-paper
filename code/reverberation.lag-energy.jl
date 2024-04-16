@@ -50,7 +50,7 @@ radii = Gradus.Grids._inverse_grid(Gradus.isco(m), 1000.0, 300)
 
 model = LampPostModel(h = 10.0)
 
-# thin disc 
+# thin disc
 d = ThinDisc(0.0, Inf)
 itb = Gradus.interpolated_transfer_branches(m, x, d, radii; verbose = true, β₀ = 2.0)
 prof = @time emissivity_profile(m, d, model; n_samples = 100_000)
