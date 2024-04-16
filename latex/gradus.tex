@@ -1,3 +1,4 @@
+% vim: tw=80 cc=80
 % mnras_template.tex
 %
 % LaTeX template for creating an MNRAS paper
@@ -40,7 +41,7 @@
 %%%%%%%%%%%% CUSTOM COMMANDS %%%%%%%%%%%%%%%%%%%%%
 
 \newcommand{\citneeded}{{\bf \color{red} $^{\text{citation needed}}$}}
-\newcommand{\todo}[1]{{\bf \color{red} #1}}
+\newcommand{\todo}[1]{{\noindent \bf \color{red} TODO: #1}}
 \newcommand{\notes}[1]{{\color{cyan} #1}}
 
 \newcommand{\Gradus}{Gradus.jl }
@@ -155,8 +156,8 @@ x^\mu$.
 
 \subsection{Geodesic integration}
 
-Using coordinates $x^\mu$, the geodesic equation with under external
-acceleration $a^\mu$ is written
+Using coordinates $x^\mu$, the geodesic equation with external acceleration
+$a^\mu$ is written
 \begin{equation}
 \label{eq:geodesic_equation}
     \frac{\d^2 x^\mu}{\d \lambda^2}
@@ -178,8 +179,8 @@ encoded in the Christoffel connections,
         - \partial_{\rho}g_{\sigma \nu}
     \right),
 \end{equation}
-with the indices to be read as ``the acceleration in direction $\mu$ of the vector
-$\nu$ travelling in direction $\sigma$''. \todo{check this}
+with the indices to be read as ``the acceleration in direction $\mu$ of the
+vector $\nu$ travelling in direction $\sigma$''. \todo{check this}
 
 For a given metric, the geodesic equation may be expressed as an initial value
 problem; a set of four coupled second-order differential equations that can be
@@ -215,8 +216,8 @@ geodesics in the forward direction as if they had travelled backwards. Photons
 can therefore be traced from an observer to the black hole, and calculations
 performed as if they had been emitted from the black hole and travelled towards
 the observer. This seemingly trivial comment cannot be understated in the
-implementation of GRRT, as it becomes a factor when determining dot products
-velocity vectors.
+implementation of GRRT, as it will appear to alter the direction of rotation,
+and is a factor when determining dot products velocity vectors.
 
 Computing the geodesic equation requires some method of determining
 $\utensor{\Gamma}{\mu}{\nu\sigma}$. This is conventionally done analytically
@@ -256,7 +257,8 @@ reach an image plane representing the observer's field of view, and therefore
 parameterize the velocity vector using \emph{impact parameters} on the image
 plane. The parameters representing the local sky are shown in
 Fig.~\ref{fig:observer-coordinates}, with the image plane drawn in yellow.
-Following \cite{cunningham_optical_1973}, one may then define a set of \emph{impact
+Following \cite{cunningham_optical_1973}, one may then define a set of
+\emph{impact
 parameters} from components of the local momenta $v_{(i)}$
 \begin{align}
     \alpha &:=  x^r \frac{v_{(\phi)}}{v_{(r)}}, \\
@@ -280,8 +282,8 @@ $\beta$
 Note the choice of sign in the root of $v_{(r)} / v_{(t)}$, chosen so the
 momentum points \emph{inwards} towards the black hole.
 
-The case for emitters is subtly different, where we now consider azimuthal and
-polar angles in the local sky, denoted $\Upsilon$ and $\Psi$ respectively (see
+The case for emitters is subtly different, where we now consider polar and
+azimuthal angles in the local sky, denoted $\Upsilon$ and $\Psi$ respectively (see
 also Fig.~\ref{fig:observer-coordinates}). The momentum components are now
 obtained by considering the tangent vector pointing in some initial direction;
 that is, by projecting the initial velocity vector onto the local momentum
@@ -391,7 +393,7 @@ $L_z$.
 \begin{figure}
     \centering
     \includegraphics[width=0.95\linewidth]{figures/circular-orbits.E-Lz.pdf}
-    \caption{\todo{TODO, also show the points we calculate using the numeric orbit finder}}
+    \caption{\todo{also show the points we calculate using the numeric orbit finder}}
     \label{fig:e-lz-cusp}
 \end{figure}
 
@@ -425,7 +427,7 @@ determine the event horizon radius. Under axis-symmetry, the event horizon is
 the set of the $(r, \theta)$ coordinates that satisfy
 \begin{equation}
     \label{eq:event_horizon}
-    0 = \left. \frac{1}{g_{rr}} \right\rvert_{x^r = r_s}.
+    0 = \left. \frac{1}{g_{rr}} \right\rvert_{x^r =: r_s}.
 \end{equation}
 For a set of equally spaced $\theta$, we determine $r$ by solving for the roots
 of the equation. If the roots are not analytically tractable, we fallback to
@@ -469,16 +471,37 @@ root-solver in \texttt{ContinuousCallback} or a per-point test with
 \subsection{Computing observables}
 \label{sec:computing-observables}
 
-We consider \textit{observables} to be any physical quantity calculated from a simulation that is evaluated using some or all of the points along a geodesic. Often only the start and end point of a geodesic are required to calculate some physical quantity, and under such circumstances it is computational beneficial to avoid allocating space for the full solutions.
+In \Gradus, an \textit{observable} is any physical quantity calculated from a
+simulation. Computing an observable requires some or all points $p = (x^\nu,
+v^\nu)$ along a geodesic, though often only the start and end points are
+required. In such circumstances, some computational concessions may be made to
+save memory allocations. Observables are abstracted in the implementation, and
+depending on the observable being calculated, different parts of the geodesic
+are held in memory during integration.
 
-A frequently required quantity is the redshift along a geodesic, due to both the Doppler and gravitational redshift. This is compactly written as the ratio of energies between the start and end point connected by the geodesic,
+An observable that requires multiple points along the geodesic can be calculated
+either coincidentally with the geodesic equation\footnote{The ODE system is then
+modified with an additional differential equation representing the observable.},
+or subsequently re-traced along the ray. Such quantities include polarization /
+parallel transport angle or radiative transfer intensities. Calculating the
+quantities simultaneously has the benefit that the error tolerance in the
+integrator is sensitive to changes in the observable. The benefit of re-tracing
+for a given set of metric parameters and observer inclination is that the
+geodesics trajectories are unchanged, allowing the observable to be more
+efficiently recalculated with new parameters.
+
+The redshift $g$ along a geodesic is an observable that only requires the start
+and end points of a geodesic. The redshift includes both the Doppler shift and
+gravitational redshift, and is compactly written as the ratio of energies
+between the start and end point,
 \begin{equation}
 \label{eq:redshift}
-g := \frac{E_\text{end}}{E_\text{start}} = \frac{\left. v_\mu u^\mu \right\rvert_\text{end}}{\left. v_\mu u^\mu \right\rvert_{\text{start}}},
+g := \frac{E_\text{end}}{E_\text{start}} = \frac{\left. v_\mu u^\mu
+\right\rvert_\text{end}}{\left. v_\mu u^\mu \right\rvert_{\text{start}}},
 \end{equation}
-where $v_\mu$ are the photon momenta, and $u^\mu$ the velocity of the emitting (start) and observing (end) media respectively.
+where $v_\mu$ are the geodesic momenta, and $u^\mu$ the velocity of the emitting
+(start) and observing (end) media respectively.
 
-Observables that require multiple points along the geodesic to be determined may either be calculated coincidentally with the geodesic equation, or subsequently re-traced along the ray. Such quantities include polarization / parallel transport or radiative transfer / optical depth. Calculating the quantities simultaneously has the benefit that the error tolerance in the step size estimation of the integrator is sensitive to changes in the observable. The benefit of the latter is that for a given set of metric parameters and observer inclination, the geodesics trajectories are unchanged, allowing the observable to be more efficiently recalculated with new parameters.
 
 
 \subsection{Emissivity profiles}
@@ -908,6 +931,7 @@ No new data or analyses have been created for this work. The code to reproduce t
 % \input{gradus.appendix.deflection-angle.tex}
 \input{gradus.appendix.integrator-error.tex}
 \input{gradus.appendix.continuum-time.tex}
+\input{gradus.appendix.hamiltonian-formalism.tex}
 
 % \section{Some extra material}
 
