@@ -26,3 +26,5 @@ end
 @buildfigure("transfer-function.parameterization.jl")
 @buildfigure("transfer-functions.2d.jl")
 @buildfigure("transfer-functions.plots.jl")
+@buildfigure("transfer-functions.sampling.jl")
+@buildfigure("datum-plane.jl")
