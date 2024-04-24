@@ -727,10 +727,11 @@ alternating root-finder as in Section \ref{sec:special-orbits}.
 
 Then we must determine the extrema of $g$ over the $r_\text{em}$ ring. The
 extremal $g$ are found by using the Golden-Section bracketing method of
-\cite{optimize.jl}\citneeded to extremize $g(\vartheta)$. We make the assumption
-that extremal $g$ approximately coincide with extremal $\beta = 0$, and therefore
-shift the domain to $\vartheta \in [ -\pi/2, 3\pi/4)$ to ensure the maxima and
-minima are away from the edges of the domain to help the optimizer.
+\cite{optimize.jl}\citneeded to extremize $g(\vartheta)$, solving a new geodesic
+at each step. We make the assumption that extremal $g$ approximately coincide
+with extremal $\beta = 0$, and therefore shift the domain to $\vartheta \in [
+-\pi/2, 3\pi/4)$ to ensure the maxima and minima are away from the edges of the
+domain to help the optimizer.
 
 The importance of accurately calculating $g_\text{min}$ and $g_\text{max}$ is
 difficult to overstate: small errors here will dramatically alter the shape of
@@ -761,32 +762,69 @@ numerical error at extremal $g$. AD avoids some of these problems, and has the
 additional benefit that it only requires the evaluation of a single geodesic to
 compute, and is thus substantially faster.
 
+The total number of geodesics traced for each Cunningham transfer function
+depends on the number of steps needed to solve impact parameters for a given
+$r_\text{em}$, and on the number of steps needed to extremize $g^\ast$ to within
+some tolerance. In our code, we set an upper-limit on the number of steps so
+that memory can be contiguously allocated, and the cost of curtailing some
+calculations. Our default configurations use an upper limit of $N = 114$ points
+along $r_\text{em}$, $80$ of which are approximately linearly sampled in
+$\vartheta$, and $34 = 2 \times 17$ used to determine $g_\text{min}$ and
+$g_\text{max}$. These limits were chosen to balance speed and accuracy of
+calculation. The resulting sampling pattern is sensitive to various extrema in
+$g$, and determines the shape of $f$ well, shown in Figure
+\ref{fig:transfer-sampling-pattern}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.95\linewidth]{figures/transfer-functions.sampling.pdf}
+    \caption{\todo{caption}}
+    \label{fig:transfer-sampling-pattern}
+\end{figure}
+
 \subsubsection{Partially obscured Cunningham transfer functions}
 
-For thick accretion discs, it is possible that the disc obscures itself
-\citep{taylor_x-ray_2018} \todo{check reference}. Certain $r_\text{em}$ may
-therefore not be visible to an observer at inclination
-$\theta_\text{obs}$, and other $r_\text{em}$ only partially visible (see Figure
-\ref{fig:transfer-parameterisation}b). In such cases, the method of calculating
-the Cunningham transfer functions is modified through the use of \emph{datum
-planes}.
+For thick accretion discs, it is possible that the disc obscures itself, and
+that certain $r_\text{em}$ may therefore be only partially visible or entirely
+obscured to an observer at inclination $\theta_\text{obs}$ (see Figure
+\ref{fig:transfer-parameterisation}b). When this is the case, the method of
+calculating the Cunningham transfer functions is modified through the use of
+\emph{datum planes}.
 
-A \emph{datum plane} is an infinite plane at some scale height $z_\text{em} =
-r_\text{em} \cos \theta$, and is used to as the manifold over which the
-optimizer solves the projection of the ring at $r_\text{em}$.
+We define a \emph{datum plane} to be an infinite plane at some scale height
+$z_\text{em} = r_\text{em} \cos \theta$, and used as the manifold over which the
+optimizer solves the projection of the ring at $r_\text{em}$. The datum plane
+is in essence a cut-off for integration such that all geodesics terminate with
+the same $z$, see Figure \ref{fig:datum-plane-tracing}.
 
-The extremal redshift is calculated over
-the whole ring, whether partially obscured or not, for the purpose of
-transforming to $g^\ast$. Therefore, we make use of a ``datum plane'' when
-calculating the transfer functions; that is, an infinite plane at the coordinate
-height of the disc at $r_\text{em}$. This guides the root-finder when solving
-for the impact parameters and redshift. We then subsequently trace a separate
-geodesic to determine if a given coordinate on the disc is visible to the
-observer or not. This is illustrated in Figure \ref{fig:datum-plane-tracing} for
-the SSD disc, assuming the disc rotates cylindrically with Keplerian circular
-velocities.
+As before, we determine the extremal redshift over the ring $r_\text{em}$,
+including also those geodesics from obscured regions of the disc. As the
+redshift depends only on the start and end point of the geodesic, it is
+therefore simpler to combine this with the radius-solving step and calculate the
+redshift over the datum plane. This is not so for the Jacobian term, which
+depends on the cross section traced by a bundle of geodesics for which the
+geometry of the disc is important. The Jacobian calculating step is combined
+with a check to see if the patch of the disc is obscured or not, which is then
+used to mask the transfer functions, as in Figure \ref{fig:transfer-functions}.
 
-For partially obscured emission radii, the benefits of using AD for calculating the Jacobian are further realized: \todo{issues related to stenciling close to obscured radii are thereby entirely mitigated.}
+This method is analogous to the ``imaginary photons'' of
+\cite{abdikamalov_testing_2020} formalized for optimizing $r_\text{em}$ and use
+with AD.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.95\linewidth]{figures/datum-plane.pdf}
+    \caption{Cross-sectional slice of geodesics traced from a distant observer
+        against a datum plane (horizontal blue line) through a thick disc
+        (curved black line). The observer ``sees'' the solid geodesics
+        intersecting the disc, whereas for the purposes of calculating the
+        Cunningham transfer functions, we continue integrating along the dashed
+        line until intersecting the datum plane. For geodesic A the observer
+        can see the emission radius $r_\text{em}$, whereas for B the radius is
+        obscured.
+}
+    \label{fig:datum-plane-tracing}
+\end{figure}
 
 
 \begin{figure*}
@@ -798,6 +836,9 @@ For partially obscured emission radii, the benefits of using AD for calculating 
 
 \subsection{Integrating transfer functions}
 \label{sec:transfer-function-integration}
+
+The Cunningham transfer functions may be viewed as the Green's function of an
+annulus $r_\text{em}$ in response to some delta function of incident flux.
 
 Integrating $\d F(E)$ to calculate line-profiles is described in detail in \cite{dauser_broad_2010}, including the Green's function formalism that adds additional flexibility in the definition of $I_\text{em}$. The transfer functions are split into the aforementioned upper and lower branches at extremal $g^\ast$, and each branch is integrated separately, with the total summed in the final result. We extend the transfer function integration to include the geodesic coordinate time, integrating $f$ as
 
@@ -838,6 +879,9 @@ The $\d g^\ast$ quadrature scheme evaluates $F(E)$ for each branch over a small 
 By formulating the integration with the time component, we can use the same transfer function table to compute both line-profiles and reverberation lags efficiently, with arbitrary intensity functions $I_\text{em}$. We note that extensions to $I_\text{em}$ that require, for example, the photon emission angle on the disc, are trivial to include.
 
 These transfer function integration methods may be checked for consistency against slower but simpler direct binning of the image plane via Eq. \eqref{eq:infinitesimal-flux} and Eq. \eqref{eq:liouville-theorem}.
+
+\todo{Mention that the extension to using the angle of emission is trivial with
+the transfer functions}
 
 \subsection{Covariant radiative transfer}
 

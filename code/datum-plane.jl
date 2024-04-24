@@ -30,6 +30,12 @@ zs = Gradus.cross_section.(d, rs)
 
 x = SVector(0.0, 1000.0, deg2rad(60), 0.0)
 
+function draw_axis_key!(ax; x = 0.0, y = 0.0,  x_len = 2, y_len = 2, kwargs...)
+    lines!(ax, [x, x, x + x_len], [y + y_len, y, y]; kwargs...)
+    text!(ax, x - 0.4, y + y_len, text = L"z")
+    text!(ax, x + x_len + 0.1, y - 0.5, text = L"r")
+end
+
 begin
     palette = _default_palette()
 
@@ -55,15 +61,15 @@ begin
 
     r_em = 4.80
     vlines!(ax1, [-r_em, r_em], color = :black, linestyle = :dash, linewidth = 1.0)
+    text!(ax1, r_em - 2, 15, text = L"r_\text{em}")
+    text!(ax1, 20.0, 0, text = L"z=0")
 
     chosen_range = [7.0, 0.0, -2.0, 2.0]
+    chosen_range = [7.0, 0.0]
 
     for b in range(-5, 10.0, step = 1)
-        # if b in chosen_range
-        #     continue
-        # end
         c = :lightgray
-        sol = traceimpact(m, x, 0.0, b)
+        sol = traceimpact(m, x, 0.0, b, d)
         X, _, Z = Gradus._extract_path(sol, 500, t_span = 60)
         lines!(ax1, X, Z, color = c, linewidth = 0.5)
     end
@@ -87,12 +93,15 @@ begin
         sol = traceimpact(m, x, 0.0, b, plane)
         X, _, Z = Gradus._extract_path(sol, 500, t_span = 60)
         lines!(ax1, X, Z, linestyle = :dash, color = c)
+        scatter!(ax1, [X[end]], [Z[end]], color = c)
     end
+
+    draw_axis_key!(ax1, x = -9, y =14, color = :black)
 
     Label(
       fig[1,1,Top()],
         text = "A",
-        padding = (120, 0, 5, 0),
+        padding = (125, 0, 0, 0),
         fontsize = 13,
         font = :bold,
     )
@@ -100,12 +109,12 @@ begin
     Label(
       fig[1,1,Top()],
         text = "B",
-        padding = (420, 0, -20, 0),
+        padding = (420, 0, 0, 0),
         fontsize = 13,
         font = :bold,
     )
 
-    x_lim = 19
+    x_lim = 20
     offset = 10.0
     xlims!(ax1, -x_lim + offset, x_lim + offset)
     ylims!(ax1, -2.0, 17)
