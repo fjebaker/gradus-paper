@@ -919,16 +919,11 @@ a 7$^\text{th}$ order Gauss-Kronrod quadrature scheme, which avoids evaluating
 the integral directly at $h$ and $1 - h$ \citep{}. Finer grids for $r_\text{em}$
 and $g^\ast$ are constructed to help with numerical accuracy and stability, with
 the finer bins subsequently rebinned into the desired output grid\footnote{The
-grid in $r$ should be irregularly spaced, e.g. $\sim 1 / r$, whereas the grid in
-$g$ should be linear. This reflects that the majority of the variation in $f$
-occurs at small $r$.}.
-
-Most of the variation in the Cunningham transfer functions occurs at small
-$r_\text{em}$, and so we calculate Cunningham transfer functions over a power
-series of $r_\text{em}$ between the extrema. For $g^\ast$, the variation is
-approximately even, and so we use a uniform grid of $N = 30$ points over
-$g^\ast$. This also make saving the transfer functions in a tabular format
-simple.
+grid in $r$ should be irregularly spaced, e.g. $\sim 1 / r$. This reflects
+that the majority of the variation in $f$ occurs at small $r$. For $g^\ast$,
+the variation is approximately uniform over the domain, and so we use a
+uniform grid of $N = 30$ points over $g^\ast$. This also make saving the
+transfer functions in a tabular format simple.  }.
 
 By formulating the Cunningham transfer function integration with the time
 component, we can use the same transfer function table to compute both
@@ -989,25 +984,89 @@ under-resolved on coarse image planes. This may lead to oversampling regions of
 low or zero variation further out on the disc.
 }
 
-\Gradus is implemented in the Julia programming language \citep{Bezanson_Julia_A_fresh_2017}. We use the DifferentialEquations.jl ODE solving library and ForwardDiff.jl for forward-mode automatic differentiation \citep{RevelsLubinPapamarkou2016}. The code is available via the \texttt{Pkg} Julia package manger in a registry maintained by members of the University of Bristol astrophysics group\footnote{\url{https://github.com/astro-group-bristol/AstroRegistry/}}. There are also rudimentary bindings to a wide variety of languages, including Python via \texttt{pip} \citep{}.
+\Gradus is implemented in the Julia programming language
+\citep{Bezanson_Julia_A_fresh_2017}. We use the DifferentialEquations.jl ODE
+solving library with ForwardDiff.jl for forward-mode automatic differentiation
+\citep{RevelsLubinPapamarkou2016}. The code is available via the \texttt{Pkg}
+Julia package manger in a registry maintained by the University of
+Bristol astrophysics
+group\footnote{\url{https://github.com/astro-group-bristol/AstroRegistry/}}.
+There are also rudimentary bindings to other languages, including Python via
+\texttt{pip} \citep{}.
 
-\Gradus aims to have a single expressive high-level API for a variety of GRRT problems, with sensible defaults and optional fine-grained control. The code is accompanied by website documentation\footnote{\url{https://astro-group-bristol.github.io/Gradus.jl/}}, with short tutorials and examples designed to provide a feature-rich overview whilst simultaneously demonstrating how to construct custom simulations and how to integrate \Gradus in user models. We encourage readers who are interesting in learning up-to-date information about the code and our methods to consult the documentation, as the documentation strives to be the most accurate description of the code as it is maintained. The documentation details all algorithm specific choices and implementations, and is built as part of our continuous integration (CI). The source code is written to be read by contributors and users alike to invite extension, to be explicit about our methods, and their benefits and limitations.
+\Gradus aims to have a single expressive high-level API for a variety of GRRT
+problems, with sensible defaults and optional fine-grained control. The code is
+accompanied by generated
+documentation\footnote{\url{https://astro-group-bristol.github.io/Gradus.jl/}},
+with short tutorials and examples designed to provide a feature-rich overview
+whilst simultaneously demonstrating how to construct custom simulations and how
+to integrate \Gradus in user models. We encourage readers who are interesting in
+learning up-to-date information about the code and our methods to consult the
+documentation, as the documentation will be a more accurate description
+of the code as it is maintained. The documentation details all algorithm
+specific choices and implementations. The source code is written to be read by
+contributors and users alike to invite extension, to be explicit about our
+methods, and their benefits and limitations.
 
-\Gradus is extensively tested with a suite of unit and end-to-end tests. The tests are constructed both by comparing numerical algorithms to specific analytic counterparts, and by saving snapshots of results in the literature to compare against. The development cycle of \Gradus is thereby expedited, allowing changes to the codebase to be made with the confidence that no previous result will be broken.
+\Gradus is extensively tested with a suite of unit and integration tests. The
+tests are constructed both by comparing numerical algorithms to specific
+analytic counterparts, and by comparing against snapshots of results in the
+literature.
 
-In our discussion of the numerical methods, we note the current default ODE integration algorithm is Tsitouras Runge-Kutta 5/4 \citep{tsitouras_rungekutta_2011}. \Gradus vendors additional ODE solvers and numerical algorithms from the Julia SciML ecosystem, with both adaptive and fixed time steps, that may provide performance or accuracy improvements for specific problems.
+In our discussion of the numerical methods, we note the current default ODE
+integration algorithm is Tsitouras Runge-Kutta 5/4
+\citep{tsitouras_rungekutta_2011}. \Gradus vendors additional ODE solvers and
+numerical algorithms from the Julia SciML ecosystem, with both adaptive and
+fixed time steps, that may provide performance or accuracy improvements for
+specific problems, which will be discussed in the \todo{Test Problems} section.
 
-\Gradus maintains a catalogue of predefined metrics, including the Kerr spacetime, Morris-Thorne wormhole, Johannsen-Psaltis metric, the Einstein-Maxwell Dilaton-Axion metric \todo{citations for these}, and the Kerr-Newman metric, complete with the ability to specify the electromagnetic potential vector, from which external accelerations $a^\mu$ in \eqref{eq:geodesic_equation} are calculated. \Gradus also has limited support for 1st order specification of the geodesic ODE system, where such a system is known. This is implemented for the Kerr spacetime, and used primarily as a self-consistency check with the second-order implementation.
+Where two (or more) methods exist to compute an observable, \Gradus implements
+both as a method of verification.
+
+\Gradus maintains a catalogue of predefined metrics, including the Kerr
+spacetime, Morris-Thorne wormhole, Johannsen-Psaltis metric, the
+Einstein-Maxwell Dilaton-Axion metric \todo{citations for these}, and the
+Kerr-Newman metric, complete with the ability to specify the electromagnetic
+potential vector, from which external accelerations $a^\mu$ in
+\eqref{eq:geodesic_equation} are calculated.
 
 \subsection{Extensibility}
 
-Our implementations of the numerical methods, as well as the actual methods themselves, are conceptually simple and consequently generalize well. The design of \Gradus prioritizes useability and extensibility, which comes at a small performance cost: our aim is not to implement the fastest, semi-analytic solutions to specific problems, but rather to have an optimal and interpretable codebase for exploring problems related to general relativity. The abstractions in \Gradus have been designed to allow users to implement and calculate observables of their models quickly. To this end, we also include a number of visualization and plotting recipes to provide some intuition for the problem space.
+Our implementations of the numerical methods, as well as the actual methods
+themselves, are conceptually simple and consequently generalize well. The design
+of \Gradus prioritizes usability and extensibility, which comes at a small
+performance cost: our aim is not to implement the fastest, semi-analytic
+solutions to specific problems, but rather to have an optimal and interpretable
+codebase for exploring problems related to general relativity. The abstractions
+in \Gradus have been designed to allow users to implement and calculate
+observables of their models quickly. To this end, we also include a number of
+visualization and plotting recipes to provide some intuition for the problem
+space.
 
-\Gradus is designed to allow simple one-line changes to propagate through the simulations. The requisite calculations for determining observables have been abstracted in such a way that the precise function calls are determined at compile-time. This design is possible with Julia's just-in-time compilation and multiple dispatch, and bring additional benefits: different number types may be used through the whole library, permitting arbitrary precision floating point operations, symbolic evaluation through Symbolics.jl \citep{symbolics_julia}, or the propagation of AD gradient information through an entire simulation. Consequently, our code can calculate derivatives of any physical product with respect to the input parameters, and is therefore optimal for use directly in model fitting.
+\Gradus is designed to allow simple one-line changes to propagate through the
+simulations. The requisite calculations for determining observables have been
+abstracted in such a way that the precise function calls are determined at
+compile-time. This design is possible with Julia's just-in-time compilation and
+multiple dispatch, and bring additional benefits: different number types may be
+used through the whole library, permitting arbitrary precision floating point
+operations, symbolic evaluation through Symbolics.jl \citep{symbolics_julia}, or
+the propagation of AD gradient information through an entire simulation.
+Consequently, our code can calculate derivatives of any physical product with
+respect to the input parameters, and is therefore optimal for use directly in
+model fitting or for generating surrogate models.
 
-The shim we have implemented between our ODE problems and DifferentialEquations.jl allows additional quantities to be integrated along with the geodesic equation, as described in Section \ref{sec:computing-observables}. The abstraction permits users of \Gradus to easily specify new ODE components to be traced, if their model requires them. Many types in \Gradus are also composable, allowing complex simulations and calculations to be pieced together from simpler, testable components. Analytic accretion geometry may also be simply specified, and mesh geometry in common file formats may be readily imported.
+The shim we have implemented between our ODE problems and
+DifferentialEquations.jl allows additional quantities to be integrated along
+with the geodesic equation, as described in Section
+\ref{sec:computing-observables}. The abstraction permits users of \Gradus to
+easily specify new ODE components to be traced, if their model requires them
+(e.g. path length of a geodesic or polarization parameters).
 
-Our transfer function integration routines permit arbitrary kernels, allowing any quantity integrated over the image plane to be efficiently pre-computed and calculated via transfer functions. Where additional information about the geodesics is needed, our extension to include the timing component serves as an example of the methods we have developed to permit this.
+Our transfer function integration routines permit arbitrary kernels, allowing
+any quantity integrated over the image plane to be efficiently pre-computed and
+calculated via transfer functions. Where additional information about the
+geodesics is needed, our extension to include the timing component serves as an
+example of the methods we have developed to permit this.
 
 \subsection{Performance}
 \label{sec:performance}
