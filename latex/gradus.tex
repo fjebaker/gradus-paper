@@ -1068,17 +1068,6 @@ calculated via transfer functions. Where additional information about the
 geodesics is needed, our extension to include the timing component serves as an
 example of the methods we have developed to permit this.
 
-\subsection{Performance}
-\label{sec:performance}
-
-Our code makes use of Julia's heterogeneity and concurrency to run in multi-threaded and distributed environments, with GPU-offloading via DiffEqGPU.jl \citep{utkarsh2023automated}, and the various supported backends including CUDA and Metal \citep{besard2018juliagpu}. We have developed custom threading contexts that minimize allocated memory when tracing large numbers of geodesics.
-
-
-\todo{a little talk about the threading strategies etc.}
-
-\todo{GPU vs CPU and when one is one better than the other
-Performance vs e.g. Bambi's NK and other work}
-
 \subsection{Simulation products}
 
 \todo{What we can export, and how they can be exported / used in e.g. XSPEC}
