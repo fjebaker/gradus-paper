@@ -652,15 +652,20 @@ equivalently \emph{Liouville's theorem}) with
 I_\text{obs}\left( E_\text{obs}\right) = g^3 I_\text{em}\left(E_\text{em}\right).
 \end{equation}
 Integrating over $\d \Omega$ to obtain the observed flux $F(E_\text{obs})$ is
-equivalent to integrating over the image plane $\d \alpha \d \beta$, which in
-practical terms is binning the geodesic in each pixel over bins of $\Delta E$.
-Formulating the flux calculation in this way is computationally simple but
-expensive, as the flux is computed on a pixel-by-pixel (geodesic-by-geodesic)
-basis. The emitted intensity $I_\text{em}$ depends on the disc emissivity, requiring both
-coordinate and redshift values for each geodesic to be stored to compute the
-flux. These quantities are dependant on the metric, disc, and observer
-parameters, and this dependence limits the reuse of calculations between
-simulations, undesirable for creating spectral models.
+equivalent up to a constant to integrating over the image plane $\d \alpha \d
+\beta$,
+\begin{equation}
+\label{eq:integrate-impact-params}
+F(E_\text{obs}) \propto \int I_\text{obs}(E_\text{obs}) \d \alpha \d \beta,
+\end{equation}
+which in practical terms is binning the geodesic in each pixel over bins of
+$\Delta E$.  Formulating the flux calculation in this way is computationally
+simple but expensive, as the flux is computed on a pixel-by-pixel
+(geodesic-by-geodesic) basis. The emitted intensity $I_\text{em}$ depends on the
+disc emissivity, requiring both coordinate and redshift values for each geodesic
+to be stored to compute the flux. These quantities are dependant on the metric,
+disc, and observer parameters, and this dependence limits the reuse of
+calculations between simulations, undesirable for creating spectral models.
 
 To elide such problems, the relativistic effects in the flux calculation are
 often encoded in so-called \emph{transfer functions}, first introduced in
@@ -788,7 +793,7 @@ For thick accretion discs, it is possible that the disc obscures itself, and
 that certain $r_\text{em}$ may therefore be only partially visible or entirely
 obscured to an observer at inclination $\theta_\text{obs}$ (see Figure
 \ref{fig:transfer-parameterisation}b). When this is the case, the method of
-calculating the Cunningham transfer functions is modified through the use of
+calculating Cunningham transfer functions is modified through the use of
 \emph{datum planes}.
 
 We define a \emph{datum plane} to be an infinite plane at some scale height
@@ -798,18 +803,19 @@ is in essence a cut-off for integration such that all geodesics terminate with
 the same $z$, see Figure \ref{fig:datum-plane-tracing}.
 
 As before, we determine the extremal redshift over the ring $r_\text{em}$,
-including also those geodesics from obscured regions of the disc. As the
-redshift depends only on the start and end point of the geodesic, it is
-therefore simpler to combine this with the radius-solving step and calculate the
-redshift over the datum plane. This is not so for the Jacobian term, which
-depends on the cross section traced by a bundle of geodesics for which the
-geometry of the disc is important. The Jacobian calculating step is combined
-with a check to see if the patch of the disc is obscured or not, which is then
-used to mask the transfer functions, as in Figure \ref{fig:transfer-functions}.
+including those geodesics from obscured regions of the disc. As the redshift
+depends only on the start and end point of the geodesic, it is therefore simpler
+to combine this with the radius-solving step and calculate the redshift over the
+datum plane. This is not so for the Jacobian term, which depends on the cross
+section traced by a bundle of geodesics for which the geometry of the disc is
+important. The Jacobian is calulated by tracing against the thick disc and is
+combined with a check to see if a patch of the disc is obscured. This
+obscuration check is used to mask the transfer functions, as in Figure
+\ref{fig:transfer-functions}.
 
-This method is analogous to the ``imaginary photons'' of
-\cite{abdikamalov_testing_2020} formalized for optimizing $r_\text{em}$ and use
-with AD.
+This method is effect analogous to the ``imaginary photons'' of
+\cite{abdikamalov_testing_2020}, formalized for optimizing $r_\text{em}$ and
+AD.
 
 \begin{figure}
     \centering
@@ -837,14 +843,25 @@ with AD.
 \subsection{Integrating transfer functions}
 \label{sec:transfer-function-integration}
 
-The Cunningham transfer functions may be viewed as the Green's function of an
-annulus $r_\text{em}$ in response to some delta function of incident flux.
+Using the Cunningham transfer functions as a Jacobian allows us to rewrite the
+integration \eqref{eq:integrate-impact-params} as
+\begin{equation}
+    F(E_\text{obs}) = \int \frac{\pi r_\text{em} f(r_\text{em}, g^\ast)}{g \sqrt{g^\ast (1 - g^\ast)}}
+    I_\text{obs}(E_\text{obs}) \ \d r_\text{em} \d g^\ast,
+\end{equation}
+where we can use Liouville's theorem \eqref{eq:liouville-theorem} to express the
+observed intensity as the emitted intensity, and write $E_\text{em} =
+E_\text{line}g$ . The integrand is then only a function of $r_\text{em}$ and
+$g^\ast$. We here see a new meaning for the Cunningham transfer functions,
+namely as the Green's function of an annulus $r_\text{em}$ in response to some
+delta function of $I_\text{em}$. This interpretation is used to guide
+integration schemes for the transfer functions \citep{dauser_broad_2010}.
 
-Integrating $\d F(E)$ to calculate line-profiles is described in detail in \cite{dauser_broad_2010}, including the Green's function formalism that adds additional flexibility in the definition of $I_\text{em}$. The transfer functions are split into the aforementioned upper and lower branches at extremal $g^\ast$, and each branch is integrated separately, with the total summed in the final result. We extend the transfer function integration to include the geodesic coordinate time, integrating $f$ as
-
-% \begin{strip}
-% \rule[-1ex]{\columnwidth}{0.7pt}\rule[-1ex]{0.7pt}{1.5ex}
-% \vbox{\vspace{2em}}
+The Cunningham transfer functions are split into the aforementioned
+upper and lower branches at extremal $g^\ast$, and each branch is integrated
+separately, with the total summed in the final result. We extend the transfer
+function integration to include the geodesic coordinate time, resulting in the
+integral
 \begin{align}
     \label{eq:transfer-integration}
     F(E, t) &=
@@ -853,35 +870,76 @@ Integrating $\d F(E)$ to calculate line-profiles is described in detail in \cite
     \int_{r_\text{in}}^{r_\text{out}} \d r_\text{em}\,r_\text{em} \nonumber \\
     &\ \int_0^1 \d g^\ast\, \delta(E - gE_\text{line})\, g^2 I_\text{em}\left(\frac{E}{g}, t^\prime\right) \frac{f(r_\text{em}, g^\ast)}{\sqrt{g^\ast (1 - g^\ast)}},
 \end{align}
-% \vbox{\vspace{2em}}
-% \hfill\rule[1ex]{0.7pt}{1.5ex}\rule[2.3ex]{\columnwidth}{0.7pt}
-% \end{strip}
-\noindent and $g = g( r_\text{em}, g^\ast, t')$ implicitly. The Dirac delta functions are selecting the $E$ and $t$ bin respectively. This allows us to construct high resolution lag transfer functions of \cite{reynolds_x-ray_1999} with little additional computational time (see Section \ref{sec:lag-transfer-functions}).
+denoting $g = g( r_\text{em}, g^\ast, t')$ implicitly. We use the Dirac delta
+functions to select the $E$ and $t$ bins of the observed flux respectively,
+however we note that at no point can we continuously evaluate the integrand, and
+this notation serves only to express what we are trying to do. In practical
+terms, we have a discrete set of Cunningham transfer functions over which can
+can smoothly interpolate. The method for numerically integrating the
+time-dependent transfer functions is as follows: the limits of the integral are
+chosen $(r_\text{in}, r_\text{out})$, as are the limits of the output space
+similarly $(E_\text{min}, E_\text{max})$, $(t_\text{min}, t_\text{max})$. Any
+evaluation of \eqref{eq:transfer-integration} that is outside of the energy and
+time limits is discarded. The integration over $\d r_\text{em}$ is performed
+using a trapezoidal scheme, as it is found to be sufficient in both accuracy and
+performance. For the integration over $\d g^\ast$ we must be more careful.
 
-The integrand for each branch remains in practice singular at $g^\ast \rightarrow (0, 1)$, and therefore the integration is performed over $g^\ast \in [h, 1 - h]$. Outside of this domain, the limits of the integrand can be taken to approximate the edges of the bin, as in \cite{dauser_broad_2010},
-\begin{equation}
-   F_\text{edge}(E,t) \propto 2\left( \sqrt{E_\text{max}} - \sqrt{E_\text{min}} \right).
-\end{equation}
-The constant of proportionality is determined from evaluating the integrand at $h$ or $1 - h$ respectively.
-
-We use $h = 2 \times 10^{-6}$, and evaluate the integral over $\d g^\ast$ using a 7$^\text{th}$ order Gauss-Kronrod quadrature scheme, which avoids evaluating the integral directly at $h$ and $1 - h$ \citep{}. Finer grids for $r_\text{em}$ and $g^\ast$ are constructed to help with numerical accuracy and stability, with the finer bins subsequently rebinned into the desired output grid\footnote{The grid in $r$ should be irregularly spaced, e.g. $\sim 1 / r$, whereas the grid in $g$ should be linear. This reflects that the majority of the variation in $f$ occurs at small $r$.}.
-
-The method for numerically integrating the time-dependent transfer functions is as follows: the limits of the integral are chosen $(r_\text{in}, r_\text{out})$, and limits of the output space similarly $(E_\text{min}, E_\text{max})$, $(t_\text{min}, t_\text{max})$. Any evaluation of \eqref{eq:transfer-integration} that is outside of the energy and time limits is discarded.  The integration over $\d r_\text{em}$ is simply performed using a trapezoidal scheme, as it is sufficient in both accuracy and performance with the finer bins.
-
-The $\d g^\ast$ quadrature scheme evaluates $F(E)$ for each branch over a small output bin in $g$, such that $t$ is determined by evaluating $t(g^\ast)$ at the limits of the bin, also for each branch. These approximations mandate that the integration is performed over a fine $g$ grid. In full:
+The $\d g^\ast$ quadrature scheme evaluates $F(E)$ for each branch over a small
+output bin in $g$, such that $t$ is determined by evaluating $t(g^\ast)$ at the
+limits of the bin, also for each branch. These approximations mandate that the
+integration is performed over a fine $g$ grid. In full:
 \begin{enumerate}
-    \item Interpolate the values of the transfer function, $f$, $t$, and $g_\text{min}$, and $g_\text{max}$, for the current radius $r_i$.
-    \item Calculate the trapezoidal integration weight for the radial coordinate $\omega_i = \Delta r_i r_i$. Any other quantities that only depend on $r_\text{em}$ may similarly be factored into this weight, e.g. if $I_\text{em} = I_\text{em}(r_\text{em})$.
-    \item For each bin in the fine $g$ grid, integrate $f$ over this bin. Record $t_\text{min} = t(g_\text{min})$ and $t_\text{max} = t(g_\text{max})$. Note that depending on the interpolation scheme, if $f$ is a function of $g$ instead of $g^\ast$, a $g / (g_\text{max} - g_\text{min})$ change-of-variable factor must be included in the integrand.
-    \item Add $\omega_i F_i(E, t)$ to the bin corresponding to $E = gE_\text{line}$, and $t(g^\ast)$ for each branch. If either $\Delta E$ or $\Delta t$ straddles an output bin, the flux must be weighted appropriately and divided into those bins.
+    \item Interpolate the values of the transfer function, $f$, $t$, and
+        $g_\text{min}$, and $g_\text{max}$, for the current radius $r_i$.
+    \item Calculate the trapezoidal integration weight for the radial coordinate
+        $\omega_i = \Delta r_i r_i$. Any other quantities that only depend on
+        $r_\text{em}$ may similarly be factored into this weight, e.g. if
+        $I_\text{em} = I_\text{em}(r_\text{em})$.
+    \item For each bin in the fine $g$ grid, integrate $f$ over this bin. Record
+        $t_\text{min} = t(g_\text{min})$ and $t_\text{max} = t(g_\text{max})$.
+        Note that depending on the interpolation scheme, if $f$ is a function of
+        $g$ instead of $g^\ast$, a $g / (g_\text{max} - g_\text{min})$
+        change-of-variable factor must be included in the integrand.
+    \item Add $\omega_i F_i(E, t)$ to the bin corresponding to $E =
+        gE_\text{line}$, and $t(g^\ast)$ for each branch. If either $\Delta E$
+        or $\Delta t$ straddles an output bin, the flux must be weighted
+        appropriately and divided into those bins.
 \end{enumerate}
 
-By formulating the integration with the time component, we can use the same transfer function table to compute both line-profiles and reverberation lags efficiently, with arbitrary intensity functions $I_\text{em}$. We note that extensions to $I_\text{em}$ that require, for example, the photon emission angle on the disc, are trivial to include.
+The integrand for each branch remains in practice singular at $g^\ast
+\rightarrow (0, 1)$, and therefore the integration is performed over $g^\ast \in
+[h, 1 - h]$. Outside of this domain, the limits of the integrand can be taken to
+approximate the edges of the bin, as in \cite{dauser_broad_2010},
+\begin{equation} F_\text{edge}(E,t) \propto 2\left( \sqrt{E_\text{max}} -
+\sqrt{E_\text{min}} \right).  \end{equation} The constant of proportionality is
+determined from evaluating the integrand at $h$ or $1 - h$ respectively.
 
-These transfer function integration methods may be checked for consistency against slower but simpler direct binning of the image plane via Eq. \eqref{eq:infinitesimal-flux} and Eq. \eqref{eq:liouville-theorem}.
+We use $h = 2 \times 10^{-6}$, and evaluate the integral over $\d g^\ast$ using
+a 7$^\text{th}$ order Gauss-Kronrod quadrature scheme, which avoids evaluating
+the integral directly at $h$ and $1 - h$ \citep{}. Finer grids for $r_\text{em}$
+and $g^\ast$ are constructed to help with numerical accuracy and stability, with
+the finer bins subsequently rebinned into the desired output grid\footnote{The
+grid in $r$ should be irregularly spaced, e.g. $\sim 1 / r$, whereas the grid in
+$g$ should be linear. This reflects that the majority of the variation in $f$
+occurs at small $r$.}.
 
-\todo{Mention that the extension to using the angle of emission is trivial with
-the transfer functions}
+Most of the variation in the Cunningham transfer functions occurs at small
+$r_\text{em}$, and so we calculate Cunningham transfer functions over a power
+series of $r_\text{em}$ between the extrema. For $g^\ast$, the variation is
+approximately even, and so we use a uniform grid of $N = 30$ points over
+$g^\ast$. This also make saving the transfer functions in a tabular format
+simple.
+
+By formulating the Cunningham transfer function integration with the time
+component, we can use the same transfer function table to compute both
+line-profiles and reverberation lags efficiently, with arbitrary intensity
+functions $I_\text{em}$. We note that extensions to $I_\text{em}$ that require,
+for example, the photon emission angle on the disc $\mu = cos(\theta)$, are
+simple to include.
+
+% These transfer function integration methods may be checked for consistency
+% against slower but simpler direct binning of the image plane via Eq.
+% \eqref{eq:infinitesimal-flux} and Eq. \eqref{eq:liouville-theorem}.
 
 \subsection{Covariant radiative transfer}
 
@@ -1052,6 +1110,10 @@ Our code permits a consistency check by binning geodesics on the image plane, wi
 \end{figure}
 
 \subsubsection{Lag-frequency spectra}
+
+% and allows us to construct high resolution lag transfer functions of
+% \cite{reynolds_x-ray_1999} with little additional computational time (see
+% Section \ref{sec:lag-transfer-functions}).
 
 Summing the two dimensional transfer functions over the energy axis for a given energy range yields an impulse response $\psi(t)$, describing the time evolution of the observed flux. This impulse response depends on the properties of the illuminating corona, accretion disc, spacetime, and inclination of the observer. Examples for different lamp post heights over the full energy range are shown in the top panel of Figure \ref{fig:reverberation-thin}.
 
