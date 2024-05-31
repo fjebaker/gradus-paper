@@ -233,6 +233,7 @@ g_{\mu\nu} = \partial{\phi} g_{\mu\nu} = 0$ (the principle Killing vectors) and
 avoid calculating two columns of the Jacobian entirely.
 
 \subsection{Observers and emitters}
+\label{sec:observers-and-emitters}
 
 \begin{figure}
     \centering
@@ -788,6 +789,7 @@ $g$, and determines the shape of $f$ well, shown in Figure
 \end{figure}
 
 \subsubsection{Partially obscured Cunningham transfer functions}
+\label{sec:partially-obscured-functions}
 
 For thick accretion discs, it is possible that the disc obscures itself, and
 that certain $r_\text{em}$ may therefore be only partially visible or entirely
@@ -972,18 +974,6 @@ The covariant intensity $\mathcal{I}$ is related to the observed intensity $I_\n
 %%% DESCRIPTION OF THE CODE %%%%%%%%%%%%%%%%%%%%%%
 \section{Description of the code}
 
-\todo{
-    add a section about binning methods and how we use them to verify results
-
-a modification of $I_\text{em}$, the geodesic calculation
-would have to be recomputed, or a large table of values related to each geodesic
-stored, to finite precision. The sampling over the image plane similarly plays
-an important role, especially in increasing efficiency, since most of the
-variation in $I_\text{em}$ is sourced close to the ISCO, which can be
-under-resolved on coarse image planes. This may lead to oversampling regions of
-low or zero variation further out on the disc.
-}
-
 \Gradus is implemented in the Julia programming language
 \citep{Bezanson_Julia_A_fresh_2017}. We use the DifferentialEquations.jl ODE
 solving library with ForwardDiff.jl for forward-mode automatic differentiation
@@ -1071,11 +1061,24 @@ example of the methods we have developed to permit this.
 %%% TEST PROBLEMS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Test problems}
 
-\todo{explain why we compare those integrators}
+This section verifies our code against a number of different tests from the
+literature, and discusses the impact of the extensions to our numerical methods.
+
+We also use this to illustrate the use of different integration algorithms when
+computing second order ODE systems. In particular we focus on Tsitouras, Faegin
+10, Vern 6 and the commonly used RK4 \todo{citations needed}.
 
 \subsection{Integration accuracy and stability}
 
-Since our method for integration does not use the constants of motion directly, the stability of the integrator may be gauged by sampling invariant quantities along the trajectory. In Figure \ref{fig:dot-stability} is shown the value the invariant of $v_\mu v^\mu$ for a geodesic that spirals into a maximally spinning black hole. The magnitude of the invariant is shown for a sample of integration algorithms, along with the solving time for the geodesic. Note this solving time includes the time to initialize the integrator, calculate the full trajectory (with interpolants), and package the solution structure. When tracing multiple geodesics, much of the initialization time may be avoided by reusing allocated memory -- see Section \ref{sec:performance}.
+Since our method for integration does not use constants of motion directly, the
+stability of the integrator may be gauged by calculating these constants or
+other invariant quantities along the trajectory. In Figure
+\ref{fig:dot-stability} is shown the invariant $v_\mu v^\mu$ for a geodesic that
+spirals into a maximally spinning black hole. The magnitude of the invariant,
+here a proxy for the \emph{stability}, is shown for a sample of integration algorithms,
+along with the time-to-solution for the geodesic. Note this solving time
+includes the time to initialize the integrator, calculate the full trajectory
+(with interpolants), and package the solution structure.
 
 \begin{figure}
 	\centering
@@ -1084,15 +1087,29 @@ Since our method for integration does not use the constants of motion directly, 
 	\label{fig:dot-stability}
 \end{figure}
 
-To test accuracy, we compare our numerical results with analytic values. The angular deflection is the difference in $x^\phi$ of a geodesic traveling from positive to negative infinity, that is
+To test \emph{accuracy}, we calculate the angular deflection. The deflection is
+the difference in $x^\phi$ of a geodesic traveling from positive to negative
+infinity, that is
 \begin{equation}
 	\delta x^\phi :=
 		x^\phi_{+\infty} - x^\phi_{-\infty}
 		- \pi,
 \end{equation}
-where the $-\pi$ is to account for radial change in the coordinate system between start and endpoint as the geodesic passes the origin \todo{is this right??}. Semi-analytic solutions for the deflection angle in the Kerr spacetime have been calculated for equatorial geodesics in \cite{iyer_lights_2009}, using elliptic integrals to find the coordinate differences. We follow their notation and denote the analytic deflection angle $\hat{\alpha}$, and present a compact summary of their calculations in Appendix \ref{appendix:deflection-angle}.
+where $\pi$ is the angular change for a trajectory that experiences no
+deflection. Semi-analytic solutions for the deflection angle in the Kerr
+spacetime have been calculated for equatorial geodesics in
+\cite{iyer_lights_2009}. The authors use elliptical integrals to find the
+coordinate differences. We follow their notation and denote the \emph{analytic}
+deflection angle $\hat{\alpha}$.
 
-Figure \ref{fig:deflection-angle} shows the deflection angle as a function of impact parameter $\alpha$ calculated using our code, along with the analytic deflection, and a measure of the error for different integration algorithms. Note the asymptotic behaviour of the error as $\lvert \alpha \rvert$ increases -- we account for this as related to the approximate observer at infinity in ray-tracing methods, catalyzed by the geometry of our observer introducing a small error at any finite $x^r$ when calculating the impact parameters relative to an $x^r = \infty$ observer. As can be expected, the error increases if $x^r_\text{start}$ is decreased.
+Figure \ref{fig:deflection-angle} shows the deflection angle as a function of
+impact parameter $\alpha$, along with a  measure of the error for the different
+integration algorithms. There is asymptotic behaviour of the error as $\lvert
+\alpha \rvert$ increases. This is related to our approximation of an ``observer
+at infinity'' discussed in Section \ref{sec:observers-and-emitters}. As can be
+expected, the error increases if $x^r_\text{start}$ is decreased, and
+vice-versa. Here we again see the impact that the choice of integrator can have
+on numerical errors.
 
 \begin{figure}
 	\centering
@@ -1107,7 +1124,13 @@ Figure \ref{fig:deflection-angle} shows the deflection angle as a function of im
 
 \subsection{Emissivity curves}
 
-We calculate a number of emissivity profiles that have been published in the literature as a test of the numerical methods in Section \ref{sec:emissivity-profiles}. In Figure \ref{fig:emissivity-profiles} are shown the emissivity profiles for the lamp post corona at different heights, including the time difference due to the Shapiro delay. Our results are consistent with other authors \citep{wilkins_understanding_2012,dauser_irradiation_2013}.
+To test our implementation of Section \ref{sec:emissivity-profiles}, we
+calculate the emissivity profiles on the surface of a thin equatorial accretion
+disc illuminated by an on-axis lamp-post corona to test our results against
+\cite{wilkins_understanding_2012} and \cite{dauser_irradiation_2013}. These are
+shown in Figure \ref{fig:emissivity-profiles} and are in good agreement with
+published results. Also shown is the effect of the Shapiro delay $t$, on the
+arrival time of a photon at a given radius on the disc.
 
 \begin{figure}
 	\centering
@@ -1116,11 +1139,28 @@ We calculate a number of emissivity profiles that have been published in the lit
 	\label{fig:emissivity-profiles}
 \end{figure}
 
+Modifying the geometry, or adding instantaneous velocities to the corona have
+been explored in \cite{gonzalez_probing_2017}. Modifying the geometry of the
+source is approximated by sampling (uniformly) random points in the volume of
+the corona and tracing a photon with (uniformly) random direction in the local
+sky. The relevant transformations in mapping the local angles back to the global
+coordinates is the same as discussed in Section
+\ref{sec:observers-and-emitters}. The emissivity functions for sample of
+different coronal geometries is shown in Figure \todo{make this figure}.
+
 \todo{Wilkins and Fabian with lamp post and moving corona, gonzalez 2017}
 
 \subsection{Line profiles}
 
-Transfer functions are integrated as described in Section \ref{sec:transfer-function-integration}, neglecting the timing components. Figure \ref{fig:relline-comparison} compares the line profiles computed using the transfer functions of \Gradus and the \relline model of \cite{dauser_broad_2010}\footnote{We compare against the \relline v2.3 with table v0.5a distributed in the Relxill package \url{http://www.sternwarte.uni-erlangen.de/~dauser/research/relxill/}. These are the latest versions at time of writing.}. We see good agreement to within $\sim 1\%$ accuracy, with all features collocated.
+Transfer functions are integrated as described in Section
+\ref{sec:transfer-function-integration}, neglecting the timing components.
+Figure \ref{fig:relline-comparison} compares the line profiles computed using
+the transfer functions of \Gradus and the \relline model of
+\cite{dauser_broad_2010}\footnote{We compare against the \relline v2.3 with
+table v0.5a distributed in the Relxill package
+\url{http://www.sternwarte.uni-erlangen.de/~dauser/research/relxill/}. These are
+the latest versions at time of writing.}. We see good agreement to within $\sim
+1\%$ accuracy.
 
 \begin{figure}
 	\centering
@@ -1129,7 +1169,15 @@ Transfer functions are integrated as described in Section \ref{sec:transfer-func
 	\label{fig:relline-comparison}
 \end{figure}
 
-Our code permits a consistency check by binning geodesics on the image plane, with the appropriate weighting. This method may also be used to compute line profiles for accretion geometry that does not lend itself to the transfer function parameterization. In Figure \ref{fig:line-profile-ssd}, we compute a number of line profiles for the SSD, using both the binning and transfer integration approach. \todo{finish this section}
+In addition to comparing to published results, \Gradus offers self-consistent
+checks by calculating line profiles using both Cunningham transfer functions and
+direct $(\alpha, \beta)$ photon binning. This is useful especially for unusual
+disc geometries, where obscuration effects make calculating the Cunningham
+transfer functions difficult, as described in
+\ref{sec:partially-obscured-functions}. In Figure \ref{fig:line-profile-ssd} we
+show line profiles for the SSD model using a fixed power-law emissivity
+function, with both numerical methods yielding identical line profiles,
+indicating our datum plane method is valid.
 
 \begin{figure}
 	\centering
