@@ -50,7 +50,7 @@ radii = Gradus.Grids._inverse_grid(Gradus.isco(m), 1000.0, 300)
 
 model = LampPostModel(h = 10.0)
 
-# thin disc 
+# thin disc
 d = ThinDisc(0.0, Inf)
 itb = Gradus.interpolated_transfer_branches(m, x, d, radii; verbose = true, β₀ = 2.0)
 prof = @time emissivity_profile(m, d, model; n_samples = 100_000)
@@ -120,8 +120,8 @@ begin
 
     vspan!(
         axmini,
-        10 .^ [lims1[1], lims2[1], lims3[1], lims4[1]],
-        10 .^ [lims1[2], lims2[2], lims3[2], lims4[2]],
+        [lims1[1], lims2[1], lims3[1], lims4[1]],
+        [lims1[2], lims2[2], lims3[2], lims4[2]],
         color = [(c, 0.4) for c in [color1, color2, color3, color4]],
     )
     lines!(axmini, freq, τ, color = color1)

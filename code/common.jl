@@ -18,7 +18,7 @@ function draw_observer_eye!(ax, x0, y0, scale; flip = false, linewidth = 4.0, ro
 
     ls = collect(range(0, 2, 20))
     x1 = ls
-    y1 = @. exp(0.3 * ls) - 1 
+    y1 = @. exp(0.3 * ls) - 1
 
     kwargs = (; color = :black, linewidth = linewidth)
     lines!(ax, xfm(x1, y1)...; kwargs...)
@@ -40,8 +40,8 @@ function draw_observer_eye!(ax, x0, y0, scale; flip = false, linewidth = 4.0, ro
     phi2 = atan(y2[end-i2], x2[end-i2])
 
     phi = collect(range(phi1, phi2, 20))
-    x3 = @. -1.7 * cos(phi) + (1.7 + x1[end-i1] - 0.15) 
-    y3 = @. 1 * sin(phi) 
+    x3 = @. -1.7 * cos(phi) + (1.7 + x1[end-i1] - 0.15)
+    y3 = @. 1 * sin(phi)
 
     lines!(ax, xfm(x3, y3)...; kwargs...)
 end

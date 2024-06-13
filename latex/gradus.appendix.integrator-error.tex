@@ -1,4 +1,5 @@
 \section{On the numerical errors in the choice of ODE integrator}
+\label{appendix:solvers}
 
 Efforts to compare GRRT codes inevitably face the same problem; that analytic (`true') results to compare to can only be constructed for contrived or simplified models. Instead, there is a tendency to attempt to compare geodesic calculations, often nearing machine precision, as a method of evaluating the accuracy of a given code. A particular fallacy is that calculating with arbitrary precision floating point numbers will in some sense convey a result that is closer to the `truth'. There is however inherent bias in this approach, as the choice of integrator for precisely the same configuration contributes an error that can be significant.
 
