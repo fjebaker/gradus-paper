@@ -68,8 +68,13 @@ thick_E, thick_t, thick_f =
 thick_freq, thick_τ = @time lag_frequency(thick_t, thick_f)
 
 begin
-    data = lag_frequency_rowwise(t, replace(f, NaN => 0))
-    thick_data = lag_frequency_rowwise(thick_t, replace(thick_f, NaN => 0))
+    # requires evenly spaced energy bins
+    # normalises the transfer function so that
+    # the maximum sum of any individual row (i.e., energy) is 1
+    fn = replace(f, NaN => 0)
+    data = lag_frequency_rowwise(t, fn ./ maximum(sum(fn, dims=2)))
+    thick_fn = replace(thick_f, NaN => 0)
+    thick_data = lag_frequency_rowwise(thick_t, thick_fn ./ maximum(sum(thick_fn, dims=2)))
 
     lims1 = (1e-3, 2e-3)
     lims2 = (4e-3, 8e-3)
