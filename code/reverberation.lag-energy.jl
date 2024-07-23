@@ -13,11 +13,12 @@ function calculate_2d_transfer_function(m, x, model, itb, prof, radii)
     flux = @time Gradus.integrate_lagtransfer(
         prof,
         itb,
-        radii,
         bins,
         tbins;
         t0 = t0,
-        Nr = 8000,
+        n_radii = 8000,
+        rmin = minimum(radii),
+        rmax = maximum(radii),
         h = 1e-8,
         g_grid_upscale = 3,
     )
@@ -72,9 +73,10 @@ begin
     # normalises the transfer function so that
     # the maximum sum of any individual row (i.e., energy) is 1
     fn = replace(f, NaN => 0)
-    data = lag_frequency_rowwise(t, fn ./ maximum(sum(fn, dims=2)))
+    data = lag_frequency_rowwise(t, fn ./ maximum(sum(fn, dims = 2)))
     thick_fn = replace(thick_f, NaN => 0)
-    thick_data = lag_frequency_rowwise(thick_t, thick_fn ./ maximum(sum(thick_fn, dims=2)))
+    thick_data =
+        lag_frequency_rowwise(thick_t, thick_fn ./ maximum(sum(thick_fn, dims = 2)))
 
     lims1 = (1e-3, 2e-3)
     lims2 = (4e-3, 8e-3)

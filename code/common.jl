@@ -2,7 +2,7 @@ using Makie, CairoMakie, LaTeXStrings
 
 # this function is absolutely terrible but it does the job of drawing an eye
 function draw_observer_eye!(ax, x0, y0, scale; flip = false, linewidth = 4.0, rot = 0)
-    rotmat = [cos(rot) -sin(rot) ; sin(rot) cos(rot)]
+    rotmat = [cos(rot) -sin(rot); sin(rot) cos(rot)]
 
     x_xfm(x) = @. scale * x * (flip ? -1 : 1) + x0
     y_xfm(y) = @. scale * y + y0

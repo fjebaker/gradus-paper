@@ -11,7 +11,7 @@ function calculate_times(m, heights, x)
     @time map(heights) do h
         try
             continuum_time(m, x, LampPostModel(h = h, θ = 0.001))
-        catch 
+        catch
             NaN
         end
     end
@@ -101,9 +101,14 @@ s_times3 = calculate_times(s_m3, heights, x)
 
 begin
     fig = Figure(resolution = (450, 350))
-    ga = fig[1,1] = GridLayout()
-    ax = Axis(ga[2,1], xlabel = L"h", ylabel = L"\delta t", xscale = log10, xticks = [1, 2, 5, 50, 10, 100],
-        xminorticks = [3, 4, 6, 7, 8, 9, 20, 30, 40, 60, 70, 80, 90,],
+    ga = fig[1, 1] = GridLayout()
+    ax = Axis(
+        ga[2, 1],
+        xlabel = L"h",
+        ylabel = L"\delta t",
+        xscale = log10,
+        xticks = [1, 2, 5, 50, 10, 100],
+        xminorticks = [3, 4, 6, 7, 8, 9, 20, 30, 40, 60, 70, 80, 90],
         xminorgridvisible = true,
     )
 
@@ -115,7 +120,8 @@ begin
     l2 = lines!(ax, heights, abs.(s_times2 .- s_times0), color = c2)
     l3 = lines!(ax, heights, abs.(s_times3 .- s_times0), color = c3)
 
-    Legend(ga[1, 1],
+    Legend(
+        ga[1, 1],
         [l3, l2, l1],
         [L"R=20", L"R=50", L"R=100"],
         orientation = :horizontal,

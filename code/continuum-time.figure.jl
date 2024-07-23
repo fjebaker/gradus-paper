@@ -85,7 +85,9 @@ model2 = LampPostModel(h = 11.0, θ = 0.001)
 begin
     palette = _default_palette()
     fig = Figure(resolution = (380, 320))
-    ax = Axis(fig[1,1], aspect = DataAspect(),
+    ax = Axis(
+        fig[1, 1],
+        aspect = DataAspect(),
         xgridvisible = false,
         ygridvisible = false,
         xlabelvisible = false,
@@ -127,8 +129,22 @@ begin
     theta = deg2rad(15)
     text!(ax, [R * cos(theta) + 0.6], [R * sin(theta)], text = L"R", fontsize = 18)
 
-    text!(ax, [x[2] * sin(x[3]) - 3.5], [x[2] * cos(x[3])], text = L"x_\text{obs}", fontsize = 18)
-    draw_observer_eye!(ax, [x[2] * sin(x[3]) + 1.6], [x[2] * cos(x[3]) + 0.6 + 1], 1, flip = true, linewidth = 1.7, rot = -x[3] )
+    text!(
+        ax,
+        [x[2] * sin(x[3]) - 3.5],
+        [x[2] * cos(x[3])],
+        text = L"x_\text{obs}",
+        fontsize = 18,
+    )
+    draw_observer_eye!(
+        ax,
+        [x[2] * sin(x[3]) + 1.6],
+        [x[2] * cos(x[3]) + 0.6 + 1],
+        1,
+        flip = true,
+        linewidth = 1.7,
+        rot = -x[3],
+    )
 
     lines!(ax, [Gradus.isco(m), 100.0], [0.0, 0.0], color = :black, linewidth = 2.0)
     lines!(ax, [-Gradus.isco(m), -100.0], [0.0, 0.0], color = :black, linewidth = 2.0)

@@ -17,11 +17,12 @@ function calculate_2d_transfer_function(m, x, model, itb, prof, radii)
     flux = @time Gradus.integrate_lagtransfer(
         prof,
         itb,
-        radii,
         bins,
         tbins;
         t0 = t0,
-        Nr = 8000,
+        n_radii = 8000,
+        rmin = minimum(radii),
+        rmax = maximum(radii),
         h = 1e-8,
         g_grid_upscale = 10,
     )
@@ -172,20 +173,3 @@ begin
     @savefigure(fig)
     fig
 end
-
-
-continuum_time(
-    KerrMetric(1.0, 0.998),
-    SVector(0.0, 1000.0, deg2rad(45), 0.0),
-    LampPostModel(h = 100.0),
-)
-continuum_time(
-    Gradus.SphericalMetric(),
-    SVector(0.0, 1000.0, deg2rad(45), 0.0),
-    LampPostModel(h = 100.0),
-)
-continuum_time(
-    Gradus.SphericalMetric(),
-    SVector(0.0, 1000.0, deg2rad(45), 0.0),
-    LampPostModel(h = 2.0),
-)

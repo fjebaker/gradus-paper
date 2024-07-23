@@ -17,12 +17,12 @@ function calculate_2d_transfer_function(m, x, model, itb, prof, radii)
     flux = @time Gradus.integrate_lagtransfer(
         prof,
         itb,
-        radii,
-        # range(4.0, 15.0, 2),
         bins,
         tbins;
         t0 = t0,
-        Nr = 3000,
+        n_radii = 3000,
+        rmin = minimum(radii),
+        rmax = maximum(radii),
         h = 1e-8,
     )
 
@@ -36,8 +36,8 @@ m = KerrMetric(M = 1.0, a = 0.998)
 d = ThinDisc(Gradus.isco(m), 10000.0)
 model = LampPostModel(h = 10.0, θ = deg2rad(0.01))
 
-prof = @time emissivity_profile(m, d, model; n_samples = 1000)
-radii = Gradus.Grids._inverse_grid(Gradus.isco(m), 150.0, 73)
+prof = @time emissivity_profile(m, d, model; n_samples = 10_000)
+radii = Gradus.Grids._inverse_grid(Gradus.isco(m), 150.0, 120)
 
 x1 = SVector(0.0, 1e4, deg2rad(45), 0.0)
 x2 = SVector(0.0, 1e4, deg2rad(80), 0.0)
@@ -67,8 +67,8 @@ begin
     )
     ylims!(ax2, nothing, 1.2)
 
-    cmap = :devon
-    hm = heatmap!(ax1, t2, E2, log.(abs.(f2')), colormap = cmap, levels = 7)
+    cmap = :batlow
+    hm = heatmap!(ax1, t2, E2, log.(abs.(f2')), colormap = cmap)
     heatmap!(ax2, t1, E1, log.(abs.(f1')), colormap = cmap)
 
     # Colorbar(ga[1,2], hm)

@@ -30,7 +30,7 @@ zs = Gradus.cross_section.(d, rs)
 
 x = SVector(0.0, 1000.0, deg2rad(60), 0.0)
 
-function draw_axis_key!(ax; x = 0.0, y = 0.0,  x_len = 2, y_len = 2, kwargs...)
+function draw_axis_key!(ax; x = 0.0, y = 0.0, x_len = 2, y_len = 2, kwargs...)
     lines!(ax, [x, x, x + x_len], [y + y_len, y, y]; kwargs...)
     text!(ax, x - 0.4, y + y_len, text = L"z")
     text!(ax, x + x_len + 0.1, y - 0.5, text = L"r")
@@ -96,10 +96,10 @@ begin
         scatter!(ax1, [X[end]], [Z[end]], color = c)
     end
 
-    draw_axis_key!(ax1, x = -9, y =14, color = :black)
+    draw_axis_key!(ax1, x = -9, y = 14, color = :black)
 
     Label(
-      fig[1,1,Top()],
+        fig[1, 1, Top()],
         text = "A",
         padding = (125, 0, 0, 0),
         fontsize = 13,
@@ -107,7 +107,7 @@ begin
     )
 
     Label(
-      fig[1,1,Top()],
+        fig[1, 1, Top()],
         text = "B",
         padding = (420, 0, 0, 0),
         fontsize = 13,
