@@ -61,8 +61,8 @@ end
 function Gradus.fluid_absorption_emission(::AbstractMetric, d::AnalyticDiscTest, x, ν, u)
     # i really don't know what to set for these
     # "physical values" so i am just setting C to make sure the 
-    # flux is approximately correct
-    C = 6.6025e-6
+    # flux is approximately correct for one of them
+    C = 6.2104e-6 
     n₀ = 1
     νp = 1
     cosθ = cos(x[3])
@@ -95,14 +95,17 @@ M = 1.0
 m = KerrMetric(M, 0.9)
 x = SVector(0.0, 1000.0, deg2rad(60), 0.0)
 
+# same with A, since I don't really know how to convert C I don't know how to convert A, so I estimate
+A_fudge = 0.289
+
 test1 = AnalyticDiscTest(A = 0.0, α = -3.0, h = 0.0, l₀ = 0.0)
 test2 = AnalyticDiscTest(A = 0.0, α = -2.0, h = 0.0, l₀ = 1.0)
 m_test2 = KerrMetric(1.0, 0.0)
 test3 = AnalyticDiscTest(A = 0.0, α = 0.0, h = 10.0 / 3, l₀ = 1.0)
 # similarly here, not sure what A should be set to, but there must
 # be an order magnitude difference between these two
-test4 = AnalyticDiscTest(A = 0.289e5, α = 0.0, h = 10.0 / 3, l₀ = 1.0)
-test5 = AnalyticDiscTest(A = 2.89e5, α = 0.0, h = 100.0 / 3, l₀ = 1.0)
+test4 = AnalyticDiscTest(A = A_fudge * 1e5, α = 0.0, h = 10.0 / 3, l₀ = 1.0)
+test5 = AnalyticDiscTest(A = A_fudge * 1e6, α = 0.0, h = 100.0 / 3, l₀ = 1.0)
 
 a1, b1, im1 = do_trace(m, x, test1)
 a2, b2, im2 = do_trace(m_test2, x, test2)
@@ -116,7 +119,7 @@ function plot_heatmap!(ax, x, y, im; kwargs...)
     s = Printf.@sprintf("%1.4f", S) #/ 1e5)
     text!(
         ax,
-        (-14.5, 11),
+        (-14.5, 10),
         text = L"S_\text{tot} = %$(s)\, \text{Jy}",
         fontsize = 24,
         color = :white,
