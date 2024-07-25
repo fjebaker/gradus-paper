@@ -1,12 +1,12 @@
 \section{Keplerian orbits of static, axis-symmetric spacetimes with accelerated geodesics}
 \label{appendix:circular-orbits}
 
-Keplerian circular orbits are orbits in the equatorial plane with velocity of the form $v^\mu = A(1, 0, 0, \Omega)$, where $A$ is some normalization that ensures \eqref{eq:velocity_constraint}, and 
+Keplerian circular orbits are orbits in the equatorial plane with velocity of the form $v^\mu = A(1, 0, 0, \Omega)$, where $A$ is some normalization that ensures \eqref{eq:velocity_constraint}, and
 \begin{equation}
     \label{eq:keplerian-angular-velocity}
     \Omega := v^\phi / v^t,
-\end{equation} 
-is the Keplerian angular velocity. We are therefore restricting ourselves to $\theta = \pi/2$, and $v^r = v^\theta = 0$, and require stability through the stationary point condition 
+\end{equation}
+is the Keplerian angular velocity. We are therefore restricting ourselves to $\theta = \pi/2$, and $v^r = v^\theta = 0$, and require stability through the stationary point condition
 \begin{equation}
     \frac{\d v^r}{\d \lambda} = 0.
 \end{equation}
@@ -18,7 +18,7 @@ To begin, we will consider unaccelerated ($a^\mu = 0$) geodesics, and follow \ci
 where we have used the expansion of the Christoffel symbols \eqref{eq:christoffel} and applications of the chain rule to manipulate the form of the equation. Examining the radial component ($\sigma = r$) for static, axis-symmetric spacetimes, along with $v^r = 0$, one obtains
 \begin{equation}
     \label{eq:expanded-geodesic-equation}
-    0 = 
+    0 =
     \partial_r g_{tt} (v^t)^2
     + 2\partial_r g_{t\phi} v^t v^\phi
     + \partial_r g_{\phi\phi} (v^\phi)^2.
@@ -26,12 +26,12 @@ where we have used the expansion of the Christoffel symbols \eqref{eq:christoffe
 Using \eqref{eq:keplerian-angular-velocity} yields
 \begin{equation}
     \label{eq:omega-expression}
-    \Omega = 
+    \Omega =
     \left( \partial_r g_{\phi\phi} \right)^{-1}\left( \partial_r g_{t\phi} \pm \sqrt{\left( \partial_r g_{t\phi} \right)^2 - \partial_r g_{tt} \partial_r g_{\phi\phi}} \right),
 \end{equation}
 now determined entirely by metric components. Using \eqref{eq:velocity_constraint}, mandating $\mu \neq 0$, and the stationary point conditions $(v^r)^2 = 0$ and $\partial_r (v^r)^2 = 0$, one may continue to find expressions for $E = -v_t$ and $L_z = v_\phi$ entirely in terms of $\Omega$, the metric, and $\mu$. The algebra involved is straightforward but verbose, and in the interest of brevity we will only state the results:
 \begin{align}
-    \frac{E}{\mu} &= \pm \mathcal{A} \left(g_{tt} + g_{t\phi}\Omega\right) , \\
+    \frac{E}{\mu} &= \pm \mathcal{A} \left(g_{tt} + g_{t\phi}\Omega\right) , \label{eq:energy-of-orbit} \\
     \frac{L_z}{\mu} &= \pm \mathcal{A} \left(g_{t\phi} + g_{\phi\phi}\Omega\right), \\
     \mathcal{A} &= \left(\sqrt{-g_{\phi\phi} \Omega^2 - 2g_{t\phi} \Omega - g_{tt}}\right)^{-1}.
 \end{align}
@@ -39,13 +39,13 @@ Since these arise only from the velocity invariance, they are dependent on $a^\m
 
 For accelerated geodeiscs, the acceleration vector modifies \eqref{eq:expanded-geodesic-equation} with the addition of a $g_{rr} a^r$ term, under the same assumptions of vanishing radial and poloidal velocity. Solving for $\Omega$ as in \eqref{eq:omega-expression} is then trivial only when $a^r$ contains quadratic terms of $v^t$ and $v^\phi$, otherwise factors of $v^t$ and $v^\phi$ must be substituted with $v^t = \pm \mu \mathcal{A}$ and $v^\phi = \pm \mu \mathcal{A} \Omega$, resulting in polynomials of higher degree.
 
-We will motivate our study by henceforth considering acceleration due to the Faraday tensor, 
+We will motivate our study by henceforth considering acceleration due to the Faraday tensor,
 \begin{equation}
     F_{\mu\nu} := \partial_\mu A_\nu - \partial_\nu A_\mu,
 \end{equation}
-where the potential driving the acceleration is axis-symmetric, $A_\mu = (A_t, 0, 0, A_\phi)$. Deviations thereof may not in general permit Keplerian circular orbits without additional assumptions. Such axis-symmetric cases are still useful in studying a number of interesting problems, including Kerr-Newman spacetimes \citep{hackmann_charged_2013}, or black holes immersed in external magnetic fields \citep{tursunov_circular_2016}. 
+where the potential driving the acceleration is axis-symmetric, $A_\mu = (A_t, 0, 0, A_\phi)$. Deviations thereof may not in general permit Keplerian circular orbits without additional assumptions. Such axis-symmetric cases are still useful in studying a number of interesting problems, including Kerr-Newman spacetimes \citep{hackmann_charged_2013}, or black holes immersed in external magnetic fields \citep{tursunov_circular_2016}.
 
-For these axis-symmetric potentials, the radial acceleration for a particle with charge $q$ is 
+For these axis-symmetric potentials, the radial acceleration for a particle with charge $q$ is
 \begin{equation}
     a^r = qF^r_\mu x^\mu = q\left( F^r_t x^t + F^r_\phi x^\phi\right),
 \end{equation}

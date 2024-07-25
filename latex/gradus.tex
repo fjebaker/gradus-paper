@@ -66,7 +66,9 @@
 
 %%%%%%%%%%%%%%%%%%% TITLE PAGE %%%%%%%%%%%%%%%%%%%
 
-\title[Gradus.jl]{General relativistic ray-tracing and reverberation modelling through automatic differentiation with Gradus.jl}
+% \title[Gradus.jl]{General relativistic ray-tracing and reverberation modelling through automatic differentiation with Gradus.jl}
+\title[Gradus.jl]{Gradus.jl: spacetime agnostic general relativistic ray-tracing
+for reflection and reverberation modelling}
 \author[F. J. E. Baker et al.]{
 F. J. E. Baker,$^{1}$\thanks{E-mail: fergus.baker@bristol.ac.uk (FB)}
 and A. J. Young$^{1}$
@@ -179,7 +181,7 @@ encoded in the Christoffel connections,
         - \partial_{\rho}g_{\sigma \nu}
     \right),
 \end{equation}
-with the indices to be read as ``the acceleration in direction $\mu$ of the
+with the indices to be read as ``the coordinate acceleration in direction $\mu$ of the
 vector $\nu$ travelling in direction $\sigma$''. \todo{check this}
 
 For a given metric, the geodesic equation may be expressed as an initial value
@@ -303,10 +305,8 @@ Cartesian coordinate system
     \right),
 \end{equation}
 where the partial derivative matrix denotes the Cartesian to spherical
-coordinate Jacobian. Other authors will expand this Jacobian and write succinct
-trigonometric formulae \todo{examples or appendix?}. The component $v_{(t)}$ is
-the negative of the energy in the local frame, and may be set to $-v_{(t)}=E=1$
-without loss of generality.
+coordinate Jacobian. The component $v_{(t)}$ is the negative of the energy in
+the local frame, and may be set to $-v_{(t)}=E=1$ without loss of generality.
 
 The transformation between local and global frame depends on the choice of
 local frame. The natural choice is the \emph{locally non-rotating frame} (LNRF)
@@ -369,7 +369,17 @@ which
 \end{equation}
 Stable circular orbits are only possible for radii $x^r \geq \risco$.
 Within the ISCO is the so-called \textit{plunging region} where $v^r \neq 0$.
-\citneeded
+Emission from within the ISCO are generally disregarded in reflection and
+reverberation models, though for specific disc models or inner boundary torques
+emission from this region may be important\citneeded. For this reason, we make
+no concrete assumptions about the plunging region, though will omit its
+contributions in this paper.
+
+The ISCO radius may be solved numerically when no analytic solution is known.
+For static, axis-symmetric metrics, the energy of a given orbit is known from
+\eqref{eq:energy-of-orbit}, with the derivative with respect to $x^r$
+calculated using AD. We use the NonlinearSolve.jl package to perform the root
+finding on the resulting expression\citneeded.
 
 Stable orbits may also be determined purely from the numerical integration of
 geodesics, by mandating a stability measure and optimizing the initial velocity
@@ -412,27 +422,14 @@ approach), or that exhibit some specific desired features (e.g. $\mathscr{M}$
 measures periodicity).
 
 We implement a numerical method for determining the event horizon radius using a
-similar approach.
-
-\todo{The following are stubs that need expanding}
-The Keplerian orbits exhibit a number of other interesting radii that may be
-calculated from the energy of the orbit.
-
-The photon orbit is the radius for which $E / \mu = \infty$, which is the only
-radius for which null geodesic orbits are circular.
-
-At $E / \mu = 1$ is the so-called \emph{marginally bound} orbit.
-
-Similar techniques used to calculate the radii special orbits are used to
-determine the event horizon radius. Under axis-symmetry, the event horizon is
-the set of the $(r, \theta)$ coordinates that satisfy
+similar approach. Under axis-symmetry, the event horizon is the set of $(r,
+\theta)$ coordinates that satisfy
 \begin{equation}
     \label{eq:event_horizon}
     0 = \left. \frac{1}{g_{rr}} \right\rvert_{x^r =: r_s}.
 \end{equation}
-For a set of equally spaced $\theta$, we determine $r$ by solving for the roots
-of the equation. If the roots are not analytically tractable, we fallback to
-using the numerical algorithms of the Roots.jl package\citneeded.
+For the cases where no analytic solution is known, we fallback to solving for
+the event horizon using the root finding method as for the ISCO.
 
 \subsection{Charts and horizons}
 
@@ -440,11 +437,12 @@ The chart defines the boundary of the integration used by the integrator to
 terminate the computation when the fate of a given geodesic is known. In
 practical terms, the chart is a set of callbacks in the integrator that mark the
 union of a set of boundaries, intersection with which classifies the outcome of
-an integration (e.g. geodesic is within the horizon, escaped to infinity, intersected with
-disc, and so on). In the majority of cases, the inner and outer boundary of the integration
-chart are the event horizon $r_s$ and some \emph{effective infinity} $r_\infty$
-respectively. In the latter case, the geodesic is assumed to escape the
-potential of the singularity without further deviation it their trajectory.
+an integration (e.g. geodesic is within the horizon, escaped to infinity,
+intersected with disc, and so on). In the majority of cases, the inner and outer
+boundary of the integration chart are the event horizon $r_s$ and some
+\emph{effective infinity} $r_\infty$ respectively. In the latter case, the
+geodesic is assumed to escape the potential of the singularity without further
+deviation it their trajectory.
 
 The geometry of an accretion disc or object is also expressed as a boundary of
 the chart. By terminating the integration when the geodesic crosses such a
@@ -1001,22 +999,23 @@ methods, and their benefits and limitations.
 \Gradus is extensively tested with a suite of unit and integration tests. The
 tests are constructed both by comparing numerical algorithms to specific
 analytic counterparts, and by comparing against snapshots of results in the
-literature.
+literature. Where two (or more) methods exist to compute an observable, \Gradus
+implements both as a method of verification. This ensures our computations are
+at least self-consistent when implementing new algorithms.
 
 In our discussion of the numerical methods, we note the current default ODE
 integration algorithm is Tsitouras Runge-Kutta 5/4
 \citep{tsitouras_rungekutta_2011}. \Gradus vendors additional ODE solvers and
 numerical algorithms from the Julia SciML ecosystem, with both adaptive and
 fixed time steps, that may provide performance or accuracy improvements for
-specific problems, which will be discussed in the \todo{Test Problems} section.
+specific problems.
 
-Where two (or more) methods exist to compute an observable, \Gradus implements
-both as a method of verification.
-
-\Gradus maintains a catalogue of predefined metrics, including the Kerr
-spacetime, Morris-Thorne wormhole, Johannsen-Psaltis metric, the
-Einstein-Maxwell Dilaton-Axion metric \todo{citations for these}, and the
-Kerr-Newman metric, complete with the ability to specify the electromagnetic
+\Gradus aims to make exploring new spacetime models simple by only requiring the
+non-zero metric components to be implemented. To this end and for comparison, we
+maintain a catalogue of predefined metrics, including the Kerr spacetime,
+Morris-Thorne wormhole, Johannsen-Psaltis metric, the Einstein-Maxwell
+Dilaton-Axion metric \todo{citations for these}, the No-$\mathbb{Z}_2$ metric, and
+the Kerr-Newman metric, complete with the ability to specify the electromagnetic
 potential vector, from which external accelerations $a^\mu$ in
 \eqref{eq:geodesic_equation} are calculated.
 
@@ -1140,15 +1139,13 @@ arrival time of a photon at a given radius on the disc.
 \end{figure}
 
 Modifying the geometry, or adding instantaneous velocities to the corona have
-been explored in \cite{gonzalez_probing_2017}. Modifying the geometry of the
-source is approximated by sampling (uniformly) random points in the volume of
-the corona and tracing a photon with (uniformly) random direction in the local
-sky. The relevant transformations in mapping the local angles back to the global
-coordinates is the same as discussed in Section
-\ref{sec:observers-and-emitters}. The emissivity functions for sample of
-different coronal geometries is shown in Figure \todo{make this figure}.
-
-\todo{Wilkins and Fabian with lamp post and moving corona, gonzalez 2017}
+been explored in \cite{gonzalez_probing_2017}. The emissivity curves calculated
+are for extended corona are then the time-averaged emissivities on the disc.
+These emissivities can be approximately calculated using a Monte-Carlo approach,
+by sampling (uniformly) random points in the volume of the corona as the sources
+of isotropic emission. The relevant transformations for mapping the local
+emission vectors back to the global coordinates is the same as discussed in
+Section \ref{sec:observers-and-emitters}.
 
 \subsection{Line profiles}
 
@@ -1251,6 +1248,8 @@ more detail).
 
 \subsubsection{Lag-energy spectra}
 
+\todo{WRITE}
+
 \begin{figure}
 	\centering
 	\includegraphics[width=0.98\linewidth]{figures/reverberation.lag-energy.pdf}
@@ -1284,13 +1283,11 @@ We compare the line profiles for the Johannsen metric in Figure \ref{fig:compare
 
 \section{Applications}
 
-\todo{working on spectral and timing models (Baker et al. in prep) for use in XSPEC and beyond}
 
-\todo{working on propagating gradient information from models into spectral fitting pipelines}
+\todo{working on extended corona spectral and timing models (Baker et al. in
+prep) for use in XSPEC and beyond}
 
-\todo{including radiative transfer information in the transfer functions}
-
-We are working on a optimized thick disc spectral and reverberation model for use in spectral fitting programs based on our thick disc transfer functions and time-dependant transfer function integration.
+\todo{although we have parallel transport, working on polarization}
 
 \section{Conclusions}
 
@@ -1298,12 +1295,10 @@ We encourage the community to contact us with interesting problems that may be t
 
 \todo{problems with the code are being patched, see github issues}
 
-% Note future work, e.g., with regard to fitting, and using the code in other papers
-
 \section*{Acknowledgements}
 This work is supported by the UKRI AIMLAC CDT funded by grant EP/S023992/1.
 
-We thank Jiachen Jiang, Cosimo Bambi and Askar Abdikamalov for sharing their software for comparisons. FB thanks Rosie for her expert debugging assistance, and Shaun for invaluable software discussions. All figures created using Makie.jl \citep{DanischKrumbiegel2021}, using the color scheme of \cite{wong_points_2011}.
+We thank Jiachen Jiang, Cosimo Bambi and Askar Abdikamalov for sharing their software for comparisons. FB thanks Rosie for her expert debugging assistance. All figures created using Makie.jl \citep{DanischKrumbiegel2021}, using the color scheme of \cite{wong_points_2011}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Data Availability}
