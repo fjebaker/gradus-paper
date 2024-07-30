@@ -1205,13 +1205,16 @@ indicating our datum plane method is valid.
 % Section \ref{sec:lag-transfer-functions}).
 
 Summing the two dimensional transfer functions over the energy axis for a given
-energy range yields an impulse response $\psi(t)$, describing the time evolution
-of the observed flux. This impulse response depends on the properties of the
-illuminating corona, accretion disc, spacetime, and inclination of the observer.
-Examples for different lamp post heights over the full energy range are shown in
-the top panel of Figure \ref{fig:reverberation-thin}.
+energy range yields an \textit{impulse response function} $\psi(t)$, which shows
+how the disc responds to the impulse of a coronal flash. This impulse response
+depends on the properties of the illuminating corona, accretion disc, spacetime,
+and inclination of the observer. Examples for different lamp post heights over
+the full energy range are shown in the top panel of Figure
+\ref{fig:reverberation-thin}.
 
-Following \cite{cackett_modelling_2014}, we define the \textit{response fraction} $R$ as the ratio of reflected to continuum flux. The impulse response in the Fourier domain is then the rescaled Fourier transform
+Following \cite{cackett_modelling_2014}, we define the \textit{response
+fraction} $R$ as the ratio of reflected to continuum flux. The impulse response
+in the Fourier domain is the scaled Fourier transform
 \begin{equation}
 	\mathscr{F}_\psi(f) := R \int_{0}^\infty \psi(t) \e^{-2\pi i f t} \d t.
 \end{equation}
@@ -1221,7 +1224,21 @@ The phase difference between the reflected and continuum flux is
 		\frac{\Im{\mathscr{F}_\psi}}{1 + \Re{\mathscr{F}_\psi}}
 	\right),
 \end{equation}
-where $\Im{\mathscr{F}_\psi}$ and $\Re{\mathscr{F}_\psi}$ are the imaginary and real components of $\mathscr{F}_\psi$ respectively. The imaginary component represents the lag contribution to the phase difference. Since the driving signal is present in both bands, it adds no lag contribution, but serves to dilute the phase difference and therefore the real component of the signal through the $+1$ in the denominator. \todo{expand on this}
+where $\Im{\mathscr{F}_\psi}$ and $\Re{\mathscr{F}_\psi}$ are the imaginary and
+real components of $\mathscr{F}_\psi$ respectively. The imaginary component
+represents the lag contribution to the phase difference. Since the driving
+signal is present in both bands, it adds no lag contribution, but serves to
+dilute the phase difference and therefore the real component of the signal
+through the $+1$ in the denominator. \todo{expand on this}
+
+A subtlety to address here in the normalisation of the impulse responses, as we
+do not fully model the continuum spectrum. We assume, as in
+\cite{cackett_modelling_2014}, that the reflected flux of the Fe
+K$\alpha$ line is equal to the continuum flux ($R = 1$). Therefore, we normalise
+the impulse response functions by dividing by a factor $Q = \int \psi_{\text{Fe
+K}\alpha}(t)$, so that the area under the Fe K$\alpha$ impulse response function
+is 1.
+
 
 The time lag is defined as
 \begin{equation}
