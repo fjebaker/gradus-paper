@@ -1187,9 +1187,42 @@ indicating our datum plane method is valid.
 \subsection{Reverberation lags}
 \label{sec:lag-transfer-functions}
 
-\citep{reynolds_x-ray_1999,wilkins_origin_2013,cackett_modelling_2014}
+AGN and XRBs exhibit a phenomena where the high energy X-ray emission from the
+corona is observed both directly and a short delay later after being reprocess
+by the accretion disc. The time delay between the direct and reflected
+components is increased by the effects of strong gravity on the light travel
+time, and therefore depends on properties of the black hole. These lags are
+known as \textit{reverberation lags} (see e.g. \cite{uttley_x-ray_2014} or
+\cite{cackett_reverberation_2021} for a review). Reverberation lags are
+typically expressed as a time lag as a function of Fourier phase frequency of
+the driving continuum signal, or as a time lag between energy bands.
 
-\todo{Ingram's code? Jiachen's code}
+Simulating either the lag-frequency or lag-energy spectra involves computing a
+set of transfer functions that record the arrival time and observed energy of
+each flux element \citep{reynolds_x-ray_1999}. See Figure
+\ref{fig:lag-frequency-transfer-functions} for examples. By convention the
+origin of the time axis is set to the (mean) arrival time of the continuum
+emission. We disambiguate these transfer functions from others by referring to
+them as the \textit{lag transfer functions}. They are calculated by re-binning
+image planes after ray-tracing the relevant quantities. We devised a method for
+calculating the lag transfer functions using the Cunningham transfer functions,
+described in \ref{sec:transfer-function-integration}. In this section, we verify
+our methods by comparing with results in the literature.
+
+The lag transfer functions depend on the choice of observer inclination,
+spacetime, coronal model, and disc model. The inclination of the observer is
+sensitive to gravitational lensing effects as well as influencing the relative
+distances of different regions of the disc and corona, affecting the arrival
+times of emission. The spacetime changes both the light travel time close to the
+central singularity and the gravitational redshift. The spacetime is therefore
+imprinted in both the energy and arrival time of each flux element.  The coronal
+model, in its geometry and spectra, modifies the emissivity profile of the
+accretion disc (which in turns changes the flux element coming from each disc
+element). The coronal geometry may also change the arrival time of both the
+continuum and reflected emissions. The disc geometry contributes to all of the
+above.
+
+% \citep{reynolds_x-ray_1999,wilkins_origin_2013,cackett_modelling_2014}
 
 \begin{figure}
 	\centering
@@ -1204,12 +1237,13 @@ indicating our datum plane method is valid.
 % \cite{reynolds_x-ray_1999} with little additional computational time (see
 % Section \ref{sec:lag-transfer-functions}).
 
-Summing the two dimensional transfer functions over the energy axis for a given
-energy range yields an \textit{impulse response function} $\psi(t)$, which shows
-how the disc responds to the impulse of a coronal flash. This impulse response
-depends on the properties of the illuminating corona, accretion disc, spacetime,
-and inclination of the observer. Examples for different lamp post heights over
-the full energy range are shown in the top panel of Figure
+Summing the lag transfer functions (Figure
+\ref{fig:lag-frequency-transfer-functions}) over the energy axis for a given
+energy range yields an \textit{impulse response function} $\psi(t)$, which
+encodes how the disc responds to the impulse of a coronal flash. This impulse
+response depends on the properties of the illuminating corona, accretion disc,
+spacetime, and inclination of the observer. Examples for different lamp post
+heights over the full energy range are shown in the top panel of Figure
 \ref{fig:reverberation-thin}.
 
 Following \cite{cackett_modelling_2014}, we define the \textit{response
@@ -1237,7 +1271,7 @@ do not fully model the continuum spectrum. We assume, as in
 K$\alpha$ line is equal to the continuum flux ($R = 1$). Therefore, we normalise
 the impulse response functions by dividing by a factor $Q = \int \psi_{\text{Fe
 K}\alpha}(t)$, so that the area under the Fe K$\alpha$ impulse response function
-is 1.
+is unity.
 
 
 The time lag is defined as
