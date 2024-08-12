@@ -50,7 +50,7 @@ model2 = LampPostModel(h = 5.0)
 model3 = LampPostModel(h = 10.0)
 model4 = LampPostModel(h = 20.0)
 
-# thin disc 
+# thin disc
 d = ThinDisc(0.0, Inf)
 
 itb = Gradus.interpolated_transfer_branches(m, x, d, radii; verbose = true, β₀ = 2.0)
@@ -93,8 +93,8 @@ begin
         xscale = log10,
         xminorgridvisible = true,
         xminorticks = IntervalsBetween(10),
-        xlabel = L"Lag $\tau$",
-        ylabel = L"Frequency $f$",
+        ylabel = L"Lag $\tau$",
+        xlabel = L"Frequency $f$",
     )
 
     color = popfirst!(palette)
