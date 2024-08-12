@@ -45,6 +45,7 @@
 \newcommand{\notes}[1]{{\color{cyan} #1}}
 
 \newcommand{\Gradus}{Gradus.jl }
+\newcommand{\FeKa}{Fe K$\alpha$ }
 \newcommand{\relline}{\texttt{relline} }
 
 \newcommand{\e}{\text{e}}
@@ -91,7 +92,7 @@ $^{1}$H. H. Wills Physics Laboratory, Tyndall Avenue, Bristol BS8 1TL, UK
 \end{abstract}
 
 % Select between one and six entries from the list of approved keywords.
-% Don't make up new ones.
+%Don't make up new ones.
 \begin{keywords}
 keyword1 -- keyword2 -- keyword3
 \end{keywords}
@@ -1270,7 +1271,7 @@ do not fully model the continuum spectrum. We assume, as in
 \cite{cackett_modelling_2014}, that the reflected flux of the Fe
 K$\alpha$ line is equal to the continuum flux ($R = 1$). Therefore, we normalise
 the impulse response functions by dividing by a factor $Q = \int \psi_{\text{Fe
-K}\alpha}(t)$, so that the area under the Fe K$\alpha$ impulse response function
+K}\alpha}(t)$, so that the area under the \FeKa impulse response function
 is unity.
 
 
@@ -1299,7 +1300,18 @@ more detail).
 
 \subsubsection{Lag-energy spectra}
 
-\todo{WRITE}
+Lag-energy spectra are calculated within specific frequency bands $f + \Delta
+f$. Since we have mandated for consistency with \cite{cackett_modelling_2014}
+that the reflected flux of the \FeKa line is equal to the continuum flux,
+the reference energy band is $E/E_\text{em} = 1$.  For the impulse response of
+each energy channel (rows in the lag transfer functions), the lag-frequency
+spectrum is calculated. The mean lag within $f + \Delta f$ is determined, and
+plotted as a function of energy. In Figure \ref{fig:lag-energy} is illustrated
+the time lag as a function of energy relative to the \FeKa band,
+to be compared to Figure 11 in \cite{cackett_modelling_2014}. As with the
+lag-frequency spectra, we attribute the differences in the low frequency band to
+the weak field approximation employed by the other authors, which results in a
+larger low frequency lag.
 
 \begin{figure}
 	\centering
@@ -1309,9 +1321,17 @@ more detail).
 \end{figure}
 
 
-\subsection{Analytic radiative transfer model}
+\subsection{Radiative transfer}
 
-\cite{gold_verification_2020} specify an analytic model for testing radiative transfer codes (their Section 3.2, with results shown in their Figure 2 and 3). We have implemented their model and traced the radiative transfer problems with \Gradus, shown in Figure \ref{fig:gold-test-problems}. We find good agreement with the published results for all test problems.
+\cite{gold_verification_2020} specify an analytic model for testing radiative
+transfer codes (their Section 3.2, with results shown in their Figure 2 and 3).
+The model gives the emissivity and absorptivity coefficients of a (corotating)
+fluid as a function of radial coordinate. There are five free parameters in this
+specification that can be used to control the model, for which they give 5
+standardized tests.
+
+We have implemented their model and see very good agreement across all of the
+tests, shown in Figure \ref{fig:gold-test-problems}.
 
 \begin{figure*}
 	\centering
