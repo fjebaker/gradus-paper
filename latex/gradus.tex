@@ -130,12 +130,11 @@ equation (ODE) system.
 
 A second-order ODE system may alternatively be formulated directly from the
 geodesic equation; a method which is pedagogically simpler, but computationally
-more expensive than the first-order system, as either the full metric
-connection or derivatives of the metric must be explicitly implemented, else
-approximated at cost during runtime. With advancements in automatic
-differentiation, derivatives are cheap to compute, and consequently the
-second-order approach is tractable and both a parsimonious and spacetime
-agnostic method for computing geodesics.
+more expensive than the first-order system, as either the full metric connection
+or derivatives of the metric must be explicitly implemented else approximated at
+runtime. With advancements in automatic differentiation, derivatives are cheap
+to compute, and consequently the second-order approach is tractable and both a
+parsimonious and spacetime agnostic method for computing geodesics.
 
 %%% NUMERICAL METHODS %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Numerical methods}
@@ -180,10 +179,8 @@ encoded in the Christoffel connections,
         \partial_{\nu}g_{\rho \sigma}
         + \partial_{\sigma}g_{\rho \nu}
         - \partial_{\rho}g_{\sigma \nu}
-    \right),
+    \right).
 \end{equation}
-with the indices to be read as ``the coordinate acceleration in direction $\mu$ of the
-vector $\nu$ travelling in direction $\sigma$''. \todo{check this}
 
 For a given metric, the geodesic equation may be expressed as an initial value
 problem; a set of four coupled second-order differential equations that can be
@@ -309,9 +306,11 @@ where the partial derivative matrix denotes the Cartesian to spherical
 coordinate Jacobian. The component $v_{(t)}$ is the negative of the energy in
 the local frame, and may be set to $-v_{(t)}=E=1$ without loss of generality.
 
-The transformation between local and global frame depends on the choice of
-local frame. The natural choice is the \emph{locally non-rotating frame} (LNRF)
-\citep{bardeen_rotating_1972} \todo{check citation + explain significance}. The
+The transformation between local and global frame depends on the choice of local
+frame. The natural choice is the \emph{locally non-rotating frame} (LNRF)
+\citep{bardeen_rotating_1972}. This frame follows strictly
+circular world lines with $x^r = \text{const.}$ and $x^\phi = \omega t +
+\text{const.}$, with angular velocity $\omega = -g_{t\phi} / g_{\phi\phi}$. The
 coordinate transformation from the LNRF is
 \begin{equation}
     \label{eq:local-to-global-velocity}
@@ -352,8 +351,8 @@ orbits, and are therefore relevant in analytical models of accretion discs
 \citep{shakura_black_1973}. These circular orbits are stationary points of the
 geodesic Hamiltonian, and constrained by $v^r = v^\theta = 0$.  These orbits are
 often studied analytically, and have a general solution for metrics of the form
-\citep{eq:static_axisymmetric_metric} (e.g. \citealp{johannsen_regular_2013},
-We provide a derivation with some extension towards $a^\mu \neq 0$ in Appendix
+\eqref{eq:static_axisymmetric_metric} (e.g. \citealp{johannsen_regular_2013},
+We provide a derivation with an extension towards $a^\mu \neq 0$ in Appendix
 \ref{appendix:circular-orbits}).
 
 Circular orbits are classified as either stable or unstable
@@ -368,19 +367,20 @@ which
     \label{eq:isco-definition}
     0 = \left. \frac{\d E}{\d x^r} \right\rvert_{x^r := \risco}.
 \end{equation}
-Stable circular orbits are only possible for radii $x^r \geq \risco$.
-Within the ISCO is the so-called \textit{plunging region} where $v^r \neq 0$.
-Emission from within the ISCO are generally disregarded in reflection and
-reverberation models, though for specific disc models or inner boundary torques
-emission from this region may be important\citneeded. For this reason, we make
-no concrete assumptions about the plunging region, though will omit its
-contributions in this paper.
+Stable circular orbits are only possible for radii $x^r \geq \risco$.  Within
+the ISCO is the so-called \textit{plunging region} where $v^r \neq 0$.  Emission
+from within the ISCO are generally disregarded in reflection and reverberation
+models, though for specific disc models or inner boundary torques emission from
+this region may be important (see e.g. \citealp{mummery_continuum_2024} for
+emission contributions within the ISCO). For this reason, we make no concrete
+assumptions about the plunging region, though will omit its contributions in
+this paper.
 
 The ISCO radius may be solved numerically when no analytic solution is known.
 For static, axis-symmetric metrics, the energy of a given orbit is known from
 \eqref{eq:energy-of-orbit}, with the derivative with respect to $x^r$
 calculated using AD. We use the NonlinearSolve.jl package to perform the root
-finding on the resulting expression\citneeded.
+finding on the resulting expression \citep{Pal_NonlinearSolve_jl_2023}.
 
 Stable orbits may also be determined purely from the numerical integration of
 geodesics, by mandating a stability measure and optimizing the initial velocity
@@ -466,7 +466,7 @@ simulations.
 The points of intersection with a Chart are found using either the interpolating
 root-solver in \texttt{ContinuousCallback} or a per-point test with
 \texttt{DiscreteCallback}, both made available from DifferentialEquations.jl
-\citneeded.
+\citep{rackauckas_differential_2017}.
 
 \subsection{Computing observables}
 \label{sec:computing-observables}
@@ -520,19 +520,18 @@ our purposes, we will drop factors considered to be constant, and use
 $\varepsilon \propto F_i$ directly.
 
 The source of $F_i$ is a luminous corona located close to the central
-singularity\citneeded, often assumed to be a point source on the
-spin axis of the black hole that emits isotropically, resulting in an $F_i$
-that is axisymmetric. This model is known as the ``lampost'' coronal model
+singularity\citneeded, often assumed to be a point source on the spin axis of
+the black hole that emits isotropically, resulting in an $F_i$ that is
+axisymmetric. This model is known as the ``lampost'' coronal model
 \citep{fukumura_accretion_2007}. Axisymmetric extended corona are also
-considered, and in general the morphology of the corona has a
-significant effect of the emissivity profile \citep{gonzalez_probing_2017}.
-\todo{there must be another reference here?} For axisymmetric corona with
-isotropic emissions, the incident flux (and therefore the emissivity profile), is a function
-of only the cylindrical coordinate on the disc $\rho = r \sin(\theta)$. The flux
-in an annulus is the number density of photons in the annulus along with an
-intensity function $I$ representing the emission spectrum of the corona.
-Therefore, up to a constant of proportionality,
-the emissivity function is
+considered, and in general the morphology of the corona has a significant effect
+of the emissivity profile \citep{wilkins_towards_2016, gonzalez_probing_2017}.
+For axisymmetric corona with isotropic emissions, the incident flux (and
+therefore the emissivity profile), is a function of only the cylindrical
+coordinate on the disc $\rho = r \sin(\theta)$. The flux in an annulus is the
+number density of photons in the annulus along with an intensity function $I$
+representing the emission spectrum of the corona.  Therefore, up to a constant
+of proportionality, the emissivity function is
 \begin{equation}
     \varepsilon (\rho, \d \rho) = \frac{\mathcal{N}(\rho, \d \rho)}{\gamma
     \tilde{A}(\rho, \d \rho)} I(g),
@@ -563,10 +562,10 @@ where the special case of circular orbits in the equatorial plane only has
 $v^{(\phi)}$ non-zero.
 
 The emission spectrum for the illuminating corona is usually assumed to be a
-powerlaw $I(g) = g^{-\Gamma}$ with photon index $\Gamma$
-\citep{gonzalez_probing_2017}. For most applications $\Gamma = 2$ or $3$ is
-chosen \citneeded. Our models make no rigid assumptions about the coronal
-spectrum, and any arbitrary spectrum as a function of $g$ may be specified.
+powerlaw $I(g) = g^{-\Gamma}$ with photon index $\Gamma$ For most applications
+$\Gamma = 2$ or $3$ is chosen \citneeded. Our models make no rigid assumptions
+about the coronal spectrum, and any arbitrary spectrum as a function of $g$ may
+be specified.
 
 When the emission from the corona is assumed to be locally isotropic in the rest
 frame of the corona, geodesics from the source are traced by sampling
@@ -732,7 +731,7 @@ alternating root-finder as in Section \ref{sec:special-orbits}.
 
 Then we must determine the extrema of $g$ over the $r_\text{em}$ ring. The
 extremal $g$ are found by using the Golden-Section bracketing method of
-\cite{optimize.jl}\citneeded to extremize $g(\vartheta)$, solving a new geodesic
+\cite{Optim.jl-2018} to extremize $g(\vartheta)$, solving a new geodesic
 at each step. We make the assumption that extremal $g$ approximately coincide
 with extremal $\beta = 0$, and therefore shift the domain to $\vartheta \in [
 -\pi/2, 3\pi/4)$ to ensure the maxima and minima are away from the edges of the
@@ -812,11 +811,9 @@ section traced by a bundle of geodesics for which the geometry of the disc is
 important. The Jacobian is calulated by tracing against the thick disc and is
 combined with a check to see if a patch of the disc is obscured. This
 obscuration check is used to mask the transfer functions, as in Figure
-\ref{fig:transfer-functions}.
-
-This method is effect analogous to the ``imaginary photons'' of
-\cite{abdikamalov_testing_2020}, formalized for optimizing $r_\text{em}$ and
-AD.
+\ref{fig:transfer-functions}. This method is in effect analogous to the
+``imaginary photons'' of \cite{abdikamalov_testing_2020}, formalized for
+optimizing $r_\text{em}$ and AD.
 
 \begin{figure}
     \centering
@@ -980,19 +977,17 @@ solving library with ForwardDiff.jl for forward-mode automatic differentiation
 Julia package manger in a registry maintained by the University of
 Bristol astrophysics
 group\footnote{\url{https://github.com/astro-group-bristol/AstroRegistry/}}.
-There are also rudimentary bindings to other languages, including Python via
-\texttt{pip} \citep{}.
 
-\Gradus aims to have a single expressive high-level API for a variety of GRRT
-problems, with sensible defaults and optional fine-grained control. The code is
-accompanied by generated
+\Gradus aims to have a single expressive high-level programming interface for a
+variety of GRRT problems, with sensible defaults and optional fine-grained
+control. The code is accompanied by generated
 documentation\footnote{\url{https://astro-group-bristol.github.io/Gradus.jl/}},
 with short tutorials and examples designed to provide a feature-rich overview
 whilst simultaneously demonstrating how to construct custom simulations and how
 to integrate \Gradus in user models. We encourage readers who are interesting in
 learning up-to-date information about the code and our methods to consult the
-documentation, as the documentation will be a more accurate description
-of the code as it is maintained. The documentation details all algorithm
+documentation, as the documentation will be a more accurate description of the
+code as it is developed and maintained. The documentation details all algorithm
 specific choices and implementations. The source code is written to be read by
 contributors and users alike to invite extension, to be explicit about our
 methods, and their benefits and limitations.
@@ -1342,23 +1337,50 @@ tests, shown in Figure \ref{fig:gold-test-problems}.
 
 \subsection{Other spacetimes}
 
-Research into the appearance of compact singularities in modified gravity theories is often focused on the shadow of the singularity or the photon rings.
+\Gradus is designed to accept user defined metrics, and self-consistently
+calculate results within the spacetime. Reflection and reverberation features
+have been explored with non-Kerr metrics by other groups (\todo{cite cosimo's
+papers}), but approach integrating the geodesic equation with a mixed-symbolic
+approach. That is, the Christoffel symbols are calculated using a computer
+algebra system (CAS), and the resulting symbolic expressions are transformed
+into executable code.  This has the limitation that if the symbolic expressions
+become too complex for the CAS system, the methodology breaks down. This can
+already happen when more than one deformation parameter is included.
 
-\cite{bambi_testing_2017,abdikamalov_testing_2020} have created a suite of codes \texttt{ABHModels}\footnote{\todo{add link}} for studying the iron line and reflection spectra from accreting black holes in the Johannsen metric. This metric is constructed by taking a higher order multipole expansion of the spherical harmonics of the metric \citep{johannsen_regular_2013}. Their codes are able to calculate lineprofiles and black-body disc spectra for the various deformation parameters of the Johannsen metric. Their code is however limited to a choice of a single deformation parameter, due to the method by which they construct their geodesic implementation.
+Our approach using AD is robust for metrics that include many deformation
+parameters. \Gradus provides the means to build reflection models that can
+therefore explore the degeneracies between these parameters, and inform
+modelling limitations when studying alternative spacetimes.
 
-We compare the line profiles for the Johannsen metric in Figure \ref{fig:compare-johannsen}.
+To test our methods we compare our results to other published codes for the
+Johannsen-Psaltis metric \cite{johannsen_regular_2013}. This metric is not a
+strict solution to the Einstein field equations, but is used to quantify
+deviations from the Kerr metric using a multipole expansion of \todo{explain}.
+The comparison is shown in Figure \ref{fig:compare-johannsen}.
 
-\todo{Bambi's various metrics and relline, self consistency between methods}
-\todo{iron line profiles for Johannsen Psaltis}
-\todo{geodesic motion of kerr newman}
+\todo{compare against Johannsen Psaltis paper to show that we get the same line profiles for specific emissivity functions, and compare to Bambi's to show we get the same for self-consistent emissivities}.
 
 \section{Applications}
 
+\Gradus can be used to efficiently generate new reflection and reverberation
+models that can be fitted to observational data, and can be tweaked to provide
+sufficient resolution for the next generation of high resolution X-ray
+spectroscopy observatories, such as XRISM\citneeded. Our software is written to
+allow users to be able to generate these models themselves using short scripts,
+and compose the different model components together to simulate new systems.
 
-\todo{working on extended corona spectral and timing models (Baker et al. in
-prep) for use in XSPEC and beyond}
+The ability to change the specific black hole solution being simulated has
+applications for testing relativity theories, and can expedite the theoretical
+modelling process for researchers exploring new gravity theories. The inclusion
+of radiative transfer is intended for exploring different emission and
+absorption features, and for eventually tracing through the output of general
+relativistic magneto hydrodynamic simulations.
 
-\todo{although we have parallel transport, working on polarization}
+We are already in the process of extending our modelling capabilities to
+efficiently include additional extended coronal models using a novel
+decomposition technique (\todo{Baker \& Young, in prep}), as well as adding
+the ability to trace Stokes parameters through a system to calculate
+polarization quantities.
 
 \section{Conclusions}
 

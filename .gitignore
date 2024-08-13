@@ -278,7 +278,6 @@ TSWLatexianTemp*
 
 Exported Items.bib
 latex/build
-*.pdf
 
 dev
 Manifest.toml
