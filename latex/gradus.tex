@@ -104,9 +104,89 @@ keyword1 -- keyword2 -- keyword3
 %%% INTRODUCTION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
 
+General relativistic effects must be included when modelling the innermost
+regions of accretion onto compact objects. The relativistic effects and
+spacetime curvature in the strong gravity regime lead to significant departures
+from the classical picture, in the energetics, timing properties, and appearance
+of the system. These effects are easiest to calculate using
+general relativistic ray-tracing (GRRT) software.
+
+GRRT has a long history in spectral modelling. These codes see widespread use in
+studying the broad iron lines, emission and absorption lines, reverberation
+signatures, AGN SED, caustics, quasi-periodic oscillations, TDEs, winds.
+
+
+The standard approach for including the effects of general relativity (GR) in a
+spectral model is to convolve the rest-frame spectrum with a relativistic
+lineprofile, using models such as \texttt(relxill} or its variants. This blurs
+the rest-frame emission and accounts for the doppler shift, relativistic
+beaming, and the gravitational redshift. These convolution models may make
+assumptions that differ from the model it is being convolved with. The
+assumptions are in the tabular data used to integrate the lineprofile, the
+\textit{transfer functions}, of which there are few public codes that can
+calculate new tables.
+
+Due to the computational complexity associated with GRRT, relativistic models
+may trade resolution for performance. This has been generally acceptable
+practice, as the noise in the models is generally at a resolution that is
+blurred out when folded through an instrument response matrix. With
+the advent of high resolution spectrometers, such as XRISM and NewAthena, this
+is no longer the case, and there
+is a need for suitably high resolution spectral models. At near sub-eV
+resolution, model noise may skew the fit statistic.
+
+The work we present in this paper is a new open-source GRRT,
+\Gradus\footnote{Open-source and available under GPL 3.0 license at
+\url{https://github.com/astro-group-bristol/Gradus.jl}.} written in the Julia
+programming language. The software aims to be a toolkit for including
+relativistic effects in spectral models. The software is designed to efficiently
+calculate transfer functions for new convolution models. To allow
+the models that \Gradus calculates to be used in popular spectral fitting
+suites, such as XSPEC, we also maintain C-ABI compatible wrappers\footnote{We
+    use the Zig programming language to wrap the spectral models, as it allows
+us to statically compile models for a wide variety of targets. Models can then
+be downloaded and imported into e.g. XSPEC without the need for any additional
+tools.}. \Gradus then allows the researcher to construct their own convolution
+models that more closely match the assumptions they make in their models with
+respect to accretion disc geometry, velocity structure, corona, and so on.
+Additionally, \Gradus is designed to be extensible, so that it may be used to
+include the relativistic effects directly in the rest frame calculations of
+other models.
+
+- it is especially important today that we get the GR effects right because of
+how good the data is about to be
+
+In recent years there has been increased interest in testing the Kerr
+hypothesis, and studying solutions to the Einstein field equations that deviate
+from a spacetime parameterised by the mass and angular momentum of the
+singularity. This interest has been in part driven by the results published by
+the Event Horizon Telescope collaboration in studying the event horizon `shadow'
+and photon rings from radio interferometry data. In the reflection spectra
+communities, the potential for the broad iron line to distinguish between
+spacetime solutions has yielded results and seemingly tight constraints on
+deformation parameters for some solutions.
+
+With the wealth of literature available on possible spacetime solutions, there
+is a need to be able to produce concrete testable results, and efficiently rule
+out certain solutions.
+
+We have created a toolkit for modelling the effects of general relativity in a
+wide variety of contexts. The toolkit is developed in such a way as to support a
+component modelling approach, such that individual models (spacetimes, coronae,
+accretion discs, analysis procedures) can be developed separately and combined
+into ensemble models that include full relativistic treatment. Our software aims
+to be a sandbox for creating spectral models, and for rapidly implementing and
+testing new models and theories.
+
+Our use-case is primarily aimed at X-ray astronomy, and constructing
+high-resolution reflection and reverberation models for use in fitting.
+
 \notes{
-In the era of quantitative, precision observational tests of General Relativity in the strong field regime it is necessary to have a fast and flexible method to compute the observational properties of accreting black hole systems. We have developed an open-source integrator
-\Gradus\footnote{Open-source and available under GPL 3.0 license at \url{https://github.com/astro-group-bristol/Gradus.jl}.} for this purpose. In the remainder of the paper we describe how the software works, comparing with previous work in the literature, and outlining the new capabilities of \Gradus.
+In the era of quantitative, precision observational tests of General Relativity in the strong field regime it is necessary to have a fast and flexible method to compute the observational properties of accreting black hole systems.
+We have developed an open-source integrator
+\Gradus\footnote{Open-source and available under GPL 3.0 license at \url{https://github.com/astro-group-bristol/Gradus.jl}.} for this purpose.
+
+In the remainder of the paper we describe how the software works, comparing with previous work in the literature, and outlining the new capabilities of \Gradus.
 
 % Maybe some history of the problem with key references
 Transfer functions \citep{cunningham_effects_1975} % An example reference
@@ -136,13 +216,23 @@ runtime. With advancements in automatic differentiation, derivatives are cheap
 to compute, and consequently the second-order approach is tractable and both a
 parsimonious and spacetime agnostic method for computing geodesics.
 
+The paper is organised as follows: in Section \ref{sec:numerical-methods} we
+detail the numerical methods used in \Gradus, introducing the approaches and
+algorithms used in the code. In Section \ref{sec:description-of-code} the
+software is described, with a focus on the organisation of the code and its
+extensibility. Section \ref{sec:test-problems} the validity of the code is
+assessed for a number of standard problems in the literature, and compared to
+other published codes and results. Intended applications of and future work on
+the code are described in \ref{sec:applications}.
+
 %%% NUMERICAL METHODS %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Numerical methods}
+\label{sec:numerical-methods}
 
-For simplicity, we focus on static, axisymmetric spacetimes in the
+For simplicity, we focus on stationary, axisymmetric spacetimes in the
 Boyer-Lindquist coordinates. Such spacetimes have metrics of the form
 \begin{equation}
-\label{eq:static_axisymmetric_metric}
+\label{eq:stationary_axisymmetric_metric}
     g_{\mu\nu}
     = g_{tt} \d t^2
     + g_{rr} \d r^2
@@ -228,7 +318,7 @@ $\utensor{\Gamma}{\mu}{\nu\sigma}$ \textit{on the fly}.  This brings
 versatility, as only an implementation of the metric is needed for the geodesic
 equation to be solved.  If the class of spacetime exhibits additional
 symmetries, these can be exploited to reduce computation further: for example,
-metrics of the form \eqref{eq:static_axisymmetric_metric} exploit $\partial_t
+metrics of the form \eqref{eq:stationary_axisymmetric_metric} exploit $\partial_t
 g_{\mu\nu} = \partial{\phi} g_{\mu\nu} = 0$ (the principle Killing vectors) and
 avoid calculating two columns of the Jacobian entirely.
 
@@ -351,7 +441,7 @@ orbits, and are therefore relevant in analytical models of accretion discs
 \citep{shakura_black_1973}. These circular orbits are stationary points of the
 geodesic Hamiltonian, and constrained by $v^r = v^\theta = 0$.  These orbits are
 often studied analytically, and have a general solution for metrics of the form
-\eqref{eq:static_axisymmetric_metric} (e.g. \citealp{johannsen_regular_2013},
+\eqref{eq:stationary_axisymmetric_metric} (e.g. \citealp{johannsen_regular_2013},
 We provide a derivation with an extension towards $a^\mu \neq 0$ in Appendix
 \ref{appendix:circular-orbits}).
 
@@ -377,7 +467,7 @@ assumptions about the plunging region, though will omit its contributions in
 this paper.
 
 The ISCO radius may be solved numerically when no analytic solution is known.
-For static, axis-symmetric metrics, the energy of a given orbit is known from
+For stationary, axis-symmetric metrics, the energy of a given orbit is known from
 \eqref{eq:energy-of-orbit}, with the derivative with respect to $x^r$
 calculated using AD. We use the NonlinearSolve.jl package to perform the root
 finding on the resulting expression \citep{Pal_NonlinearSolve_jl_2023}.
@@ -969,6 +1059,7 @@ The covariant intensity $\mathcal{I}$ is related to the observed intensity $I_\n
 
 %%% DESCRIPTION OF THE CODE %%%%%%%%%%%%%%%%%%%%%%
 \section{Description of the code}
+\label{sec:description-of-code}
 
 \Gradus is implemented in the Julia programming language
 \citep{Bezanson_Julia_A_fresh_2017}. We use the DifferentialEquations.jl ODE
@@ -1055,6 +1146,7 @@ example of the methods we have developed to permit this.
 
 %%% TEST PROBLEMS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Test problems}
+\label{sec:test-problems}
 
 This section verifies our code against a number of different tests from the
 literature, and discusses the impact of the extensions to our numerical methods.
@@ -1078,7 +1170,17 @@ includes the time to initialize the integrator, calculate the full trajectory
 \begin{figure}
 	\centering
 	\includegraphics[width=0.95\linewidth]{figures/stability.conservation.pdf}
-	\caption{\todo{caption + better choice of integrators to compare}}
+	\caption{A comparison of different ODE integration algorithms using the default
+    tolerances $\text{abstol} = \text{reltol} = 10^{-9}$. Panel a) shows the
+    null-geodesic of the Kerr spacetime, $a = 0.998$, for impact parameters
+    $\alpha = 5$ and $\beta = 0$ integrated from the starting position $x^r =
+    10^4 \rg$ and $x^\theta = \pi / 2$.  . All of the algorithms considered
+    yield the same solution. Panel b) shows the integration time for the
+    geodesic considered. The integration time is approximately equal for all of
+    the algorithms except for RK4. Panel c) shows the value of the conserved
+    quantity $g_{\mu \nu} v^\mu v^\nu = 0$ along the trajectory, used as a
+    measure of stability of the integration algorithm.
+}
 	\label{fig:dot-stability}
 \end{figure}
 
@@ -1283,15 +1385,7 @@ and relates the observed time lag to the Fourier frequency of the driving signal
 	\label{fig:reverberation-thin}
 \end{figure}
 
-We note a slight disagreement with \cite{cackett_modelling_2014} in the $h = 10$
-and $h=20$ case, due to a weak-field approximation after $100\, \rg$ that the
-authors employ. At $\theta_\text{obs} = 45^\circ$ inclination,
-the time difference due to the weak-field approximation between the reflected
-and continuum band increases with $h$, resulting in their continuum component
-arriving \textit{early}. This results in a shift of the impulse response towards
-later $t$, and therefore a greater low frequency lag and a shift of the peak of
-the negative lag to lower $f$ (see Appendix \ref{appendix:continuum-time} for
-more detail).
+We find good agreement with \cite{cackett_modelling_2014} for all cases.
 
 \subsubsection{Lag-energy spectra}
 
@@ -1326,7 +1420,9 @@ specification that can be used to control the model, for which they give 5
 standardized tests.
 
 We have implemented their model and see very good agreement across all of the
-tests, shown in Figure \ref{fig:gold-test-problems}.
+tests, shown in Figure \ref{fig:gold-test-problems}. Our covariant radiative
+transfer implementation therefore reproduces the same results as other GRRT
+codes to within standard tolerances.
 
 \begin{figure*}
 	\centering
@@ -1361,6 +1457,7 @@ The comparison is shown in Figure \ref{fig:compare-johannsen}.
 \todo{compare against Johannsen Psaltis paper to show that we get the same line profiles for specific emissivity functions, and compare to Bambi's to show we get the same for self-consistent emissivities}.
 
 \section{Applications}
+\ref{sec:applications}
 
 \Gradus can be used to efficiently generate new reflection and reverberation
 models that can be fitted to observational data, and can be tweaked to provide
@@ -1421,8 +1518,8 @@ this paper and all figures therein is freely available under GPL 3.0 license:
 \input{gradus.appendix.circular-orbits.tex}
 % \input{gradus.appendix.deflection-angle.tex}
 \input{gradus.appendix.integrator-error.tex}
-\input{gradus.appendix.continuum-time.tex}
-\input{gradus.appendix.hamiltonian-formalism.tex}
+% \input{gradus.appendix.continuum-time.tex}
+% \input{gradus.appendix.hamiltonian-formalism.tex}
 
 % \section{Some extra material}
 
