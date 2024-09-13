@@ -104,105 +104,100 @@ keyword1 -- keyword2 -- keyword3
 %%% INTRODUCTION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
 
-General relativistic effects must be included when modelling the innermost
-regions of accretion onto compact objects. The relativistic effects and
-spacetime curvature in the strong gravity regime lead to significant departures
-from the classical picture, in the energetics, timing properties, and appearance
-of the system. These effects are easiest to calculate using general relativistic
-ray-tracing (GRRT) software. The GRRT approach has a long history in spectral
-modelling, and sees widespread use in models of reflection spectra, broad iron
-lines, emission and absorption features including winds, for variability studies
-such as reverberation lags, TDEs, and quasi-periodic oscillations (QPOs). The
-use of the GRRT approach has enabled the measurement of black hole spins using
-the broad iron line, and is at the forefront of modelling the X-ray corona.
+\todo{
+\begin{itemize}
+    \item george and fabian for reflection of xrays off cold ad
+    \item mention Neutron star accretion things too
+\end{itemize}
+}
 
-The standard approach for including the effects of general relativity (GR) in a
-spectral model is to convolve the rest-frame spectrum with a relativistic
-lineprofile, using models such as \texttt{relxill} and its variants. These
-convolution models blur the rest-frame emission thereby accounting for the
-doppler shift, relativistic beaming, and the gravitational redshift, amongst
-other effects. These models, however, may make assumptions that differ from the
-model it is being convolved with. The assumptions are in the tabular data used
-to integrate the lineprofile, the \textit{transfer functions}, of which there
-are few public codes that can calculate new tables.
+General relativistic effects must be included when modelling spectral components
+of the innermost regions of accretion onto compact objects. The relativistic
+effects and spacetime curvature in the strong gravity regime lead to significant
+departures from the classical picture, from the energetics, timing properties,
+and appearances of the systems. These effects are simplest to calculate using
+general relativistic ray-tracing (GRRT) software. The GRRT approach has a long
+history in spectral modelling, and sees widespread use in models of reflection
+spectra, broad iron lines, emission and absorption features including winds, for
+variability studies such as reverberation lags, TDEs, and quasi-periodic
+oscillations (QPOs), and so on. The use of GRRT has enabled the
+measurement of black hole spins using the broad iron line, and is at the
+forefront of modelling the X-ray corona.
+
+The standard approach for including the effects of general relativity (GR)
+calculated using GRRT is to  convolve the rest-frame spectrum with a
+relativistic lineprofile, using models such as \texttt{relxill} and its
+variants. These convolution models blur the rest-frame emission thereby
+accounting for the doppler shift, relativistic beaming, and the gravitational
+redshift, amongst other effects, of the reflection features from razor thin
+accretion discs in the equatorial plane around the accretor. These models,
+however, will make assumptions that may differ from the models they are being
+convolved with; most fundamentally, in the geometry of the accretion disc. The
+assumptions are encoded in the transfer functions -- the tabular data used to
+integrate calculate the lineprofile -- for which which there are few public
+codes that can calculate new transfer function tables.
 
 Due to the computational complexity associated with GRRT, relativistic models
-may trade resolution for performance. This has been generally acceptable
-practice, as the noise in the models is generally at a resolution that is
-blurred out when folded through an instrument response matrix. With
-the advent of high resolution spectrometers, such as XRISM and NewAthena, this
-is no longer the case, and there
-is a need for suitably high resolution spectral models. At near sub-eV
-resolution, model noise may skew the fit statistic.
+trade resolution for performance. This has been a generally acceptable practice,
+as the noise in the models is at a resolution that is blurred out when folded
+through an instrument response matrix, and therefore has negligible effect on
+the fit statistic. With the advent of high resolution spectroscopic datasets,
+such as observation from XRISM and NewAthena, this is no longer the case, and
+there is a need for suitably high resolution spectral models, and by extension
+relativistic convolutions. At near sub-eV resolution, model noise may skew the
+fit statistic due to the presence of hitherto unresolved narrow spectral
+features. High resolution spectroscopy gives rise to unprecedented opportunities
+for studying the details of accretion at the horizon scales, which mandates
+inclusion of GR effects.
 
-The work we present in this paper is a new open-source GRRT,
+There is a need for relativistic convolution kernels that more closely match the
+assumptions of the underlying models they are convolving, and that can achieve
+the resolutions of the instruments they are fitting.  The work we present in
+this paper is towards providing the tools and techniques to address
+these needs. We present a new open-source GRRT code,
 \Gradus\footnote{Open-source and available under GPL 3.0 license at
 \url{https://github.com/astro-group-bristol/Gradus.jl}.} written in the Julia
-programming language. The software aims to be a toolkit for including
-relativistic effects in spectral models. The software is designed to efficiently
-calculate transfer functions for new convolution models. To allow
-the models that \Gradus calculates to be used in popular spectral fitting
-suites, such as XSPEC, we also maintain C-ABI compatible wrappers\footnote{We
-    use the Zig programming language to wrap the spectral models, as it allows
-us to statically compile models for a wide variety of targets. Models can then
-be downloaded and imported into e.g. XSPEC without the need for any additional
-tools.}. \Gradus then allows the researcher to construct their own convolution
-models that more closely match the assumptions they make in their models with
-respect to accretion disc geometry, velocity structure, corona, and so on.
-Additionally, \Gradus is designed to be extensible, so that it may be used to
-include the relativistic effects directly in the rest frame calculations of
-other models.
+programming language. The software aims to be a toolkit for including general
+relativistic effects in spectral models, and is designed to efficiently
+calculate transfer function tables for new convolution models.  So that \Gradus
+can be used in popular spectral fitting suites, such as XSPEC, we also maintain
+C-ABI compatible wrappers for integrating the transfer function tables that have
+similar capabilities matching or beyond current models \footnote{We use the Zig
+    programming language to wrap the spectral models, as it allows us to
+    statically compile models for a wide variety of targets. Models can then be
+    downloaded and imported into e.g. XSPEC without the need for any additional
+tools.}. \Gradus additionally allows the researcher to construct their own
+convolution kernels within a component modelling framework that can be made to
+more closely match the assumptions made in their models with respect to
+accretion disc geometry, disc velocity structure, corona, and so on.
+Additionally, \Gradus is designed to be easily extensible, so that it can be
+used to include the relativistic effects directly in the rest frame calculations
+of other models.
 
-- it is especially important today that we get the GR effects right because of
-how good the data is about to be
-
-In recent years there has been increased interest in testing the Kerr
-hypothesis, and studying solutions to the Einstein field equations that deviate
-from a spacetime parameterised by the mass and angular momentum of the
-singularity. This interest has been in part driven by the results published by
-the Event Horizon Telescope collaboration in studying the event horizon `shadow'
-and photon rings from radio interferometry data. In the reflection spectra
-communities, the potential for the broad iron line to distinguish between
-spacetime solutions has yielded results and seemingly tight constraints on
-deformation parameters for some solutions.
+In recent years there has been increased interest in so-called \textit{tests of
+the Kerr hypothesis} and studying solutions to the Einstein field equations that
+deviate from black hole spacetimes parameterized by the mass and angular
+momentum of the central singularity. These include metrics that challenge the
+\textit{no-hair theorem}, where hair is metaphor for additional information in
+the spacetime. This interest is in part driven by observations published by the
+Event Horizon Telescope collaboration, a momentous effort that uses radio
+interferometry to image compact accretors capable of resolving event horizon
+scale features, such as the `shadow' of the black hole or the photon ring. These
+images have produced a wealth of study into modified spacetimes. In the
+reflection spectra communities, there is similarly much work dedicated to using
+the broad iron line and other X-ray features to measure deviations from the Kerr
+spacetime, yielding seemingly promising results and tight constraints on
+the deformation parameters of some spacetime solutions.
 
 With the wealth of literature available on possible spacetime solutions, there
 is a need to be able to produce concrete testable results, and efficiently rule
-out certain solutions.
-
-We have created a toolkit for modelling the effects of general relativity in a
-wide variety of contexts. The toolkit is developed in such a way as to support a
-component modelling approach, such that individual models (spacetimes, coronae,
-accretion discs, analysis procedures) can be developed separately and combined
-into ensemble models that include full relativistic treatment. Our software aims
-to be a sandbox for creating spectral models, and for rapidly implementing and
-testing new models and theories.
+out certain solutions. \Gradus provides an interface through which new spacetime
+solutions can straightforwardly be implemented, and can be used to expedite the
+process of generating observational tests for these spacetime solutions in the
+context of reflection and reverberation signatures.
 
 Our use-case is primarily aimed at X-ray astronomy, and constructing
 high-resolution reflection and reverberation models for use in fitting.
-
-\notes{
-In the era of quantitative, precision observational tests of General Relativity in the strong field regime it is necessary to have a fast and flexible method to compute the observational properties of accreting black hole systems.
-We have developed an open-source integrator
-\Gradus\footnote{Open-source and available under GPL 3.0 license at \url{https://github.com/astro-group-bristol/Gradus.jl}.} for this purpose.
-
-In the remainder of the paper we describe how the software works, comparing with previous work in the literature, and outlining the new capabilities of \Gradus.
-
-% Maybe some history of the problem with key references
-Transfer functions \citep{cunningham_effects_1975} % An example reference
-
-Julia is a high-performance... with SciML and DifferentialEquations.jl, a state-of-the-art ecosystem and workhorse for solving differential equations.
-}
-
-\todo{goerge and fabian for reflection of xrays off cold ad}
-
-\todo{
-\begin{itemize}
-    \item some references to other softwares
-    \item where does Gradus fit into the field (extensibility / maintainability / prototyping models)
-    \item define SSD as Shakura Sunyaev disc
-\end{itemize}
-}
 
 The trajectory of light in curved space may be determined by reformulating the
 Hamilton-Jacobi equations of motion as a first-order ordinary differential
