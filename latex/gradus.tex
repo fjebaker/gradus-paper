@@ -108,23 +108,23 @@ General relativistic effects must be included when modelling the innermost
 regions of accretion onto compact objects. The relativistic effects and
 spacetime curvature in the strong gravity regime lead to significant departures
 from the classical picture, in the energetics, timing properties, and appearance
-of the system. These effects are easiest to calculate using
-general relativistic ray-tracing (GRRT) software.
-
-GRRT has a long history in spectral modelling. These codes see widespread use in
-studying the broad iron lines, emission and absorption lines, reverberation
-signatures, AGN SED, caustics, quasi-periodic oscillations, TDEs, winds.
-
+of the system. These effects are easiest to calculate using general relativistic
+ray-tracing (GRRT) software. The GRRT approach has a long history in spectral
+modelling, and sees widespread use in models of reflection spectra, broad iron
+lines, emission and absorption features including winds, for variability studies
+such as reverberation lags, TDEs, and quasi-periodic oscillations (QPOs). The
+use of the GRRT approach has enabled the measurement of black hole spins using
+the broad iron line, and is at the forefront of modelling the X-ray corona.
 
 The standard approach for including the effects of general relativity (GR) in a
 spectral model is to convolve the rest-frame spectrum with a relativistic
-lineprofile, using models such as \texttt(relxill} or its variants. This blurs
-the rest-frame emission and accounts for the doppler shift, relativistic
-beaming, and the gravitational redshift. These convolution models may make
-assumptions that differ from the model it is being convolved with. The
-assumptions are in the tabular data used to integrate the lineprofile, the
-\textit{transfer functions}, of which there are few public codes that can
-calculate new tables.
+lineprofile, using models such as \texttt{relxill} and its variants. These
+convolution models blur the rest-frame emission thereby accounting for the
+doppler shift, relativistic beaming, and the gravitational redshift, amongst
+other effects. These models, however, may make assumptions that differ from the
+model it is being convolved with. The assumptions are in the tabular data used
+to integrate the lineprofile, the \textit{transfer functions}, of which there
+are few public codes that can calculate new tables.
 
 Due to the computational complexity associated with GRRT, relativistic models
 may trade resolution for performance. This has been generally acceptable
@@ -495,7 +495,13 @@ $L_z$.
 \begin{figure}
     \centering
     \includegraphics[width=0.95\linewidth]{figures/circular-orbits.E-Lz.pdf}
-    \caption{\todo{also show the points we calculate using the numeric orbit finder}}
+    \caption{Energy $E$ and angular momentum $L_z$ for (stable) circular orbits in the
+        Kerr spacetime for different black hole spins. The point corresponding
+        to the sharp cusp is the ISCO. The crosses show the $E$ and $L_z$
+        values calculated by optimizing the stability condition (see text for
+        details). For the maximally spinning spacetime, the optimizer is unable
+    to find solutions within the ISCO, as the ISCO almost coincides with the
+coordinate singularity corresponding to the event horizon.}
     \label{fig:e-lz-cusp}
 \end{figure}
 
