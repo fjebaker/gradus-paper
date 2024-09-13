@@ -24,6 +24,7 @@ function calculate_2d_transfer_function(m, x, model, itb, prof, radii)
         rmin = minimum(radii),
         rmax = maximum(radii),
         h = 1e-8,
+        g_grid_upscale = 10,
     )
 
     flux[flux.==0] .= NaN
