@@ -211,14 +211,19 @@ runtime. With advancements in automatic differentiation, derivatives are cheap
 to compute, and consequently the second-order approach is tractable and both a
 parsimonious and spacetime agnostic method for computing geodesics.
 
-The paper is organised as follows: in Section \ref{sec:numerical-methods} we
-detail the numerical methods used in \Gradus, introducing the approaches and
-algorithms used in the code. In Section \ref{sec:description-of-code} the
-software is described, with a focus on the organisation of the code and its
-extensibility. Section \ref{sec:test-problems} the validity of the code is
-assessed for a number of standard problems in the literature, and compared to
-other published codes and results. Intended applications of and future work on
-the code are described in \ref{sec:applications}.
+The paper is organised in the following manner: in Section
+\ref{sec:numerical-methods} we detail the numerical methods used in \Gradus,
+introducing the approaches and algorithms employed in the code. The description
+of the numerical methods necessarily avoids implementation details, focusing on
+describing the mathematical and algorithmic narrative, as the implementation is
+publicly available in the code. In Section \ref{sec:description-of-code} the
+software is described in terms of the organisation of the implementation and
+detailing its extensibility. Section \ref{sec:test-problems} assesses the
+validity of the code against a number of standard tests and problems from the
+literature, and compares results computed with \Gradus to other published codes.
+Intended applications of and future work on the code are described in
+\ref{sec:applications}. Finally, overall conclusions of the work are discussed
+in \ref{sec:conclusion}.
 
 %%% NUMERICAL METHODS %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Numerical methods}
@@ -1481,6 +1486,7 @@ the ability to trace Stokes parameters through a system to calculate
 polarization quantities.
 
 \section{Conclusions}
+\label{sec:conclusion}
 
 We encourage the community to contact us with interesting problems that may be tackled using \Gradus as we are happy to assist with new applications of the code.
 
