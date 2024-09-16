@@ -114,28 +114,37 @@ keyword1 -- keyword2 -- keyword3
 General relativistic effects must be included when modelling spectral components
 of the innermost regions of accretion onto compact objects. The relativistic
 effects and spacetime curvature in the strong gravity regime lead to significant
-departures from the classical picture, from the energetics, timing properties,
-and appearances of the systems. These effects are simplest to calculate using
-general relativistic ray-tracing (GRRT) software. The GRRT approach has a long
-history in spectral modelling, and sees widespread use in models of reflection
-spectra, broad iron lines, emission and absorption features including winds, for
-variability studies such as reverberation lags, TDEs, and quasi-periodic
-oscillations (QPOs), and so on. The use of GRRT has enabled the
-measurement of black hole spins using the broad iron line, and is at the
-forefront of modelling the X-ray corona.
+departures from the classical picture, from the energetics
+\citep{cunningham_optical_1973}, timing properties
+\citep{stella_measuring_1990}, and appearances of the systems
+\citep{luminet_image_1979}. These effects are often included in models through
+the use of general relativistic ray-tracing (GRRT) software. The GRRT approach
+has a long history in spectral modelling, and sees widespread use in models of
+reflection spectra (e.g. \citealt{fabian_x-ray_1989}), accretion disc
+emissivities and the X-ray corona (e.g. \citealt{wilkins_understanding_2012, wilkins_towards_2016}) emission and absorption features including
+winds, spectral energy densities of quasars (e.g.
+\citealt{hagen_estimating_2023}), for variability studies such as reverberation lags (e.g.
+\citealt{ingram_public_2019, cackett_reverberation_2021}),
+quasi-periodic oscillations (QPOs, e.g. \citealt{tsang_iron_2013}), and so on.
 
 The standard approach for including the effects of general relativity (GR)
-calculated using GRRT is to  convolve the rest-frame spectrum with a
-relativistic lineprofile, using models such as \texttt{relxill} and its
-variants. These convolution models blur the rest-frame emission thereby
-accounting for the doppler shift, relativistic beaming, and the gravitational
-redshift, amongst other effects, of the reflection features from razor thin
-accretion discs in the equatorial plane around the accretor. These models,
-however, will make assumptions that may differ from the models they are being
-convolved with; most fundamentally, in the geometry of the accretion disc. The
-assumptions are encoded in the transfer functions -- the tabular data used to
-integrate calculate the lineprofile -- for which which there are few public
-codes that can calculate new transfer function tables.
+calculated using GRRT is to convolve the rest-frame spectrum with a relativistic
+lineprofile \citep{laor_line_1991}, using models such as \texttt{relline} /
+\texttt{relxill} \citep{dauser_broad_2010, dauser_relativistic_2016}  and its
+variants. These lineprofiles are usually convolution models that blur the
+rest-frame emission, thereby accounting for the doppler shift, relativistic
+beaming, and the gravitational redshift relative to a distant observer and
+sensitive to the spacetime solution. The
+convolution models, however, make assumptions that may differ from the models
+they are being convolved with; most fundamentally in the geometry of the
+accretion disc. The majority of convolution models assume a razor-thin disc
+structure (\citealt{dovciak_extended_2004, brenneman_constraining_2006,
+dauser_broad_2010}), with the notable exceptions being the models of
+\cite{taylor_exploring_2018} and \cite{abdikamalov_testing_2020}, where the
+Shakura-Sunyaev disc (SSD) structure is used. The assumptions are encoded in the
+transfer functions -- the tabular data used to integrate calculate the
+lineprofile -- for which which there are few public codes that can calculate new
+transfer function tables.
 
 Due to the computational complexity associated with GRRT, relativistic models
 trade resolution for performance. This has been a generally acceptable practice,
@@ -150,9 +159,11 @@ features. High resolution spectroscopy gives rise to unprecedented opportunities
 for studying the details of accretion at the horizon scales, which mandates
 inclusion of GR effects.
 
+% and continuing the tradition of iterating higher resolution
+
 There is a need for relativistic convolution kernels that more closely match the
 assumptions of the underlying models they are convolving, and that can achieve
-the resolutions of the instruments they are fitting.  The work we present in
+the resolutions of the instruments they are fitting. The work we present in
 this paper is towards providing the tools and techniques to address
 these needs. We present a new open-source GRRT code,
 \Gradus\footnote{Open-source and available under GPL 3.0 license at
@@ -170,9 +181,6 @@ tools.}. \Gradus additionally allows the researcher to construct their own
 convolution kernels within a component modelling framework that can be made to
 more closely match the assumptions made in their models with respect to
 accretion disc geometry, disc velocity structure, corona, and so on.
-Additionally, \Gradus is designed to be easily extensible, so that it can be
-used to include the relativistic effects directly in the rest frame calculations
-of other models.
 
 In recent years there has been increased interest in so-called \textit{tests of
 the Kerr hypothesis} and studying solutions to the Einstein field equations that
@@ -774,8 +782,10 @@ disc, and observer parameters, and this dependence limits the reuse of
 calculations between simulations, undesirable for creating spectral models.
 
 To elide such problems, the relativistic effects in the flux calculation are
-often encoded in so-called \emph{transfer functions}, first introduced in
-\cite{cunningham_effects_1975}. There, they are defined
+often encoded in so-called \emph{transfer functions}
+\citep{brenneman_constraining_2006}. The most ubiquitous formulation of these
+transfer functions was first introduced in \cite{cunningham_effects_1975}.
+There, they are defined
 \begin{equation}
     \label{eq:cunn-transfer-function}
     f:=\frac{g}{\pi r_\text{em}} \sqrt{g^\ast(1 - g^\ast)} \jacobian{(\alpha, \beta)}{(r_\text{em}, g^\ast)},
@@ -1540,7 +1550,9 @@ We encourage the community to contact us with interesting problems that may be t
 \section*{Acknowledgements}
 This work is supported by the UKRI AIMLAC CDT funded by grant EP/S023992/1.
 
-We thank Jiachen Jiang, Cosimo Bambi and Askar Abdikamalov for sharing their software for comparisons. FB thanks Rosie for her expert debugging assistance. All figures created using Makie.jl \citep{DanischKrumbiegel2021}, using the color scheme of \cite{wong_points_2011}.
+We thank Jiachen Jiang, Cosimo Bambi and Askar Abdikamalov for sharing their
+software for comparisons, and thank Corbin Taylor for making his
+\textit{fenrir} code, along with many example scripts, public at our request. FB thanks Rosie for her expert debugging assistance. All figures created using Makie.jl \citep{DanischKrumbiegel2021}, using the color scheme of \cite{wong_points_2011}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Data Availability}
