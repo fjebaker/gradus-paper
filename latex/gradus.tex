@@ -68,8 +68,8 @@
 %%%%%%%%%%%%%%%%%%% TITLE PAGE %%%%%%%%%%%%%%%%%%%
 
 % \title[Gradus.jl]{General relativistic ray-tracing and reverberation modelling through automatic differentiation with Gradus.jl}
-\title[Gradus.jl]{Gradus.jl: spacetime agnostic general relativistic ray-tracing
-for reflection and reverberation modelling}
+\title[Gradus.jl]{Gradus.jl: spacetime-agnostic general relativistic ray-tracing
+for spectral modelling}
 \author[F. J. E. Baker et al.]{
 F. J. E. Baker,$^{1}$\thanks{E-mail: fergus.baker@bristol.ac.uk (FB)}
 and A. J. Young$^{1}$
@@ -104,19 +104,12 @@ keyword1 -- keyword2 -- keyword3
 %%% INTRODUCTION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
 
-\todo{
-\begin{itemize}
-    \item george and fabian for reflection of xrays off cold ad
-    \item mention Neutron star accretion things too
-\end{itemize}
-}
-
 General relativistic effects must be included when modelling spectral components
 of the innermost regions of accretion onto compact objects. The relativistic
 effects and spacetime curvature in the strong gravity regime lead to significant
 departures from the classical picture, from the energetics
-\citep{cunningham_optical_1973}, timing properties
-\citep{stella_measuring_1990}, and appearances of the systems
+\citep{cunningham_optical_1973, fabian_long_2002}, timing properties
+\citep{stella_measuring_1990, reynolds_x-ray_1999}, and appearances of the systems
 \citep{luminet_image_1979}. These effects are often included in models through
 the use of general relativistic ray-tracing (GRRT) software. The GRRT approach
 has a long history in spectral modelling, and sees widespread use in models of
@@ -127,56 +120,55 @@ winds, spectral energy densities of quasars (e.g.
 \citealt{ingram_public_2019, cackett_reverberation_2021}),
 quasi-periodic oscillations (QPOs, e.g. \citealt{tsang_iron_2013}), and so on.
 
-The standard approach for including the effects of general relativity (GR)
-calculated using GRRT is to convolve the rest-frame spectrum with a relativistic
-lineprofile \citep{laor_line_1991}, using models such as \texttt{relline} /
-\texttt{relxill} \citep{dauser_broad_2010, dauser_relativistic_2016}  and its
-variants. These lineprofiles are usually convolution models that blur the
-rest-frame emission, thereby accounting for the doppler shift, relativistic
-beaming, and the gravitational redshift relative to a distant observer and
-sensitive to the spacetime solution. The
-convolution models, however, make assumptions that may differ from the models
-they are being convolved with; most fundamentally in the geometry of the
-accretion disc. The majority of convolution models assume a razor-thin disc
-structure (\citealt{dovciak_extended_2004, brenneman_constraining_2006,
-dauser_broad_2010}), with the notable exceptions being the models of
+The standard approach for including relativistic effects calculated using GRRT
+is to convolve a rest-frame spectrum with a something akin to a lineprofile
+\citep{laor_line_1991}, using models such as \texttt{relline} / \texttt{relxill}
+\citep{dauser_broad_2010, dauser_relativistic_2016}  and its variants. These
+lineprofiles are usually convolution models that blur the rest-frame emission,
+thereby accounting for the doppler shift, relativistic beaming, and the
+gravitational redshift relative to a distant observer. The convolution models,
+however, make assumptions that may differ from the models they are being
+convolved with; most fundamentally in the geometry of the accretion disc. The
+majority of convolution models assume a razor-thin disc structure (e.g.,
+\citealt{dovciak_extended_2004, brenneman_constraining_2006,
+dauser_broad_2010}), with notable exceptions being the models of
 \cite{taylor_exploring_2018} and \cite{abdikamalov_testing_2020}, where the
-Shakura-Sunyaev disc (SSD) structure is used. The assumptions are encoded in the
-transfer functions -- the tabular data used to integrate calculate the
-lineprofile -- for which which there are few public codes that can calculate new
-transfer function tables.
+structure of the Shakura-Sunyaev disc is used. Such assumptions are encoded in
+the \textit{transfer functions} -- the tabular data used to efficiently
+calculate lineprofiles -- for which which there are few immediately available
+codes that can reliably and efficiently calculate new transfer function tables.
 
 Due to the computational complexity associated with GRRT, relativistic models
-trade resolution for performance. This has been a generally acceptable practice,
-as the noise in the models is at a resolution that is blurred out when folded
-through an instrument response matrix, and therefore has negligible effect on
-the fit statistic. With the advent of high resolution spectroscopic datasets,
-such as observation from XRISM and NewAthena, this is no longer the case, and
-there is a need for suitably high resolution spectral models, and by extension
-relativistic convolutions. At near sub-eV resolution, model noise may skew the
-fit statistic due to the presence of hitherto unresolved narrow spectral
-features. High resolution spectroscopy gives rise to unprecedented opportunities
-for studying the details of accretion at the horizon scales, which mandates
-inclusion of GR effects.
+trade resolution for performance. Limiting the resolution has been a generally
+acceptable practice, as noise in the models is usually blurred out when folded
+through an instrument response, and therefore has negligible effect on the fit
+statistic. With the advent of higher resolution spectroscopic datasets, such as
+observation from XRISM and NewAthena \citneeded, this is no longer the case, and
+there is once again a need for suitably high resolution spectral models, and, by
+extension, high resolution relativistic convolution models. At near sub-eV
+resolution, model noise may skew the fit statistic due to the presence of
+hitherto unresolved narrow spectral features. High resolution spectroscopy gives
+rise to unprecedented opportunities for studying the details of accretion at the
+horizon scales\citneeded, which mandates including all relativistic effects.  And `high
+resolution' is here not only to mean computing the existing models to higher
+precision, but also re-evaluating the underlying models themselves\citneeded, as subtle
+effects that were once deemed too small to measure ought now be included.
 
-% and continuing the tradition of iterating higher resolution
-
-There is a need for relativistic convolution kernels that more closely match the
-assumptions of the underlying models they are convolving, and that can achieve
-the resolutions of the instruments they are fitting. The work we present in
-this paper is towards providing the tools and techniques to address
-these needs. We present a new open-source GRRT code,
-\Gradus\footnote{Open-source and available under GPL 3.0 license at
+Related to the need for resolution is the need for relativistic convolution
+kernels that more closely match the assumptions of the underlying models they
+are being convolved with. The work we present in this paper is towards providing
+the tools and techniques to address these needs. We present a new open-source
+GRRT code, \Gradus\footnote{Open-source and available under GPL 3.0 license at
 \url{https://github.com/astro-group-bristol/Gradus.jl}.} written in the Julia
 programming language. The software aims to be a toolkit for including general
 relativistic effects in spectral models, and is designed to efficiently
-calculate transfer function tables for new convolution models.  So that \Gradus
+calculate transfer function tables for new convolution models. So that \Gradus
 can be used in popular spectral fitting suites, such as XSPEC, we also maintain
 C-ABI compatible wrappers for integrating the transfer function tables that have
 similar capabilities matching or beyond current models \footnote{We use the Zig
     programming language to wrap the spectral models, as it allows us to
-    statically compile models for a wide variety of targets. Models can then be
-    downloaded and imported into e.g. XSPEC without the need for any additional
+statically compile models for a wide variety of targets. Models can then be
+downloaded and imported into e.g. XSPEC without the need for any additional
 tools.}. \Gradus additionally allows the researcher to construct their own
 convolution kernels within a component modelling framework that can be made to
 more closely match the assumptions made in their models with respect to
@@ -322,7 +314,11 @@ $\utensor{\Gamma}{\mu}{\nu\sigma}$. This is conventionally done analytically
 and implemented directly into the solving code, however our method is to
 compute the Jacobian of the metric ($\partial_{\sigma} g_{\mu \nu}$) needed in
 Eq. \eqref{eq:christoffel} with AD, thereby calculating
-$\utensor{\Gamma}{\mu}{\nu\sigma}$ \textit{on the fly}.  This brings
+$\utensor{\Gamma}{\mu}{\nu\sigma}$ \textit{on the fly}\footnote{We were made
+    aware by colleagues of the Mahakala code of \citet{sharma_mahakala_2023}
+    which uses the same AD approach,
+    indicating that the method is indeed sufficiently accurate and performant
+for GRRT needs.}. This brings
 versatility, as only an implementation of the metric is needed for the geodesic
 equation to be solved.  If the class of spacetime exhibits additional
 symmetries, these can be exploited to reduce computation further: for example,
