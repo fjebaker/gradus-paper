@@ -889,7 +889,18 @@ $g$, and determines the shape of $f$ well, shown in Figure
 \begin{figure}
     \centering
     \includegraphics[width=0.95\linewidth]{figures/transfer-functions.sampling.pdf}
-    \caption{\todo{caption}}
+    \caption{Transfer functions of the Kerr spacetime ($a = 0.998$) for various
+        observer inclinations, showing the sample pattern of $g^\ast$ that our
+        algorithm (described in the text) produces. The higher
+        density of points around extremal $g^\ast$ is due to the optimizer we
+        employ to determine the extremal points. Note that for the high
+        inclination case ($\theta = 85^\circ$) there is slight numerical noise
+        very close to $g^\ast = 1$. This noise is in the region excluded by the
+        integration scheme, and therefore contributes negligible error in
+        calculations involving transfer functions. There is also a high density
+        of points on the lower branch of the transfer function, which is an
+        artefact of the projection of the disc onto the observer's plane.
+    }
     \label{fig:transfer-sampling-pattern}
 \end{figure}
 
@@ -1249,7 +1260,16 @@ arrival time of a photon at a given radius on the disc.
 \begin{figure}
 	\centering
 	\includegraphics[width=0.99\linewidth]{figures/emissivity.point-source.pdf}
-	\caption{\todo{caption}}
+    \caption{Emissivity profiles of a lamppost point source for various heights
+        above the spin axis of a maximally spinning Kerr black hole ($a =
+        0.998$). Panel a) shows the emissivity profiles in arbitrary flux units.
+        Panel b) is the $\alpha$ exponent of the emissivity profile found by
+        differentiating the emissivity profile as $r^{-\alpha}$.  Panel a) and
+        b) are to be compared to Figures 2 and 3 in
+        \citet{dauser_irradiation_2013}. Panel c) is the light-travel time of
+        the photon from the lamppost to the disc. The increase in light travel
+        time at small radii is due to the strong gravity effects.
+}
 	\label{fig:emissivity-profiles}
 \end{figure}
 
