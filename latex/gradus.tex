@@ -160,24 +160,27 @@ are being convolved with. The work we present in this paper is towards providing
 the tools and techniques to address these needs. We present a new open-source
 GRRT code, \Gradus\footnote{Open-source and available under GPL 3.0 license at
 \url{https://github.com/astro-group-bristol/Gradus.jl}.} written in the Julia
-programming language. The software aims to be a toolkit for including general
-relativistic effects in spectral models, and is designed to efficiently
-calculate transfer function tables for new convolution models. So that \Gradus
-can be used in popular spectral fitting suites, such as XSPEC, we also maintain
-C-ABI compatible wrappers for integrating the transfer function tables that have
-similar capabilities matching or beyond current models \footnote{We use the Zig
-    programming language to wrap the spectral models, as it allows us to
-statically compile models for a wide variety of targets. Models can then be
-downloaded and imported into e.g. XSPEC without the need for any additional
-tools.}. \Gradus additionally allows the researcher to construct their own
-convolution kernels within a component modelling framework that can be made to
-more closely match the assumptions made in their models with respect to
-accretion disc geometry, disc velocity structure, corona, and so on.
+programming language \citep{Bezanson_Julia_A_fresh_2017}. The software aims to
+be a toolkit for including general relativistic effects in spectral models, and
+is designed to efficiently calculate transfer function tables for new
+convolution models. So that \Gradus can be used in popular spectral fitting
+suites, such as XSPEC \citep{arnaud_xspec_1996}, we also maintain C-ABI
+compatible wrappers for integrating the transfer function tables that have
+similar capabilities as popular convolution models\footnote{We use the Zig
+    programming language \url{https://ziglang.org/} to wrap the spectral models.
+    This allows us to statically compile models for a wide variety of targets.
+    Models can then be downloaded and imported into e.g. XSPEC without the need
+    for any additional tools.}. \Gradus additionally allows for constructing
+custom convolution kernels within a component modelling framework that can be
+made to more closely match the assumptions made in their models with respect to,
+for example, accretion disc geometry, disc velocity structure, or corona.
 
-In recent years there has been increased interest in so-called \textit{tests of
-the Kerr hypothesis} and studying solutions to the Einstein field equations that
-deviate from black hole spacetimes parameterized by the mass and angular
-momentum of the central singularity. These include metrics that challenge the
+In recent years there has been increased interest in tests of the Kerr
+hypothesis -- that the central singularity is parameterised only by its mass and
+angular momentum -- and in studying solutions to the Einstein field equations
+that deviate from a Kerr black holes (e.g. \citealt{johannsen_testing_2010,
+chrusciel_stationary_2012, bambi_testing_2022, patra_accretion_2023,
+chen_observational_2024},). These include metrics that challenge the
 \textit{no-hair theorem}, where hair is metaphor for additional information in
 the spacetime. This interest is in part driven by observations published by the
 Event Horizon Telescope collaboration, a momentous effort that uses radio
@@ -186,8 +189,8 @@ scale features, such as the `shadow' of the black hole or the photon ring. These
 images have produced a wealth of study into modified spacetimes. In the
 reflection spectra communities, there is similarly much work dedicated to using
 the broad iron line and other X-ray features to measure deviations from the Kerr
-spacetime, yielding seemingly promising results and tight constraints on
-the deformation parameters of some spacetime solutions.
+spacetime, yielding seemingly promising results and tight constraints on the
+deformation parameters of some spacetime solutions.
 
 With the wealth of literature available on possible spacetime solutions, there
 is a need to be able to produce concrete testable results, and efficiently rule
@@ -810,12 +813,12 @@ ambiguity, we henceforth refer to functions of the kind defined in
 transfer functions}. Furthermore, the Cunningham transfer functions are referred
 to as having ``upper'' and ``lower'' branches between extremal $g^\ast$, as
 shown in Figure \ref{fig:transfer-functions}, stemming from the double-valued
-nature of $g^\ast$. As we shall see, when the emission from the disc is not
-isotropic, the distinction between these branches becomes important. Cunningham
-transfer functions also make a number of assumptions about the system under
+nature of $g^\ast$. When the emission from the disc is not isotropic, the
+distinction between these branches becomes important. Cunningham transfer
+functions also make a number of assumptions about the system under
 consideration, principally that only one side of the disc contributes to the
-flux (no false images), and do not generalize to thick discs easily, as we will
-see. Nevertheless, when these assumptions apply, the Cunningham transfer
+flux (no false images), and, as we shall see, do not generalize to thick discs
+easily. Nevertheless, when these assumptions apply, the Cunningham transfer
 functions provide a number of significant benefits over the naive binning
 approaches.
 
