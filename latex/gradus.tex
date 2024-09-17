@@ -185,34 +185,21 @@ chen_observational_2024},). These include metrics that challenge the
 the spacetime. This interest is in part driven by observations published by the
 Event Horizon Telescope collaboration, a momentous effort that uses radio
 interferometry to image compact accretors capable of resolving event horizon
-scale features, such as the `shadow' of the black hole or the photon ring. These
-images have produced a wealth of study into modified spacetimes. In the
+scale features, such as the `shadow' of the black hole or the photon ring
+\citep{the_event_horizon_telescope_collaboration_first_2019,
+the_event_horizon_telescope_collaboration_first_2023}. These
+images have produced a wealth of study into modified spacetimes\citneeded. In the
 reflection spectra communities, there is similarly much work dedicated to using
 the broad iron line and other X-ray features to measure deviations from the Kerr
 spacetime, yielding seemingly promising results and tight constraints on the
 deformation parameters of some spacetime solutions.
 
-With the wealth of literature available on possible spacetime solutions, there
-is a need to be able to produce concrete testable results, and efficiently rule
-out certain solutions. \Gradus provides an interface through which new spacetime
-solutions can straightforwardly be implemented, and can be used to expedite the
-process of generating observational tests for these spacetime solutions in the
-context of reflection and reverberation signatures.
-
-Our use-case is primarily aimed at X-ray astronomy, and constructing
-high-resolution reflection and reverberation models for use in fitting.
-
-The trajectory of light in curved space may be determined by reformulating the
-Hamilton-Jacobi equations of motion as a first-order ordinary differential
-equation (ODE) system.
-
-A second-order ODE system may alternatively be formulated directly from the
-geodesic equation; a method which is pedagogically simpler, but computationally
-more expensive than the first-order system, as either the full metric connection
-or derivatives of the metric must be explicitly implemented else approximated at
-runtime. With advancements in automatic differentiation, derivatives are cheap
-to compute, and consequently the second-order approach is tractable and both a
-parsimonious and spacetime agnostic method for computing geodesics.
+With the wealth of literature available on possible spacetime solutions, it is
+useful to be able to produce concrete testable results, and efficiently rule out
+certain solutions. \Gradus provides an interface through which new spacetime
+solutions can straightforwardly be implemented into the simulations, and can be
+used to expedite the process of generating observational tests for these
+spacetime solutions in the context of reflection and reverberation signatures.
 
 The paper is organised in the following manner: in Section
 \ref{sec:numerical-methods} we detail the numerical methods used in \Gradus,
@@ -225,8 +212,8 @@ detailing its extensibility. Section \ref{sec:test-problems} assesses the
 validity of the code against a number of standard tests and problems from the
 literature, and compares results computed with \Gradus to other published codes.
 Intended applications of and future work on the code are described in
-\ref{sec:applications}. Finally, overall conclusions of the work are discussed
-in \ref{sec:conclusion}.
+Section \ref{sec:applications}. Finally, overall conclusions of the work are discussed
+in Section \ref{sec:conclusion}.
 
 %%% NUMERICAL METHODS %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Numerical methods}
@@ -250,6 +237,18 @@ respect to the coordinates $x^\mu$ as $\partial_\mu := \partial / \partial
 x^\mu$.
 
 \subsection{Geodesic integration}
+
+The trajectory of light in curved space may be determined by reformulating the
+Hamilton-Jacobi equations of motion as a first-order ordinary differential
+equation (ODE) system.
+
+A second-order ODE system may alternatively be formulated directly from the
+geodesic equation; a method which is pedagogically simpler, but computationally
+more expensive than the first-order system, as either the full metric connection
+or derivatives of the metric must be explicitly implemented else approximated at
+runtime. With advancements in automatic differentiation, derivatives are cheap
+to compute, and consequently the second-order approach is tractable and both a
+parsimonious and spacetime agnostic method for computing geodesics.
 
 Using coordinates $x^\mu$, the geodesic equation with external acceleration
 $a^\mu$ is written
@@ -290,11 +289,10 @@ classes depending on the sign of $\mu^2$; namely $\mu^2 = 0$ corresponding to
 0$ to \emph{space-like geodesics}. Null geodesics are the trajectories of
 photons, time-like geodesics are the trajectories of massive particles, and
 space-like geodesics are the trajectories of exotic ``faster-than-light''
-particles, such as tachyons
-\citneeded.
+particles.
 
 As with the position, it is sufficient to specify the three-vector $\vel{i}$,
-and use \ref{eq:velocity_constraint} to determine $\vel{t}$ by rearranging
+and use \eqref{eq:velocity_constraint} to determine $\vel{t}$ by rearranging
 \begin{equation}
 \vel{t}  = \frac{-g_{t\phi} \vel{\phi} \pm
     \sqrt{-g_{ij} \vel{i} \vel{j} - \mu^2}
@@ -303,14 +301,15 @@ and use \ref{eq:velocity_constraint} to determine $\vel{t}$ by rearranging
 Sensible choices of $v^i$ will be discussed in the next section.
 
 The choice of positive or negative root corresponds to the direction of time,
-wherein lies the ray-tracing \textit{trick}: a time-reversal symmetry in the
+wherein lies the \textit{ray-tracing trick}: a time-reversal symmetry in the
 metric $t \rightarrow -t$, $\phi \rightarrow -\phi$ allows us to calculate
-geodesics in the forward direction as if they had travelled backwards. Photons
-can therefore be traced from an observer to the black hole, and calculations
-performed as if they had been emitted from the black hole and travelled towards
-the observer. This seemingly trivial comment cannot be understated in the
-implementation of GRRT, as it will appear to alter the direction of rotation,
-and is a factor when determining dot products velocity vectors.
+geodesics in the forward direction as if they had travelled \textit{backwards}.
+Photons can therefore be traced from an observer to the black hole, and
+calculations performed as if they had been emitted from the black hole and
+travelled towards the observer. This seemingly trivial comment cannot be
+understated in the implementation of GRRT, as it will appear to alter the
+directions of rotations, and is consequently a factor when determining the dot
+products of velocity vectors.
 
 Computing the geodesic equation requires some method of determining
 $\utensor{\Gamma}{\mu}{\nu\sigma}$. This is conventionally done analytically
@@ -1044,10 +1043,10 @@ a 7$^\text{th}$ order Gauss-Kronrod quadrature scheme, which avoids evaluating
 the integral directly at $h$ and $1 - h$ \citep{}. Finer grids for $r_\text{em}$
 and $g^\ast$ are constructed to help with numerical accuracy and stability, with
 the finer bins subsequently rebinned into the desired output grid\footnote{The
-grid in $r$ should be irregularly spaced, e.g. $\sim 1 / r$. This reflects
-that the majority of the variation in $f$ occurs at small $r$. For $g^\ast$,
-the variation is approximately uniform over the domain, and so we use a
-uniform grid of $N = 30$ points over $g^\ast$. This also make saving the
+    grid in $r$ should be regularly spaced, e.g. $\sim 1 / r$, reflecting the
+    fact that the majority of the variation in $f$ occurs at small $r$. For
+$g^\ast$, the variation is approximately uniform over the domain, and so we use
+a uniform grid of $N = 30$ points over $g^\ast$. This also make saving the
 transfer functions in a tabular format simple.  }.
 
 By formulating the Cunningham transfer function integration with the time
@@ -1493,15 +1492,16 @@ codes to within standard tolerances.
 
 \subsection{Other spacetimes}
 
-\Gradus is designed to accept user defined metrics, and self-consistently
-calculate results within the spacetime. Reflection and reverberation features
-have been explored with non-Kerr metrics by other groups (\todo{cite cosimo's
-papers}), but approach integrating the geodesic equation with a mixed-symbolic
-approach. That is, the Christoffel symbols are calculated using a computer
-algebra system (CAS), and the resulting symbolic expressions are transformed
-into executable code.  This has the limitation that if the symbolic expressions
-become too complex for the CAS system, the methodology breaks down. This can
-already happen when more than one deformation parameter is included.
+\Gradus is designed to allow new spacetime metrics to be implemented easily, and
+self-consistently calculates higher-order results within the spacetime.
+Reflection and reverberation features have been explored with non-Kerr metrics
+by other groups (\todo{cite cosimo's papers}), but approach integrating the
+geodesic equation with a mixed-symbolic approach. That is, the Christoffel
+symbols are calculated using a computer algebra system (CAS), and the resulting
+symbolic expressions are transformed into executable code. This has the
+limitation that if the symbolic expressions become too complex for the CAS
+system, the methodology breaks down. This can already happen when more than one
+deformation parameter is included.
 
 Our approach using AD is robust for metrics that include many deformation
 parameters. \Gradus provides the means to build reflection models that can
@@ -1517,7 +1517,7 @@ The comparison is shown in Figure \ref{fig:compare-johannsen}.
 \todo{compare against Johannsen Psaltis paper to show that we get the same line profiles for specific emissivity functions, and compare to Bambi's to show we get the same for self-consistent emissivities}.
 
 \section{Applications}
-\ref{sec:applications}
+\label{sec:applications}
 
 \Gradus can be used to efficiently generate new reflection and reverberation
 models that can be fitted to observational data, and can be tweaked to provide
@@ -1551,7 +1551,7 @@ This work is supported by the UKRI AIMLAC CDT funded by grant EP/S023992/1.
 
 We thank Jiachen Jiang, Cosimo Bambi and Askar Abdikamalov for sharing their
 software for comparisons, and thank Corbin Taylor for making his
-\textit{fenrir} code, along with many example scripts, public at our request. FB thanks Rosie for her expert debugging assistance. All figures created using Makie.jl \citep{DanischKrumbiegel2021}, using the color scheme of \cite{wong_points_2011}.
+\texttt{fenrir} code, along with many example scripts, public at our request. FB thanks Rosie for her expert debugging assistance. All figures created using Makie.jl \citep{DanischKrumbiegel2021}, using the color scheme of \cite{wong_points_2011}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Data Availability}
