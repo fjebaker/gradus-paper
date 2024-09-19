@@ -107,60 +107,76 @@ keyword1 -- keyword2 -- keyword3
 General relativistic effects must be included when modelling spectral components
 of the innermost regions of accretion onto compact objects. The relativistic
 effects and spacetime curvature in the strong gravity regime lead to significant
-departures from the classical picture, from the energetics
+departures from the classical picture in the energetics
 \citep{cunningham_optical_1973, fabian_long_2002}, timing properties
-\citep{stella_measuring_1990, reynolds_x-ray_1999}, and appearances of the systems
-\citep{luminet_image_1979}. These effects are often included in models through
-the use of general relativistic ray-tracing (GRRT) software. The GRRT approach
-has a long history in spectral modelling, and sees widespread use in models of
-reflection spectra (e.g. \citealt{fabian_x-ray_1989}), accretion disc
-emissivities and the X-ray corona (e.g. \citealt{wilkins_understanding_2012, wilkins_towards_2016}) emission and absorption features including
-winds, spectral energy densities of quasars (e.g.
-\citealt{hagen_estimating_2023}), for variability studies such as reverberation lags (e.g.
-\citealt{ingram_public_2019, cackett_reverberation_2021}),
-quasi-periodic oscillations (QPOs, e.g. \citealt{tsang_iron_2013}), and so on.
-
-\todo{a little about what GRRT is}
+\citep{stella_measuring_1990, reynolds_x-ray_1999}, and appearances of the
+systems \citep{luminet_image_1979}. Spectral models will often account for such
+departures
+through the use of general relativistic ray-tracing (GRRT) software. GRRT is the
+practice of integrating the trajectory of photons in curved spacetime, which, in
+turn, allows for radiative processes to be computed whilst accounting for the
+full relativistic effects of strong gravity. The GRRT approach has a long
+history in spectral modelling, and sees widespread use in models of reflection
+spectra (e.g. \citealt{fabian_x-ray_1989}), the
+X-ray corona and accretion disc emissivities (e.g.  \citealt{wilkins_understanding_2012, wilkins_towards_2016})
+emission and absorption features\citneeded, winds\citneeded, spectral energy densities of
+quasars (e.g.  \citealt{hagen_estimating_2023}), in variability studies such as
+reverberation lags from close to the black hole (e.g.
+\citealt{ingram_public_2019}), the corona-disc connection in thermal
+lags (e.g. \citealt{kammoun_hard_2019}), quasi-periodic oscillations (QPOs, e.g.
+\citealt{tsang_iron_2013}), and so on.  We refer the reader to the reviews of
+\citet{uttley_x-ray_2014} and \citet{cackett_reverberation_2021} for detailed
+discussion of X-ray reverberation and the accompanying models that makes use of GRRT codes.
 
 The standard approach for including relativistic effects calculated using GRRT
 is to convolve a rest-frame spectrum with a something akin to a lineprofile
-\citep{laor_line_1991}, using models such as \texttt{relline} / \texttt{relxill}
-\citep{dauser_broad_2010, dauser_relativistic_2016}  and its variants. These
-lineprofiles are usually convolution models that blur the rest-frame emission,
-thereby accounting for the doppler shift, relativistic beaming, and the
-gravitational redshift relative to a distant observer. The convolution models,
-however, make assumptions that may differ from the models they are being
-convolved with; most fundamentally in the geometry of the accretion disc. The
-majority of convolution and lineprofile models assume a razor-thin disc
-structure (e.g., \citealt{dovciak_extended_2004, brenneman_constraining_2006,
-dauser_broad_2010}), with some notable exceptions: the models of
-\cite{karas_light_1992, karas_vicinity_1992} examine hot spots eclipsed in thick
-discs, \cite{pariev_line_1998} studies the effects of turbulent accretion in
-Novikov-Thorne accretion discs, \cite{taylor_exploring_2018} who calculate
-tabular lineprofile models for the Shakura-Sunyaev accretion disc, and
-\cite{abdikamalov_testing_2020} where thick disc models are applied to the
-Johannsen-Psaltis metric \todo{check this is the right metric}. In the
-convolution models, the assumptions made about the become encoded in the
-\textit{transfer functions} -- the tabular data used to efficiently calculate
-lineprofiles -- which must be recomputed if the assumptions are changed. There
-are few immediately available public codes that can reliably and efficiently
-calculate new transfer function tables.
+\citep{fabian_x-ray_1989, laor_line_1991}, using models such as \texttt{relline}
+/ \texttt{relxill} \citep{dauser_broad_2010, dauser_relativistic_2016}  and its
+variants. These lineprofiles are usually convolution models that blur the
+rest-frame emission, thereby accounting for the doppler shift, relativistic
+beaming, and gravitational redshift relative to a distant observer. The
+convolution models make assumptions about the disc geometry and velocity
+structure; assumptions that may differ from the models they are being convolved
+with. Almost all convolution and lineprofile models assume a razor-thin
+disc in the equatorial plane with strictly Keplerian velocity structure (e.g.
+\citealt{dovciak_extended_2004, beckwith_iron_2004, brenneman_constraining_2006,
+dauser_broad_2010}).
+There are some notable exceptions:
+the models of \cite{karas_light_1992} and \cite{karas_vicinity_1992} examine the
+changing lineprofiles of hot spots
+eclipsed in thick discs, \cite{pariev_line_1998} study the effects of
+turbulent velocities in a Novikov-Thorne accretion discs,
+\cite{hartnoll_reprocessed_2001} model a warped accretion disc,
+\cite{fukumura_iron_2004} study a spiral velocity structure; a conical disc
+structure is explored by \cite{wu_iron_2007} including sub-Keplerian orbits and the effects of
+self-occulting of the disc,
+\cite{taylor_exploring_2018} calculate tabular lineprofile models for a disc
+with the
+Shakura-Sunyaev height profile, culminating with \cite{abdikamalov_testing_2020}
+studying a Novikov-Thorne disc in the Johannsen-Psaltis spacetime  \todo{check
+this is the right metric}.
+
+For relativistic convolution models, the assumptions made about the accretion
+disc become encoded in the \textit{transfer functions} table -- the tabular data
+used to efficiently calculate lineprofiles -- which must be recomputed if the
+assumptions are changed. There are few immediately available public codes that
+can reliably and efficiently calculate new transfer function tables.
 
 Due to the computational complexity associated with GRRT, relativistic models
 trade resolution for performance. Limiting the resolution has been a generally
 acceptable practice, as noise in the models is usually blurred out when folded
 through an instrument response, and therefore has negligible effect on the fit
-statistic. With the advent of higher resolution spectroscopic datasets, such as
-observation from XRISM and NewAthena \citneeded, this is no longer the case, and
-there is once again a need for suitably high resolution spectral models, and, by
-extension, high resolution relativistic convolution models. At near sub-eV
-resolution, model noise may skew the fit statistic due to the presence of
-hitherto unresolved narrow spectral features. High resolution spectroscopy gives
-rise to unprecedented opportunities for studying the details of accretion at the
-horizon scales\citneeded, which mandates including all relativistic effects.  And `high
-resolution' is here not only to mean computing the existing models to higher
-precision, but also re-evaluating the underlying models themselves\citneeded, as subtle
-effects that were once deemed too small to measure ought now be included.
+statistic. It is acknowledged at least once in every generation of
+astronomers\citneeded, that with the higher resolution spectroscopic datasets,
+higher resolution models are needed. Today, it is the advent of XRISM\citneeded and
+expected launch of NewAthena \citneeded that is driving the need for more
+detailed models, and, by extension, more detailed relativistic convolution
+models. At near sub-eV resolution, model noise may skew the fit statistic due to
+the presence of hitherto unresolved narrow spectral features. It is not only
+that some existing models must be computed higher precision, but that many
+models need their underlying assumptions re-evaluated, as subtle effects that
+were once deemed too difficult to distinguish may now be included -- including
+the accretion structure.
 
 Related to the need for resolution is the need for relativistic convolution
 kernels that more closely match the assumptions of the underlying models they
@@ -219,9 +235,11 @@ software is described in terms of the organisation of the implementation and
 detailing its extensibility. Section \ref{sec:test-problems} assesses the
 validity of the code against a number of standard tests and problems from the
 literature, and compares results computed with \Gradus to other published codes.
-Intended applications of and future work on the code are described in
-Section \ref{sec:applications}. Finally, overall conclusions of the work are discussed
-in Section \ref{sec:conclusion}.
+This section also includes novel simulation results that examine the effect of
+disc thickness on the X-ray reverberation lag. Intended applications of and
+future work on the code are described in Section \ref{sec:applications}.
+Finally, overall conclusions of the work are discussed in Section
+\ref{sec:conclusion}.
 
 %%% NUMERICAL METHODS %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Numerical methods}
@@ -320,21 +338,20 @@ directions of rotations, and is consequently a factor when determining the dot
 products of velocity vectors.
 
 Computing the geodesic equation requires some method of determining
-$\utensor{\Gamma}{\mu}{\nu\sigma}$. This is conventionally done analytically
-and implemented directly into the solving code, however our method is to
-compute the Jacobian of the metric ($\partial_{\sigma} g_{\mu \nu}$) needed in
-Eq. \eqref{eq:christoffel} with AD, thereby calculating
+$\utensor{\Gamma}{\mu}{\nu\sigma}$. This is conventionally done analytically and
+implemented directly into the solving code, however our method is to compute the
+Jacobian of the metric ($\partial_{\sigma} g_{\mu \nu}$) needed in Eq.
+\eqref{eq:christoffel} with AD, thereby calculating
 $\utensor{\Gamma}{\mu}{\nu\sigma}$ \textit{on the fly}\footnote{We were made
-    aware by colleagues of the Mahakala code of \citet{sharma_mahakala_2023}
-    which uses the same AD approach,
-    indicating that the method is indeed sufficiently accurate and performant
-for GRRT needs.}. This brings
-versatility, as only an implementation of the metric is needed for the geodesic
-equation to be solved.  If the class of spacetime exhibits additional
-symmetries, these can be exploited to reduce computation further: for example,
-metrics of the form \eqref{eq:stationary_axisymmetric_metric} exploit $\partial_t
-g_{\mu\nu} = \partial{\phi} g_{\mu\nu} = 0$ (the principle Killing vectors) and
-avoid calculating two columns of the Jacobian entirely.
+    aware by colleagues of the independently developed code Mahakala of
+    \citet{sharma_mahakala_2023} which uses the same AD approach, indicating
+that the method is indeed sufficiently accurate and performant for GRRT needs.}.
+This brings versatility, as only an implementation of the metric is needed for
+the geodesic equation to be solved.  If the class of spacetime exhibits
+additional symmetries, these can be exploited to reduce computation further: for
+example, metrics of the form \eqref{eq:stationary_axisymmetric_metric} exploit
+$\partial_t g_{\mu\nu} = \partial{\phi} g_{\mu\nu} = 0$ (the principle Killing
+vectors) and avoid calculating two columns of the Jacobian entirely.
 
 \subsection{Observers and emitters}
 \label{sec:observers-and-emitters}
