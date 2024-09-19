@@ -120,6 +120,8 @@ winds, spectral energy densities of quasars (e.g.
 \citealt{ingram_public_2019, cackett_reverberation_2021}),
 quasi-periodic oscillations (QPOs, e.g. \citealt{tsang_iron_2013}), and so on.
 
+\todo{a little about what GRRT is}
+
 The standard approach for including relativistic effects calculated using GRRT
 is to convolve a rest-frame spectrum with a something akin to a lineprofile
 \citep{laor_line_1991}, using models such as \texttt{relline} / \texttt{relxill}
@@ -129,14 +131,20 @@ thereby accounting for the doppler shift, relativistic beaming, and the
 gravitational redshift relative to a distant observer. The convolution models,
 however, make assumptions that may differ from the models they are being
 convolved with; most fundamentally in the geometry of the accretion disc. The
-majority of convolution models assume a razor-thin disc structure (e.g.,
-\citealt{dovciak_extended_2004, brenneman_constraining_2006,
-dauser_broad_2010}), with notable exceptions being the models of
-\cite{taylor_exploring_2018} and \cite{abdikamalov_testing_2020}, where the
-structure of the Shakura-Sunyaev disc is used. Such assumptions are encoded in
-the \textit{transfer functions} -- the tabular data used to efficiently
-calculate lineprofiles -- for which which there are few immediately available
-codes that can reliably and efficiently calculate new transfer function tables.
+majority of convolution and lineprofile models assume a razor-thin disc
+structure (e.g., \citealt{dovciak_extended_2004, brenneman_constraining_2006,
+dauser_broad_2010}), with some notable exceptions: the models of
+\cite{karas_light_1992, karas_vicinity_1992} examine hot spots eclipsed in thick
+discs, \cite{pariev_line_1998} studies the effects of turbulent accretion in
+Novikov-Thorne accretion discs, \cite{taylor_exploring_2018} who calculate
+tabular lineprofile models for the Shakura-Sunyaev accretion disc, and
+\cite{abdikamalov_testing_2020} where thick disc models are applied to the
+Johannsen-Psaltis metric \todo{check this is the right metric}. In the
+convolution models, the assumptions made about the become encoded in the
+\textit{transfer functions} -- the tabular data used to efficiently calculate
+lineprofiles -- which must be recomputed if the assumptions are changed. There
+are few immediately available public codes that can reliably and efficiently
+calculate new transfer function tables.
 
 Due to the computational complexity associated with GRRT, relativistic models
 trade resolution for performance. Limiting the resolution has been a generally
@@ -612,13 +620,13 @@ where $v_\mu$ are the geodesic momenta, and $u^\mu$ the velocity of the emitting
 The emissivity profile is related to the ionization pattern on the accretion
 disc, with the emissivity $\varepsilon$ being proportional the ionization
 parameter $\xi$ \citep{laor_line_1991,wilkins_understanding_2012}. The
-ionization parameter is related to the illuminating flux on the disc $F_i$ and
-material properties of the disc
+ionization parameter is related to the illuminating X-ray flux on the disc $F_i$
+and material properties of the disc
 \begin{equation}
     \xi = \frac{4 \pi F_i}{n_\text{H}}
 \end{equation}
-where $n_\text{H}$ is the hydrogen column density \citep{ross_effects_1993}. For
-our purposes, we will drop factors considered to be constant, and use
+where $n_\text{H}$ is the co-moving hydrogen density \citep{ross_effects_1993}.
+For our purposes, we will drop factors considered to be constant, and use
 $\varepsilon \propto F_i$ directly.
 
 The source of $F_i$ is a luminous corona located close to the central
