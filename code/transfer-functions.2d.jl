@@ -68,6 +68,9 @@ begin
     )
     ylims!(ax2, nothing, 1.2)
 
+    text!(ax1, 82, 0.2, text="θ = 80°", font = :bold, fontsize=20)
+    text!(ax2, 82, 0.2, text="θ = 45°", font= :bold, fontsize=20)
+
     cmap = :batlow
     hm = heatmap!(ax1, t2, E2, log.(abs.(f2')), colormap = cmap)
     heatmap!(ax2, t1, E1, log.(abs.(f1')), colormap = cmap)

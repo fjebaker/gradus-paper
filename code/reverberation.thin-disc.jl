@@ -28,7 +28,6 @@ function calculate_2d_transfer_function(m, x, model, itb, prof, radii)
     )
 
     flux[flux.==0] .= NaN
-
     bins, tbins, flux
 end
 
@@ -169,6 +168,21 @@ begin
 
     ylims!(ax1, 2e-5, 0.2)
     xlims!(ax1, 0, 120)
+
+    Label(
+        ga[1, 1, Right()],
+        text = "a",
+        padding = (8, 0, -90, 0),
+        fontsize = 18,
+        font = :bold,
+    )
+    Label(
+        ga[2, 1, Right()],
+        text = "b",
+        padding = (8, 0, -410, 0),
+        fontsize = 18,
+        font = :bold,
+    )
 
     @savefigure(fig)
     fig
