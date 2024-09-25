@@ -111,22 +111,23 @@ departures from the classical picture in the energetics
 \citep{cunningham_optical_1973, fabian_long_2002}, timing properties
 \citep{stella_measuring_1990, reynolds_x-ray_1999}, and appearances of the
 systems \citep{luminet_image_1979}. Spectral models will often account for such
-departures
-through the use of general relativistic ray-tracing (GRRT) software. GRRT is the
-practice of integrating the trajectory of photons in curved spacetime, which, in
-turn, allows for radiative processes to be computed whilst accounting for the
-full relativistic effects of strong gravity. The GRRT approach has a long
-history in spectral modelling, and sees widespread use in models of reflection
-spectra (e.g. \citealt{fabian_x-ray_1989}), the
-X-ray corona and accretion disc emissivities (e.g.  \citealt{wilkins_understanding_2012, wilkins_towards_2016})
-emission and absorption features\citneeded, winds\citneeded, spectral energy densities of
+departures through the use of general relativistic ray-tracing (GRRT) software.
+GRRT is the practice of integrating the trajectory of photons in curved
+spacetime, which, in turn, allows for radiative processes to be computed whilst
+accounting for the full relativistic effects of strong gravity. The GRRT
+approach has a long history in spectral modelling, and sees widespread use in
+models of reflection spectra (e.g. \citealt{fabian_x-ray_1989}), the X-ray
+corona and accretion disc emissivities (e.g.
+\citealt{wilkins_understanding_2012, wilkins_towards_2016}) emission and
+absorption features\citneeded, winds\citneeded, spectral energy densities of
 quasars (e.g.  \citealt{hagen_estimating_2023}), in variability studies such as
 reverberation lags from close to the black hole (e.g.
-\citealt{ingram_public_2019}), the corona-disc connection in thermal
-lags (e.g. \citealt{kammoun_hard_2019}), quasi-periodic oscillations (QPOs, e.g.
+\citealt{ingram_public_2019}), the corona-disc connection in thermal lags (e.g.
+\citealt{kammoun_hard_2019}), quasi-periodic oscillations (QPOs, e.g.
 \citealt{tsang_iron_2013}), and so on.  We refer the reader to the reviews of
-\citet{uttley_x-ray_2014} and \citet{cackett_reverberation_2021} for detailed
-discussion of X-ray reverberation and the accompanying models that makes use of GRRT codes.
+\citet{uttley_x-ray_2014} and
+\citet{cackett_reverberation_2021} for detailed discussion of X-ray
+reverberation and the accompanying models that makes use of GRRT codes.
 
 The standard approach for including relativistic effects calculated using GRRT
 is to convolve a rest-frame spectrum with a something akin to a lineprofile
@@ -1496,6 +1497,13 @@ Shakura-Sunyaev disc.}
 
 \subsection{Radiative transfer}
 
+\begin{figure*}
+	\centering
+	\includegraphics[width=0.99\linewidth]{figures/radiative-transfer.gold.pdf}
+	\caption{Intensity images calculated with \Gradus of the radiative transfer analytic test models specified in \citet{gold_verification_2020} with resolution $128 \times 128$ pixels, and impact parameters ranging between $-15\, \rg$ and $15\, \rg$, and observer position $r_\text{obs} = 1000\, \rg$ and inclination $\theta_\text{obs} = 60^\circ$. The test cases correspond to the test parameters in their Table 1. The colouring is the intensity for the geodesic corresponding to that pixel normalized over the total intensity .}
+	\label{fig:gold-test-problems}
+\end{figure*}
+
 \cite{gold_verification_2020} specify an analytic model for testing radiative
 transfer codes (their Section 3.2, with results shown in their Figure 2 and 3).
 The model gives the emissivity and absorptivity coefficients of a (corotating)
@@ -1507,13 +1515,6 @@ We have implemented their model and see very good agreement across all of the
 tests, shown in Figure \ref{fig:gold-test-problems}. Our covariant radiative
 transfer implementation therefore reproduces the same results as other GRRT
 codes to within standard tolerances.
-
-\begin{figure*}
-	\centering
-	\includegraphics[width=0.99\linewidth]{figures/radiative-transfer.gold.pdf}
-	\caption{Intensity images calculated with \Gradus of the radiative transfer analytic test models specified in \citet{gold_verification_2020} with resolution $128 \times 128$ pixels, and impact parameters ranging between $-15\, \rg$ and $15\, \rg$, and observer position $r_\text{obs} = 1000\, \rg$ and inclination $\theta_\text{obs} = 60^\circ$. The test cases correspond to the test parameters in their Table 1. The colouring is the intensity for the geodesic corresponding to that pixel normalized over the total intensity .}
-	\label{fig:gold-test-problems}
-\end{figure*}
 
 \subsection{Other spacetimes}
 
@@ -1543,6 +1544,20 @@ The comparison is shown in Figure \ref{fig:compare-johannsen}.
 
 \section{Applications}
 \label{sec:applications}
+
+\begin{figure*}
+	\centering
+	\includegraphics[width=0.99\linewidth]{figures/reverberation.thick-disc.pdf}
+    \caption{\todo{caption}}
+	\label{fig:reverb-thick-discs}
+\end{figure*}
+
+\begin{figure*}
+	\centering
+	\includegraphics[width=0.99\linewidth]{figures/reverberation.thick-disc-corona.pdf}
+    \caption{\todo{caption}}
+	\label{fig:reverb-thick-discs}
+\end{figure*}
 
 \Gradus can be used to efficiently generate new reflection and reverberation
 models that can be fitted to observational data, and can be tweaked to provide
