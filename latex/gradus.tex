@@ -1545,6 +1545,25 @@ The comparison is shown in Figure \ref{fig:compare-johannsen}.
 \section{Applications}
 \label{sec:applications}
 
+The thick disc transfer function calculation method described in Section
+\ref{sec:partially-obscured-functions} allows spectra for arbitrary disc
+geometries to be efficiently computed. We demonstrate this by calculating high
+resolution lag-energy spectra for the SSD, with self consistent emissivity and
+light-crossing profiles for the lamppost model. The results are shown in Figure
+\ref{fig:reverb-thick-discs} for different Eddington accretion rates. The effect
+of the obscuration of the disc is here visible as it is in the lineprofiles; as
+the inclination steepens, the blue shifted higher energy component of the
+profile moves to lower energy. There is also a decrease in the time lag relative
+to the thin disc case which is numerically comparable to the thickness of the
+disc. At lower inclinations, the effect of the disc thickness is negligible.
+\todo{compare with results of Taylor and Reynolds and Abdikamalov}.
+
+In Figure \ref{fig:reverb-thick-discs-corona}, the lamppost height is changed
+for a fixed Eddington ratio. For low coronal heights, the thickness of the disc
+has a significant impact on the emissivity and light-crossing profiles, which
+therefore distorts the observed lag-energy profile across all inclinations and
+Fourier frequencies.
+
 \begin{figure*}
 	\centering
 	\includegraphics[width=0.99\linewidth]{figures/reverberation.thick-disc.pdf}
@@ -1570,7 +1589,7 @@ The comparison is shown in Figure \ref{fig:compare-johannsen}.
         emissivity at distant radii, and similarly with the light crossing
     times. This makes a marked change irrespective of inclination, but only
 occurs when the coronal height is comparable to the height of the disc.}
-	\label{fig:reverb-thick-discs}
+	\label{fig:reverb-thick-discs-corona}
 \end{figure*}
 
 \Gradus can be used to efficiently generate new reflection and reverberation
