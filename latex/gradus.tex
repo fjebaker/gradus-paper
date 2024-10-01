@@ -1550,19 +1550,23 @@ The thick disc transfer function calculation method described in Section
 geometries to be efficiently computed. We demonstrate this by calculating high
 resolution lag-energy spectra for the SSD, with self consistent emissivity and
 light-crossing profiles for the lamppost model. The results are shown in Figure
-\ref{fig:reverb-thick-discs} for different Eddington accretion rates. The effect
-of the obscuration of the disc is here visible as it is in the lineprofiles; as
-the inclination steepens, the blue shifted higher energy component of the
-profile moves to lower energy. There is also a decrease in the time lag relative
-to the thin disc case which is numerically comparable to the thickness of the
-disc. At lower inclinations, the effect of the disc thickness is negligible.
-\todo{compare with results of Taylor and Reynolds and Abdikamalov}.
+\ref{fig:reverb-thick-discs} for different Eddington accretion rates. The
+self-obscuration of the disc has here the same effect as in the linesprofiles;
+with steeper inclination, the highest blue shifted component moves to lower
+energies. In tandem with this is a decrease in the time lag relative to the
+thin disc case, which is comparable to the thickness of the disc. At lower
+inclinations, the effect of the disc thickness is negligible. \todo{compare
+with results of Taylor and Reynolds and Abdikamalov}.
 
 In Figure \ref{fig:reverb-thick-discs-corona}, the lamppost height is changed
 for a fixed Eddington ratio. For low coronal heights, the thickness of the disc
 has a significant impact on the emissivity and light-crossing profiles, which
 therefore distorts the observed lag-energy profile across all inclinations and
-Fourier frequencies.
+Fourier frequencies. The distant regions of the accretion disc have their
+contributions to the observed reflection flux suppressed, as the corona is
+obscured by the disc. The effect of lamppost height is pronounced, and can
+significantly change the shape of the lag-energy profile without shifting the
+energy range of the flux.
 
 \begin{figure*}
 	\centering
@@ -1592,28 +1596,40 @@ occurs when the coronal height is comparable to the height of the disc.}
 	\label{fig:reverb-thick-discs-corona}
 \end{figure*}
 
+This example application will hopefully persuade the reader of the importance of
+modelling the full complexities of the relativistic system, as small
+modifications to the underlying assumptions of the system can have dramatic
+consequences for certain parameter combinations of the model. This is not only
+true for the particulars of the disc geometry; the coronal geometry similarly
+will have marked effect on spectral features. \Gradus is designed to tackle
+extended corona modelling using a decomposition technique (\todo{Baker \& Young,
+in prep.}).
+
+The spacetime under consideration may similarly exhibit dramatic changes in the
+spectral model, with potentially some tell-tale signature that would allow a
+particular spacetime to be distinguished from another to high accuracy.
+Currently, the reflection profile techniques used to disambiguate one metric
+from another often run into strong parameter degeneracies (in particular when
+the ISCO of two spacetimes coincide). By expediting the modelling process for
+computing observables of new spacetimes, \Gradus has a direct application for
+studying modified gravity theories, and can be used to compute convolution
+models or (reverberation) timing properties with little additional effort.
+
+An anticipated application for \Gradus is to include the treatment of polarization
+in the software. This would allow the Stokes parameters to be traced through the
+simulation, and for polarization models to be efficiently computed using the
+same extension to the Cunningham transfer function approach as we demonstrated
+with timing in this work.
+
+\section{Conclusions}
+\label{sec:conclusion}
+
 \Gradus can be used to efficiently generate new reflection and reverberation
 models that can be fitted to observational data, and can be tweaked to provide
 sufficient resolution for the next generation of high resolution X-ray
 spectroscopy observatories, such as XRISM\citneeded. Our software is written to
 allow users to be able to generate these models themselves using short scripts,
 and compose the different model components together to simulate new systems.
-
-The ability to change the specific black hole solution being simulated has
-applications for testing relativity theories, and can expedite the theoretical
-modelling process for researchers exploring new gravity theories. The inclusion
-of radiative transfer is intended for exploring different emission and
-absorption features, and for eventually tracing through the output of general
-relativistic magneto hydrodynamic simulations.
-
-We are already in the process of extending our modelling capabilities to
-efficiently include additional extended coronal models using a novel
-decomposition technique (\todo{Baker \& Young, in prep}), as well as adding
-the ability to trace Stokes parameters through a system to calculate
-polarization quantities.
-
-\section{Conclusions}
-\label{sec:conclusion}
 
 We encourage the community to contact us with interesting problems that may be tackled using \Gradus as we are happy to assist with new applications of the code.
 
