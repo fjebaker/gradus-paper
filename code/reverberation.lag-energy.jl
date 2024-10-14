@@ -4,8 +4,8 @@ using Gradus
 include("common.jl")
 
 function calculate_2d_transfer_function(m, x, model, itb, prof, radii)
-    bins = collect(range(0.0, 1.5, 1000))
-    tbins = collect(range(0, 2000.0, 3000))
+    bins = collect(range(0.0, 1.5, 2000))
+    tbins = collect(range(0, 2000.0, 6000))
 
     t0 = continuum_time(m, x, model)
     @show t0
@@ -47,22 +47,22 @@ end
 
 m = KerrMetric(1.0, 0.998)
 x = SVector(0.0, 10_000.0, deg2rad(45), 0.0)
-radii = Gradus.Grids._inverse_grid(Gradus.isco(m), 1000.0, 300)
+radii = Gradus.Grids._geometric_grid(Gradus.isco(m), 1000.0, 300)
 
 model = LampPostModel(h = 10.0)
 
 # thin disc
 d = ThinDisc(0.0, Inf)
-itb = Gradus.interpolated_transfer_branches(m, x, d, radii; verbose = true, β₀ = 2.0)
-prof = @time emissivity_profile(m, d, model; n_samples = 100_000)
+itb = Gradus.interpolated_transfer_branches(m, x, d, radii; verbose = true)
+prof = @time emissivity_profile(m, d, model; n_samples = 140_000)
 
 E, t, f = @time calculate_2d_transfer_function(m, x, model, itb, prof, radii)
 freq, τ = @time lag_frequency(t, f)
 
 thick_d = ShakuraSunyaev(m)
 thick_itb =
-    Gradus.interpolated_transfer_branches(m, x, thick_d, radii; verbose = true, β₀ = 2.0)
-thick_prof = @time emissivity_profile(m, thick_d, model; n_samples = 100_000)
+    Gradus.interpolated_transfer_branches(m, x, thick_d, radii; verbose = true, β₀ = 2.0, abstol = 1e-12, reltol = 1e-12)
+thick_prof = @time emissivity_profile(m, thick_d, model; n_samples = 140_000)
 
 thick_E, thick_t, thick_f =
     @time calculate_2d_transfer_function(m, x, model, thick_itb, thick_prof, radii)
@@ -145,6 +145,7 @@ begin
     lines!(ax, thick_E, thick_le4, linestyle = :dot, color = color4)
 
 
+    ylims!(axmini, -6, 28)
     xlims!(axmini, 5e-5, 0.3)
     xlims!(ax, 0.25, 1.23)
 

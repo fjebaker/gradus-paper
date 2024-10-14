@@ -35,7 +35,7 @@ function calculate_2d_transfer_function(m, x, model, itb, prof, radii)
         rmin = minimum(radii),
         rmax = maximum(radii),
         h = 1e-8,
-        g_grid_upscale = 1,
+        g_grid_upscale = 3,
     )
 
     flux[flux.==0] .= NaN
@@ -43,7 +43,7 @@ function calculate_2d_transfer_function(m, x, model, itb, prof, radii)
 end
 
 function calculate_lag_transfer(m, x, d, model, radii, itb)
-    prof = @time emissivity_profile(m, d, model; n_samples = 150_000)
+    prof = @time emissivity_profile(m, d, model; n_samples = 200_000)
     E, t, f = @time calculate_2d_transfer_function(m, x, model, itb, prof, radii)
     ψ = Gradus.sum_impulse_response(f)
     freq, τ = @time lag_frequency(t, f)
@@ -53,10 +53,9 @@ function calculate_lag_transfer(m, x, d, model, radii, itb)
     (; freq, τ, ψ, t, all_pulses, E, f)
 end
 
-function calculate_for_disc(m, d)
-    model = LampPostModel(h = 10.0)
+function calculate_for_model(m, d, model)
     # different angles
-    angles = [60, 80, 85]
+    angles = [10, 30, 60, 80]
     datas = map(angles) do angle
         @info "Angle = $angle"
         x = SVector(0.0, 10_000.0, deg2rad(angle), 0.0)
@@ -71,14 +70,21 @@ m = KerrMetric(1.0, 0.998)
 radii = Gradus.Grids._geometric_grid(Gradus.isco(m), 1000.0, 400)
 
 begin
-    @info "Thin disc"
-    datas1 = calculate_for_disc(m, ThinDisc(0.0, Inf))
     @info "Thick disc 1"
-    datas2 = calculate_for_disc(m, ShakuraSunyaev(m, eddington_ratio = 0.1))
+    m_datas2 = calculate_for_model(m, ShakuraSunyaev(m, eddington_ratio = 0.3), LampPostModel(h=2.0))
     @info "Thick disc 2"
-    datas3 = calculate_for_disc(m, ShakuraSunyaev(m, eddington_ratio = 0.2))
+    m_datas3 = calculate_for_model(m, ShakuraSunyaev(m, eddington_ratio = 0.3), LampPostModel(h=5.0))
     @info "Thick disc 3"
-    datas4 = calculate_for_disc(m, ShakuraSunyaev(m, eddington_ratio = 0.3))
+    m_datas4 = calculate_for_model(m, ShakuraSunyaev(m, eddington_ratio = 0.3), LampPostModel(h=10.0))
+end
+
+begin
+    @info "Thin disc 1"
+    t_datas2 = calculate_for_model(m, ThinDisc(0.0, Inf), LampPostModel(h=2.0))
+    @info "Thin disc 2"
+    t_datas3 = calculate_for_model(m, ThinDisc(0.0, Inf), LampPostModel(h=5.0))
+    @info "Thin disc 3"
+    t_datas4 = calculate_for_model(m, ThinDisc(0.0, Inf), LampPostModel(h=10.0))
 end
 
 begin
@@ -92,19 +98,28 @@ begin
     lims2 = (4e-3, 8e-3)
     lims3 = (1.9e-2, 4e-2)
     lims4 = (1e-5, 1e-4)
-
+    
     # x_lims1 = (0.83, 1.08)
-    x_lims2 = (0.45, 1.45)
-    x_lims1 = (0.45, 1.6)
+    x_lims1 = (0.85, 1.05)
+    x_lims2 = (0.65, 1.2)
+    x_lims3 = (0.45, 1.4)
+    x_lims4 = (0.45, 1.6)
 
-    axes = map(enumerate((datas2, datas3, datas4))) do (col, ds)
-        map(enumerate(ds)) do (row, d)
-            ax = Axis(ga[row, col],
-                ylabel ="τ",
-                xlabel ="E/E₀",
-                yticks = [0, 20, 40]
-            )
-            thin = datas1[row]
+    axes = map(enumerate((m_datas2, m_datas3, m_datas4))) do (row, ds)
+        map(enumerate(ds)) do (col, d)
+            ax = if col == 1
+                Axis(ga[row, col],
+                    ylabel ="τ",
+                    xlabel ="E/E₀",
+                    yticks = LinearTicks(3),
+                )
+            else
+                Axis(ga[row, col],
+                    xlabel ="E/E₀",
+                    yticks = LinearTicks(3),
+                )
+            end
+            thin = (t_datas2, t_datas3, t_datas4)[row][col]
 
             for (lim) in ((lims1, lims2, lims3, lims4))
                 thin_le = lag_energy(thin.all_pulses, lim...)
@@ -113,44 +128,41 @@ begin
                 le = lag_energy(d.all_pulses, lim...)
                 lines!(ax, d.E, le)
             end
-            if col != 1
-                hideydecorations!(ax, grid=false)
-            end
-            if row != 3
+            if row != 3 
                 hidexdecorations!(ax, grid=false)
             end
-            xlims!(ax, x_lims1...)
+            xlims!(ax, (x_lims1, x_lims2, x_lims3, x_lims4)[col]...)
             ax
         end
     end
     axs = reshape(reduce(vcat, axes), (length(axes[1]), length(axes)))
-    for i in 1:length(axes)
-        linkxaxes!(axs[1, i], axs[2, i])
+    for i in 1:length(axes[1])
+        linkxaxes!(axs[i, 1], axs[i, 2])
         # linkxaxes!(axs[3, i], axs[4, i])
     end
-    for i in 1:length(axes[1])
-        root = axs[i, 1]
-        for a in axs[i, 2:end]
-            linkyaxes!(root, a)
-        end
-    end
-
+    # for i in 1:length(axes)
+    #     root = axs[1, i]
+    #     for a in axs[2:end, i]
+    #         linkyaxes!(root, a)
+    #     end
+    # end
+    
     rowgap!(ga, 10)
     colgap!(ga, 10)
 
-    for (i, a) in enumerate([0.1, 0.2, 0.3])
+    for (i, a) in enumerate([10, 30, 60, 80])
         Label(
             ga[1, i, Top()],
-            text = "Ṁ / Ṁₑ = $a",
+            text = "θ = $(a)°",
             padding = (0, 0, 10, 0),
             fontsize = 13,
             font = :bold,
         )
     end
-    for (i, h) in enumerate([60, 80, 85])
+    for (i, h) in enumerate([2, 5, 10])
         Label(
-            ga[i, 3, Right()],
-            text = "θ = $(h)°",
+            ga[i, 4, Right()],
+            text = "h = $h",
             padding = (10, 0, 00, 0),
             fontsize = 13,
             font = :bold,
