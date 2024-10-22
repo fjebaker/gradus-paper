@@ -46,8 +46,8 @@
 \newcommand{\notes}[1]{{\color{cyan} #1}}
 
 \newcommand{\Gradus}{Gradus.jl\xspace}
-\newcommand{\FeKa}{Fe K$\alpha$\xspec}
-\newcommand{\relline}{\texttt{relline}\xspec}
+\newcommand{\FeKa}{Fe K$\alpha$\xspace}
+\newcommand{\relline}{\texttt{relline}\xspace}
 
 \newcommand{\e}{\text{e}}
 \renewcommand{\d}{\text{d}}
@@ -110,7 +110,7 @@ General relativistic ray-tracing (GRRT) software enables the calculation of
 spectra and variability of radiation produced by accretion flows and coronae
 around compact objects in different spacetimes where strong gravitational
 effects are significant. It can, however, be technically challenging to modify
-GRRT software to perform a specific simulation of interest, e.g., for a
+GRRT software to perform a specific simulation of interest, e.g. for a
 particular disc, corona, and spacetime geometry. Here we introduce Gradus.jl, a
 general purpose open-source GRRT, with the flexibility to allow non-specialists
 in the community to setup and model their own problems of interest.
@@ -128,15 +128,15 @@ spacetime, which, with a model of the accretion flow geometry and dynamics,
 allows for radiative processes to be computed whilst accounting for the full
 relativistic effects of strong gravity. The GRRT approach has a long history in
 spectral modelling, and sees widespread use in models of reflection spectra
-\citep[e.g.,][]{fabian_x-ray_1989}, the X-ray corona and accretion disc
-emissivities \citep[e.g.,][]{wilkins_understanding_2012, wilkins_towards_2016}
-emission and absorption features \citep[e.g.,][]{ruszkowski_absorption_2002},
-winds \citep[e.g.,][]{juranova_absorption_timing_2022}, spectral energy
-densities of quasars \citep[e.g.,][]{hagen_estimating_2023}, in variability
+\citep[e.g.][]{fabian_x-ray_1989}, the X-ray corona and accretion disc
+emissivities \citep[e.g.][]{wilkins_understanding_2012, wilkins_towards_2016}
+emission and absorption features \citep[e.g.][]{ruszkowski_absorption_2002},
+winds \citep[e.g.][]{juranova_absorption_timing_2022}, spectral energy
+densities of quasars \citep[e.g.][]{hagen_estimating_2023}, in variability
 studies such as reverberation lags from close to the black hole
-\citep[e.g.,][]{ingram_public_2019}, the corona-disc connection in thermal lags
-\citep[e.g.,][]{kammoun_hard_2019}, quasi-periodic oscillations \citep[QPOs,
-e.g.,][]{tsang_iron_2013}, and so on.  We refer the reader to the reviews of
+\citep[e.g.][]{ingram_public_2019}, the corona-disc connection in thermal lags
+\citep[e.g.][]{kammoun_hard_2019}, quasi-periodic oscillations \citep[QPOs,
+e.g.][]{tsang_iron_2013}, and so on.  We refer the reader to the reviews of
 \citet{reynolds_iron_lines_2003} and \citet{reynolds_observational_2021} for
 detailed discussion of relativistic X-ray spectroscopy, and
 \citet{uttley_x-ray_2014} and \citet{cackett_reverberation_2021} for reviews of
@@ -189,7 +189,7 @@ higher precision, but that many models need their underlying assumptions
 re-evaluated, as subtle effects that were once deemed too difficult to
 distinguish may now be discoverable -- including particulars of the accretion
 structure. This is particularly true for disc models that have small scale
-variations (e.g., hot spots, warps, turbulence, spiral structure) and high
+variations (e.g. hot spots, warps, turbulence, spiral structure) and high
 signal-to-noise observations with relatively narrow (i.e., better than
 CCD-resolution) emission and absorption features.
 
@@ -229,11 +229,11 @@ scale features, such as the `shadow' of the black hole or the photon ring
 \citep{the_event_horizon_telescope_collaboration_first_2019,
 the_event_horizon_telescope_collaboration_first_2023}. These images have
 produced a wealth of study into modified spacetimes
-\citep[e.g.,][]{eht_non_kerr_2022}. In the reflection spectra communities, there
+\citep[e.g.][]{eht_non_kerr_2022}. In the reflection spectra communities, there
 is similarly much work dedicated to using the broad iron line and other X-ray
 features to measure deviations from the Kerr spacetime, yielding seemingly
 promising results and tight constraints on the deformation parameters of some
-spacetime solutions \citep[e.g.,][]{bambi_precision_measuremets_2021}.
+spacetime solutions \citep[e.g.][]{bambi_precision_measuremets_2021}.
 
 With the wealth of literature available on possible spacetime solutions, it is
 useful to be able to produce concrete testable results, and efficiently rule out
@@ -289,9 +289,9 @@ A second-order ODE system may alternatively be formulated directly from the
 geodesic equation; a method which is pedagogically simpler, but computationally
 more expensive than the first-order system, as either the full metric connection
 or derivatives of the metric must be explicitly implemented else approximated at
-runtime. With advancements in automatic differentiation, derivatives are cheap
-to compute, and consequently the second-order approach is tractable and both a
-parsimonious and spacetime agnostic method for computing geodesics.
+runtime. With advancements in Automatic Differentiation (AD), derivatives are
+cheap to compute, and consequently the second-order approach is tractable and
+both a parsimonious and spacetime agnostic method for computing geodesics.
 
 Using coordinates $x^\mu$, the geodesic equation with external acceleration
 $a^\mu$ is written
@@ -347,8 +347,8 @@ The choice of positive or negative root corresponds to the direction of time,
 wherein lies the \textit{ray-tracing trick}: a time-reversal symmetry in the
 metric $t \rightarrow -t$, $\phi \rightarrow -\phi$ allows us to calculate
 geodesics in the forward direction as if they had travelled \textit{backwards}.
-Photons can therefore be traced from an observer to the black hole, and
-calculations performed as if they had been emitted from the black hole and
+Photons can therefore be traced from an observer towards the black hole, and
+calculations performed as if they had been emitted from near the black hole and
 travelled towards the observer. This seemingly trivial comment cannot be
 understated in the implementation of GRRT, as it will appear to alter the
 directions of rotations, and is consequently a factor when determining the dot
@@ -367,7 +367,7 @@ This brings versatility, as only an implementation of the metric is needed for
 the geodesic equation to be solved.  If the class of spacetime exhibits
 additional symmetries, these can be exploited to reduce computation further: for
 example, metrics of the form \eqref{eq:stationary_axisymmetric_metric} exploit
-$\partial_t g_{\mu\nu} = \partial{\phi} g_{\mu\nu} = 0$ (the principle Killing
+$\partial_t g_{\mu\nu} = \partial_{\phi} g_{\mu\nu} = 0$ (the principal Killing
 vectors) and avoid calculating two columns of the Jacobian entirely.
 
 \subsection{Observers and emitters}
@@ -377,7 +377,7 @@ vectors) and avoid calculating two columns of the Jacobian entirely.
     \centering
     \includegraphics[width=0.99\linewidth]{figures/skycoords.pdf}
     \caption{
-    Geometry of the local sky for an observer or emitter. The image plane is
+    Geometry of the local sky for an observer or emitter. The image plane (yellow) is
     perpendicular to the $e_{(r)}$ axis, which for an observer points towards
     the global origin and therefore the central singularity. The momenta
     $v_{(\phi)}$ and $v_{(\theta)}$ are used to calculate the impact parameters
@@ -408,7 +408,7 @@ frame. The choice of subscript ($r, \theta, \phi$) is to anticipate identifying
 coordinate directions in the local and global (metric) bases, and to suggest
 some intuition for the meaning of directions in the local frame.
 
-Exploiting the invariance of four-momenta (c.f. Eq.
+Exploiting the invariance of four-momenta (cf. Eq.
 \eqref{eq:velocity_constraint}), we obtain a curve of solutions along $x^r$ for
 the local momenta of geodesics intersecting the image plane at specific
 $\alpha$ and
@@ -445,8 +445,8 @@ coordinate Jacobian. The component $v_{(t)}$ is the negative of the energy in
 the local frame, and may be set to $-v_{(t)}=E=1$ without loss of generality.
 
 The transformation between local and global frame depends on the choice of local
-frame. The natural choice is the \emph{locally non-rotating frame} (LNRF)
-\citep{bardeen_rotating_1972}. This frame follows strictly
+frame. The natural choice is the \emph{locally non-rotating frame}
+\citep[LNRF;][]{bardeen_rotating_1972}. This frame follows strictly
 circular world lines with $x^r = \text{const.}$ and $x^\phi = \omega t +
 \text{const.}$, with angular velocity $\omega = -g_{t\phi} / g_{\phi\phi}$. The
 coordinate transformation from the LNRF is
@@ -482,16 +482,16 @@ must be taken into account when comparing GRRT codes to many decimal places.
 \subsection{Special orbits and horizons}
 \label{sec:special-orbits}
 
-Of particular interest when studying accreting processes are the Keplerian
+Of particular interest when studying accretion processes are the Keplerian
 circular orbits, confined to the equatorial plane f$(x^\theta = \pi/2)$ in
 axis-symmetric spacetimes. A subset of the Keplerian orbits are the circular
 orbits, and are therefore relevant in analytical models of accretion discs
 \citep{shakura_black_1973}. These circular orbits are stationary points of the
 geodesic Hamiltonian, and constrained by $v^r = v^\theta = 0$.  These orbits are
 often studied analytically, and have a general solution for metrics of the form
-\eqref{eq:stationary_axisymmetric_metric} (e.g. \citealp{johannsen_regular_2013},
-We provide a derivation with an extension towards $a^\mu \neq 0$ in Appendix
-\ref{appendix:circular-orbits}).
+given by eq. \eqref{eq:stationary_axisymmetric_metric} (e.g.
+\citealp{johannsen_regular_2013}, We provide a derivation with an extension
+towards $a^\mu \neq 0$ in Appendix \ref{appendix:circular-orbits}).
 
 Circular orbits are classified as either stable or unstable
 \citep{wilkins_bound_1972,bardeen_rotating_1972}. There exists an innermost
@@ -509,7 +509,8 @@ Stable circular orbits are only possible for radii $x^r \geq \risco$.  Within
 the ISCO is the so-called \textit{plunging region} where $v^r \neq 0$.  Emission
 from within the ISCO are generally disregarded in reflection and reverberation
 models, though for specific disc models or inner boundary torques emission from
-this region may be important (see e.g. \citealp{mummery_continuum_2024} for
+this region may be important (see e.g.
+\citealp{reynolds_isco_1997,young_isco_1998, mummery_continuum_2024} for
 emission contributions within the ISCO). For this reason, we make no concrete
 assumptions about the plunging region, though will omit its contributions in
 this paper.
@@ -525,7 +526,7 @@ geodesics, by mandating a stability measure and optimizing the initial velocity
 vector until some heuristic measure is a minimum. For example, let $\mathscr{M}$
 measure the eccentricity of an orbit in the equatorial plane. For a given radius
 $x^r$, the velocity corresponding to a circular orbit is $v^\mu = v^t \partial_t
-+ v^\phi \partial_\phi $. With \eqref{eq:velocity_constraint}, the circular
++ v^\phi \partial_\phi $. With eq. \eqref{eq:velocity_constraint}, the circular
 orbit velocity may be found through
 \begin{equation}
     \underset{v^\phi}{\arg \min}\ \ \mathscr{M}(x^r, v^\phi),
@@ -536,20 +537,21 @@ preferred optimization algorithm for exploring the $v^\phi$ parameter space
 orbit, this approach may find both unstable and stable orbits. These are
 distinguished by inspecting $E$ as a function of $x^r$, or similarly $E$ as a
 function of $L_z$ \citep{hackmann_charged_2013}, see Figure \ref{fig:e-lz-cusp}.
-The $\risco$ is found by solving \eqref{eq:isco-definition} numerically, or
+The $\risco$ is found by solving eq. \eqref{eq:isco-definition} numerically, or
 by finding $x^r$ corresponding to the \emph{cusp} of the curve of  $E$ against
 $L_z$.
 
 \begin{figure}
     \centering
     \includegraphics[width=0.95\linewidth]{figures/circular-orbits.E-Lz.pdf}
-    \caption{Energy $E$ and angular momentum $L_z$ for (stable) circular orbits in the
-        Kerr spacetime for different black hole spins. The point corresponding
-        to the sharp cusp is the ISCO. The crosses show the $E$ and $L_z$
-        values calculated by optimizing the stability condition (see text for
-        details). For the maximally spinning spacetime, the optimizer is unable
-    to find solutions within the ISCO, as the ISCO almost coincides with the
-coordinate singularity corresponding to the event horizon.}
+    \caption{Energy $E$ and angular momentum $L_z$ for (stable) circular orbits
+        in the Kerr spacetime for different black hole spins. The point
+        corresponding to the sharp cusp is the ISCO. The crosses show the $E$
+        and $L_z$ values calculated by optimizing the stability condition (see
+        text for details). For the maximally spinning spacetime, the optimizer
+        is unable to find solutions within the ISCO, as the ISCO exactly
+        coincides with the coordinate singularity corresponding to the event
+        horizon.}
     \label{fig:e-lz-cusp}
 \end{figure}
 
