@@ -37,6 +37,7 @@
 
 \usepackage{tcolorbox}
 \usepackage{listings}
+\usepackage{xspace}
 
 %%%%%%%%%%%% CUSTOM COMMANDS %%%%%%%%%%%%%%%%%%%%%
 
@@ -44,9 +45,9 @@
 \newcommand{\todo}[1]{{\noindent \bf \color{red} TODO: #1}}
 \newcommand{\notes}[1]{{\color{cyan} #1}}
 
-\newcommand{\Gradus}{Gradus.jl }
-\newcommand{\FeKa}{Fe K$\alpha$ }
-\newcommand{\relline}{\texttt{relline} }
+\newcommand{\Gradus}{Gradus.jl\xspace}
+\newcommand{\FeKa}{Fe K$\alpha$\xspec}
+\newcommand{\relline}{\texttt{relline}\xspec}
 
 \newcommand{\e}{\text{e}}
 \renewcommand{\d}{\text{d}}
@@ -92,6 +93,7 @@ $^{1}$H. H. Wills Physics Laboratory, Tyndall Avenue, Bristol BS8 1TL, UK
 \end{abstract}
 
 % Select between one and six entries from the list of approved keywords.
+% See §2.3 of https://academic.oup.com/mnras/pages/general_instructions
 %Don't make up new ones.
 \begin{keywords}
 accretion, accretion discs -- black hole physics -- gravitation -- line: profiles -- relativistic processes -- methods: numerical
@@ -104,62 +106,69 @@ accretion, accretion discs -- black hole physics -- gravitation -- line: profile
 %%% INTRODUCTION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
 
-General relativistic effects must be included when modelling spectral components
-of the innermost regions of accretion onto compact objects. The relativistic
-effects and spacetime curvature in the strong gravity regime lead to significant
-departures from the classical picture in the energetics
+General relativistic ray-tracing (GRRT) software enables the calculation of
+spectra and variability of radiation produced by accretion flows and coronae
+around compact objects in different spacetimes where strong gravitational
+effects are significant. It can, however, be technically challenging to modify
+GRRT software to perform a specific simulation of interest, e.g., for a
+particular disc, corona, and spacetime geometry. Here we introduce Gradus.jl, a
+general purpose open-source GRRT, with the flexibility to allow non-specialists
+in the community to setup and model their own problems of interest.
+
+General relativistic effects must be included when modelling the spectra and
+variability of the innermost regions of accretion flows onto compact objects.
+The relativistic effects and spacetime curvature in the strong gravity regime
+lead to significant departures from the classical picture in the energetics
 \citep{cunningham_optical_1973, fabian_long_2002}, timing properties
 \citep{stella_measuring_1990, reynolds_x-ray_1999}, and appearances of the
 systems \citep{luminet_image_1979}. Spectral models will often account for such
 departures through the use of general relativistic ray-tracing (GRRT) software.
 GRRT is the practice of integrating the trajectory of photons in curved
-spacetime, which, in turn, allows for radiative processes to be computed whilst
-accounting for the full relativistic effects of strong gravity. The GRRT
-approach has a long history in spectral modelling, and sees widespread use in
-models of reflection spectra (e.g. \citealt{fabian_x-ray_1989}), the X-ray
-corona and accretion disc emissivities (e.g.
-\citealt{wilkins_understanding_2012, wilkins_towards_2016}) emission and
-absorption features\citneeded, winds\citneeded, spectral energy densities of
-quasars (e.g.  \citealt{hagen_estimating_2023}), in variability studies such as
-reverberation lags from close to the black hole (e.g.
-\citealt{ingram_public_2019}), the corona-disc connection in thermal lags (e.g.
-\citealt{kammoun_hard_2019}), quasi-periodic oscillations (QPOs, e.g.
-\citealt{tsang_iron_2013}), and so on.  We refer the reader to the reviews of
-\citet{uttley_x-ray_2014} and
-\citet{cackett_reverberation_2021} for detailed discussion of X-ray
-reverberation and the accompanying models that makes use of GRRT codes.
+spacetime, which, with a model of the accretion flow geometry and dynamics,
+allows for radiative processes to be computed whilst accounting for the full
+relativistic effects of strong gravity. The GRRT approach has a long history in
+spectral modelling, and sees widespread use in models of reflection spectra
+\citep[e.g.,][]{fabian_x-ray_1989}, the X-ray corona and accretion disc
+emissivities \citep[e.g.,][]{wilkins_understanding_2012, wilkins_towards_2016}
+emission and absorption features \citep[e.g.,][]{ruszkowski_absorption_2002},
+winds \citep[e.g.,][]{juranova_absorption_timing_2022}, spectral energy
+densities of quasars \citep[e.g.,][]{hagen_estimating_2023}, in variability
+studies such as reverberation lags from close to the black hole
+\citep[e.g.,][]{ingram_public_2019}, the corona-disc connection in thermal lags
+\citep[e.g.,][]{kammoun_hard_2019}, quasi-periodic oscillations \citep[QPOs,
+e.g.,][]{tsang_iron_2013}, and so on.  We refer the reader to the reviews of
+\citet{reynolds_iron_lines_2003} and \citet{reynolds_observational_2021} for
+detailed discussion of relativistic X-ray spectroscopy, and
+\citet{uttley_x-ray_2014} and \citet{cackett_reverberation_2021} for reviews of
+X-ray reverberation, and the accompanying models that makes use of GRRT codes.
 
 The standard approach for including relativistic effects calculated using GRRT
-is to convolve a rest-frame spectrum with a something akin to a lineprofile
+is to convolve a rest-frame spectrum with a something akin to a line profile
 \citep{fabian_x-ray_1989, laor_line_1991}, using models such as \texttt{relline}
 / \texttt{relxill} \citep{dauser_broad_2010, dauser_relativistic_2016}  and its
-variants. These lineprofiles are usually convolution models that blur the
+variants. These line profiles are usually convolution models that blur the
 rest-frame emission, thereby accounting for the doppler shift, relativistic
 beaming, and gravitational redshift relative to a distant observer. The
 convolution models make assumptions about the disc geometry and velocity
 structure; assumptions that may differ from the models they are being convolved
-with. Almost all convolution and lineprofile models assume a razor-thin
-disc in the equatorial plane with strictly Keplerian velocity structure (e.g.
+with. Almost all convolution and line profile models assume a razor-thin disc in
+the equatorial plane with strictly Keplerian velocity structure (e.g.
 \citealt{dovciak_extended_2004, beckwith_iron_2004, brenneman_constraining_2006,
-dauser_broad_2010}).
-There are some notable exceptions:
-the models of \cite{karas_light_1992} and \cite{karas_vicinity_1992} examine the
-changing lineprofiles of hot spots
-eclipsed in thick discs, \cite{pariev_line_1998} study the effects of
-turbulent velocities in a Novikov-Thorne accretion discs,
+dauser_broad_2010}). There are some notable exceptions: the models of
+\cite{karas_light_1992} and \cite{karas_vicinity_1992} examine the changing line
+profiles of hot spots eclipsed in thick discs, \cite{pariev_line_1998} study the
+effects of turbulent velocities in a Novikov-Thorne accretion discs,
 \cite{hartnoll_reprocessed_2001} model a warped accretion disc,
 \cite{fukumura_iron_2004} study a spiral velocity structure; a conical disc
-structure is explored by \cite{wu_iron_2007} including sub-Keplerian orbits and the effects of
-self-occulting of the disc,
-\cite{taylor_exploring_2018} calculate tabular lineprofile models for a disc
-with the
-Shakura-Sunyaev height profile, culminating with \cite{abdikamalov_testing_2020}
-studying a Novikov-Thorne disc in the Johannsen-Psaltis spacetime  \todo{check
-this is the right metric}.
+structure is explored by \cite{wu_iron_2007} including sub-Keplerian orbits and
+the effects of self-occulting of the disc, \cite{taylor_exploring_2018}
+calculate tabular line profile models for a disc with the Shakura-Sunyaev height
+profile, culminating with \cite{abdikamalov_testing_2020} studying a
+Novikov-Thorne disc in the \citet{johannsen_regular_2013} spacetime .
 
 For relativistic convolution models, the assumptions made about the accretion
 disc become encoded in the \textit{transfer functions} table -- the tabular data
-used to efficiently calculate lineprofiles -- which must be recomputed if the
+used to efficiently calculate line profiles -- which must be recomputed if the
 assumptions are changed. There are few immediately available public codes that
 can reliably and efficiently calculate new transfer function tables.
 
@@ -169,21 +178,27 @@ acceptable practice, as noise in the models is usually blurred out when folded
 through an instrument response, and therefore has negligible effect on the fit
 statistic. It is acknowledged at least once in every generation of
 astronomers\citneeded, that with the higher resolution spectroscopic datasets,
-higher resolution models are needed. Today, it is the advent of XRISM\citneeded
-and expected launch of NewAthena \citneeded that is driving the need for more
-detailed models, and, by extension, more considerate treatment of the
-relativistic effects. At near sub-eV resolution, model noise may skew the fit
-statistic due to the presence of hitherto unresolved narrow spectral features.
-It is not only that some existing models must be computed higher precision, but
-that many models need their underlying assumptions re-evaluated, as subtle
-effects that were once deemed too difficult to distinguish may now be
-discoverable -- including particulars of the accretion structure.
+and telescopes with larger collecting areas, more flexible higher resolution
+models are needed. Today, it is the advent of XRISM \citep{tashiro_xrism_2020}
+and expected launch of NewAthena \citep{barret_athena_2013} that is driving the
+need for more detailed models, and, by extension, more considerate treatment of
+the relativistic effects. At a few to tens of eV resolution, model noise may
+skew the fit statistic due to the presence of hitherto unresolved narrow
+spectral features. It is not only that some existing models must be computed
+higher precision, but that many models need their underlying assumptions
+re-evaluated, as subtle effects that were once deemed too difficult to
+distinguish may now be discoverable -- including particulars of the accretion
+structure. This is particularly true for disc models that have small scale
+variations (e.g., hot spots, warps, turbulence, spiral structure) and high
+signal-to-noise observations with relatively narrow (i.e., better than
+CCD-resolution) emission and absorption features.
 
 Related to the need for resolution is the need for relativistic convolution
 kernels that more closely match the assumptions of the underlying models they
-are being convolved with. The work we present in this paper is towards providing
-the tools and techniques to address these needs. We present a new open-source
-GRRT code, \Gradus\footnote{Open-source and available under GPL 3.0 license at
+are being convolved with, for example allowing more general disc and corona
+geometries. The work we present in this paper provides new tools and techniques
+to address these needs. We present a new open-source GRRT code,
+\Gradus\footnote{Open-source and available under GPL 3.0 license at
 \url{https://github.com/astro-group-bristol/Gradus.jl}.} written in the Julia
 programming language \citep{Bezanson_Julia_A_fresh_2017}. The software aims to
 be a toolkit for including general relativistic effects in spectral models, and
@@ -192,13 +207,13 @@ convolution models. So that \Gradus can be used in popular spectral fitting
 suites, such as XSPEC \citep{arnaud_xspec_1996}, we also maintain C-ABI
 compatible wrappers for integrating the transfer function tables that have
 similar capabilities as popular convolution models\footnote{We use the Zig
-    programming language \url{https://ziglang.org/} to wrap the spectral models.
-    This allows us to statically compile models for a wide variety of targets.
-    Models can then be downloaded and imported into e.g. XSPEC without the need
-    for any additional tools.}. \Gradus additionally allows for constructing
-custom convolution kernels within a component modelling framework that can be
-made to more closely match the assumptions made in their models with respect to,
-for example, accretion disc geometry, disc velocity structure, or corona.
+programming language \url{https://ziglang.org/} to wrap the spectral models.
+This allows us to statically compile models for a wide variety of targets.
+Models can then be downloaded and imported into, e.g., XSPEC without the need
+for any additional tools.}. \Gradus additionally allows for constructing custom
+convolution kernels within a component modelling framework that can be made to
+more closely match the assumptions made in their models with respect to, for
+example, accretion disc geometry, disc velocity structure, or corona.
 
 In recent years there has been increased interest in tests of the Kerr
 hypothesis -- that the central singularity is parameterised only by its mass and
@@ -206,18 +221,19 @@ angular momentum -- and in studying solutions to the Einstein field equations
 that deviate from a Kerr black holes (e.g. \citealt{johannsen_testing_2010,
 chrusciel_stationary_2012, bambi_testing_2022, patra_accretion_2023,
 chen_observational_2024},). These include metrics that challenge the
-\textit{no-hair theorem}, where hair is metaphor for additional information in
+\textit{no-hair theorem}, where hair is a metaphor for additional information in
 the spacetime. This interest is in part driven by observations published by the
 Event Horizon Telescope collaboration, a momentous effort that uses radio
 interferometry to image compact accretors capable of resolving event horizon
 scale features, such as the `shadow' of the black hole or the photon ring
 \citep{the_event_horizon_telescope_collaboration_first_2019,
-the_event_horizon_telescope_collaboration_first_2023}. These
-images have produced a wealth of study into modified spacetimes\citneeded. In the
-reflection spectra communities, there is similarly much work dedicated to using
-the broad iron line and other X-ray features to measure deviations from the Kerr
-spacetime, yielding seemingly promising results and tight constraints on the
-deformation parameters of some spacetime solutions.
+the_event_horizon_telescope_collaboration_first_2023}. These images have
+produced a wealth of study into modified spacetimes
+\citep[e.g.,][]{eht_non_kerr_2022}. In the reflection spectra communities, there
+is similarly much work dedicated to using the broad iron line and other X-ray
+features to measure deviations from the Kerr spacetime, yielding seemingly
+promising results and tight constraints on the deformation parameters of some
+spacetime solutions \citep[e.g.,][]{bambi_precision_measuremets_2021}.
 
 With the wealth of literature available on possible spacetime solutions, it is
 useful to be able to produce concrete testable results, and efficiently rule out
@@ -231,16 +247,16 @@ The paper is organised in the following manner: in Section
 introducing the approaches and algorithms employed in the code. The description
 of the numerical methods necessarily avoids implementation details, focusing on
 describing the mathematical and algorithmic narrative, as the implementation is
-publicly available in the code. In Section \ref{sec:description-of-code} the
-software is described in terms of the organisation of the implementation and
-detailing its extensibility. Section \ref{sec:test-problems} assesses the
-validity of the code against a number of standard tests and problems from the
-literature, and compares results computed with \Gradus to other published codes.
-This section also includes novel simulation results that examine the effect of
-disc thickness on the X-ray reverberation lag. Intended applications of and
-future work on the code are described in Section \ref{sec:applications}.
-Finally, overall conclusions of the work are discussed in Section
-\ref{sec:conclusion}.
+publicly available in the code and documentation. In Section
+\ref{sec:description-of-code} the software is described in terms of the
+organisation of the implementation and detailing its extensibility. Section
+\ref{sec:test-problems} assesses the validity of the code against a number of
+standard tests and problems from the literature, and compares results computed
+with \Gradus to other published codes. This section also includes illustrative
+simulation results that examine the effect of disc thickness on the X-ray
+reverberation lag. Intended applications of and future work on the code are
+described in Section \ref{sec:applications}. Finally, overall conclusions of the
+work are discussed in Section \ref{sec:conclusion}.
 
 %%% NUMERICAL METHODS %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Numerical methods}
