@@ -650,26 +650,24 @@ where $v_\mu$ are the geodesic momenta, and $u^\mu$ the velocity of the emitting
 
 
 
-\subsection{Emissivity profiles}
+\subsection{Disc illumination and emissivity profiles}
 \label{sec:emissivity-profiles}
 
-The emissivity profile is related to the ionization pattern on the accretion
-disc, with the emissivity $\varepsilon$ being proportional the ionization
-parameter $\xi$ \citep{laor_line_1991,wilkins_understanding_2012}. The
-ionization parameter is related to the illuminating X-ray flux on the disc $F_i$
-and material properties of the disc
+The \emph{illumination profile} is the local flux of radiation on the disc as a function of radius, $\varepsilon(r)$, for an axis-symmetric system. This is often referred to as the \emph{emissivity profile} as the line strength in the back-scattered spectrum is often proportional to the illuminating flux.
+The illumination profile is related to the ionization parameter, $\xi(r)$, of the accretion disc \citep{laor_line_1991,ross_reflection_1993, wilkins_understanding_2012}
+given by
 \begin{equation}
     \xi = \frac{4 \pi F_i}{n_\text{H}}
 \end{equation}
-where $n_\text{H}$ is the co-moving hydrogen density \citep{ross_effects_1993}.
+where $F_i$ is the total illuminating X-ray flux in some band, often $0.01 - 100 \text{ keV}$, and $n_\text{H}$ is the co-moving hydrogen density \citep{ross_effects_1993}.
 For our purposes, we will drop factors considered to be constant, and use
 $\varepsilon \propto F_i$ directly.
 
 The source of $F_i$ is a luminous corona located close to the central
-singularity\citneeded, often assumed to be a point source on the spin axis of
+singularity \citep{svensson_corona_1994}, often assumed to be a point source on the spin axis of
 the black hole that emits isotropically, resulting in an $F_i$ that is
-axisymmetric. This model is known as the ``lampost'' coronal model
-\citep{fukumura_accretion_2007}. Axisymmetric extended corona are also
+axisymmetric. This model is known as the ``lamppost'' coronal model
+\citep{fukumura_accretion_2007}. Axisymmetric extended coronae are also
 considered, and in general the morphology of the corona has a significant effect
 of the emissivity profile \citep{wilkins_towards_2016, gonzalez_probing_2017}.
 For axisymmetric corona with isotropic emissions, the incident flux (and
@@ -688,7 +686,7 @@ $\tilde{A}$ is the curvature corrected (proper) area of the annulus, and
 $\gamma$ is the Lorentz factor that accounts for area contraction of the annulus
 due to the velocity of the disc.
 
-The relativistic corrections as follows: for an infinitesimal area $\d A = \d
+The relativistic corrections are as follows: for an infinitesimal area $\d A = \d
 \rho\d\phi$, the \textit{proper area} is calculated directly from the metric,
 and so
 \begin{equation}
@@ -709,13 +707,13 @@ $v^{(\phi)}$ non-zero.
 
 The emission spectrum for the illuminating corona is usually assumed to be a
 powerlaw $I(g) = g^{-\Gamma}$ with photon index $\Gamma$ For most applications
-$\Gamma = 2$ or $3$ is chosen \citneeded. Our models make no rigid assumptions
+$\Gamma = 2$ or $3$ is chosen \citep{mushotzky_agn_pl_1982,remillard_binaries_2006}. Our models make no rigid assumptions
 about the coronal spectrum, and any arbitrary spectrum as a function of $g$ may
 be specified.
 
 When the emission from the corona is assumed to be locally isotropic in the rest
 frame of the corona, geodesics from the source are traced by sampling
-$(\Upsilon, \Phi)$ evenly on a sphere. The angles are transformed via
+$(\Upsilon, \Phi)$ evenly on a sphere. The angles are transformed via equations
 \eqref{eq:local-angle-to-velocity} and \eqref{eq:local-to-global-velocity} to
 find the initial velocity of the geodesic. Those geodesics that intersect with
 the disc are then used to calculate the emissivity. When the emission in
@@ -742,10 +740,10 @@ Smirnov transform method.}
 \end{equation}
 An illustration of the two methods is shown in Figure \ref{fig:coronal-tracing}.
 It should be noted that the latter method converges faster than the
-first (Monte-Carlo) sampling approach, and captures the behaviour at small $r$
+former (Monte-Carlo) sampling approach, and captures the behaviour at small $r$
 close to the ISCO faithfully -- behaviour that would otherwise require an
 inordinate number of samples. However, since this method is specialized for
-point sources, extended corona require an approximate rebinning algorithm to
+point sources, extended coronae require an approximate rebinning algorithm to
 reconstruct the emissivity profile taking into account the overlap between the
 annuli determined from different source points.
 
@@ -759,7 +757,7 @@ annuli determined from different source points.
         the Monte-Carlo approach, where the initial velocity vector of the
         photon is sampled isotropically on the local sky of the emitter. The
         number density on the disc in a given annulus is then used as a proxy
-        for the flux density. Panel b) shows how the symmetry of the lampost can
+        for the flux density. Panel b) shows how the symmetry of the lamppost can
         be exploited, by considering only a slice of the emission around the
         spin axis. The initial velocity vectors now differ by a constant $\Delta
     \theta$, which allows the spacing on the disc $\Delta r$ to be used as a
@@ -1303,7 +1301,7 @@ on numerical errors.
 
 To test our implementation of Section \ref{sec:emissivity-profiles}, we
 calculate the emissivity profiles on the surface of a thin equatorial accretion
-disc illuminated by an on-axis lamp-post corona to test our results against
+disc illuminated by an on-axis lamppost corona to test our results against
 \cite{wilkins_understanding_2012} and \cite{dauser_irradiation_2013}. These are
 shown in Figure \ref{fig:emissivity-profiles} and are in good agreement with
 published results. Also shown is the effect of the Shapiro delay $t$, on the
@@ -1432,7 +1430,7 @@ Summing the lag transfer functions (Figure
 energy range yields an \textit{impulse response function} $\psi(t)$, which
 encodes how the disc responds to the impulse of a coronal flash. This impulse
 response depends on the properties of the illuminating corona, accretion disc,
-spacetime, and inclination of the observer. Examples for different lamp post
+spacetime, and inclination of the observer. Examples for different lamppost
 heights over the full energy range are shown in the top panel of Figure
 \ref{fig:reverberation-thin}.
 
