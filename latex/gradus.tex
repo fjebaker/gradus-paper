@@ -1106,16 +1106,16 @@ simple to include.
 
 The intensity of a given geodesic is an observable that can be either calculated coincident with the geodesic trajectory, or retraced once the trajectory is determined.
 
-The covariant formulation of the radiative transfer equation calculates the emissions and extinction in aframe co-moving with the geodesic \citep{fuerst_radiation_2004,younsi_general_2012}. The generalized form of the differential equation with respect to the affine parameter $\lambda$ is
+The covariant formulation of the radiative transfer equation calculates the emissions and extinction in a frame co-moving with the geodesic \citep{fuerst_radiation_2004,younsi_general_2012}. The generalized form of the differential equation with respect to the affine parameter $\lambda$ can be written in terms of the Lorentz invariant intensity $\mathcal{I} = I_\nu / \nu^3$ \citep{lindquist_louville_1966} as follows,
 \begin{equation}
     \label{eq:covariant-radiative-transfer}
     \frac{\d \mathcal{I}}{\d \lambda} = \left. \frac{\d s}{\d \lambda} \right\rvert_\lambda \left( -\alpha_\nu \mathcal{I} + \frac{j_\nu}{\nu^3} \right),
 \end{equation}
-where $\mathcal{I}$ is the invariant intensity, $s$ is the proper length traversed by the geodesic, and $\alpha_\nu$ and $j_\nu$ are the frequency $\nu$ dependent absorption and emissivity coefficients respectively, as measured in the local frame. The frequency $\nu$ is related to the observed frequency via the redshift
+where $I_\nu$ is the specific intensity, $s$ is the proper length traversed by the geodesic, and $\alpha_\nu$ and $j_\nu$ are the frequency $\nu$ dependent absorption and emissivity coefficients respectively, as measured in the local frame. The frequency $\nu$ is related to the observed frequency via the redshift
 \begin{equation}
     g = \frac{\nu_\text{obs}}{\nu},
 \end{equation}
-In general, both coefficients $\alpha_nu$ and $j_\nu$ are also functions of the position $x^\mu$.
+In general, both coefficients $\alpha_\nu$ and $j_\nu$ are also functions of the position $x^\mu$.
 
 The $\d s / \d \lambda$ derivative term is calculated by projecting the geodesic momentum $v_\mu$ onto the velocity $u^\mu$ of the medium, using the projection tensor
 \begin{equation}
@@ -1132,7 +1132,7 @@ such that for the particular case of null geodesics through a time-like medium
     \left. \frac{\d s}{\d \lambda} \right\rvert_\lambda = - \left. v_\mu u^\mu \right\rvert_\lambda.
 \end{equation}
 
-The covariant intensity $\mathcal{I}$ is related to the observed intensity $I_\nu = \mathcal{I} \nu^3$, derived using Liouville's theorem \citep{todo}. The intensity is therefore calculated by selecting $\nu_\text{obs} = E$ at the observer, and integrating \eqref{eq:covariant-radiative-transfer} along a given geodesic.
+The observed intensity $I_\nu = \mathcal{I} \nu^3$ is therefore calculated by selecting $\nu_\text{obs} = E$ at the observer, and integrating \eqref{eq:covariant-radiative-transfer} along a given geodesic.
 
 
 %%% DESCRIPTION OF THE CODE %%%%%%%%%%%%%%%%%%%%%%
