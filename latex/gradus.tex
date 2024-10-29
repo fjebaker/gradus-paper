@@ -784,7 +784,7 @@ on the image plane of a distant observer at $\theta_\text{obs} = 75^\circ$. The
 central singularity is described by the Kerr metric with $a = 0.998$. The
 innermost thick black line is the projection of the ISCO. Note the contours of
 $g^\ast$ are double valued for any given $r_\text{em}$. Panel a) geometrically
-thin disc. Panel b) SSD with $\dot{M} / \dot{M}_\text{Edd} = 0.3$, with
+thin disc. Panel b) \citet{shakura_black_1973} Disc (SSD) with $\dot{M} / \dot{M}_\text{Edd} = 0.3$, with
 obscuration of some of the inner radii. The edge of the ISCO is here only
 partially visible.}
     \label{fig:transfer-parameterisation}
@@ -792,15 +792,15 @@ partially visible.}
 
 To motivate the use of \emph{transfer functions}, consider the calculation of an
 observed spectrum of flux reflected by the accretion disc. The infinitesimal
-flux element is related to the intensity in the solid angle element
+flux element, $\d F(E)$, is related to the specific intensity in the solid angle element
 \begin{equation}
 \label{eq:infinitesimal-flux}
 \d F(E) = I(E)\, \d \Omega,
 \end{equation}
 for observed energy $E$, specific intensity $I$ and solid angle $\d \Omega$.
-\cite{ingram_public_2019} gives an intuitive relation between the observed
-and emitted intensities as derived using the \emph{reciprocity theorem} (or
-equivalently \emph{Liouville's theorem}) with
+\cite{cunningham_effects_1975} gives an intuitive relation between the observed
+and emitted intensities as derived using the \emph{reciprocity theorem} \citep[or
+equivalently \emph{Liouville's theorem};][]{lindquist_louville_1966} with
 \begin{equation}
 \label{eq:liouville-theorem}
 I_\text{obs}\left( E_\text{obs}\right) = g^3 I_\text{em}\left(E_\text{em}\right).
@@ -849,7 +849,7 @@ functions at extremal $g^\ast$.
 
 As a note, the name \emph{transfer functions} is a more general term and used
 elsewhere, for example in reverberation simulations discussed later. To avoid
-ambiguity, we henceforth refer to functions of the kind defined in
+ambiguity, we henceforth refer to functions of the kind defined in equation
 \eqref{eq:cunn-transfer-function} as \emph{relativistic} or \emph{Cunningham
 transfer functions}. Furthermore, the Cunningham transfer functions are referred
 to as having ``upper'' and ``lower'' branches between extremal $g^\ast$, as
@@ -897,9 +897,9 @@ domain to help the optimizer.
 The importance of accurately calculating $g_\text{min}$ and $g_\text{max}$ is
 difficult to overstate: small errors here will dramatically alter the shape of
 the transfer functions close to $g^\ast \rightarrow 0$ and $g^\ast \rightarrow
-1$, and have a high likelyhood of sending $f$ to positive or negative infinity.
+1$, and have a high likelihood of sending $f$ to positive or negative infinity.
 Even when the extrema are determined to high accuracy, in practice, it is useful
-to employ a small truncation of $\delta g^\ast \sim 10^{-6}g^\ast$ either side
+to employ a small truncation of $\delta g^\ast = h \sim 10^{-6}$ either side
 of the domain when doing anything practical. This is discussed in the next
 section in further detail in the context of integrating $f$.
 
@@ -933,7 +933,7 @@ along $r_\text{em}$, $80$ of which are approximately linearly sampled in
 $\vartheta$, and $34 = 2 \times 17$ used to determine $g_\text{min}$ and
 $g_\text{max}$. These limits were chosen to balance speed and accuracy of
 calculation. The resulting sampling pattern is sensitive to various extrema in
-$g$, and determines the shape of $f$ well, shown in Figure
+$g$, and determines the shape of $f$ well, as shown in Figure
 \ref{fig:transfer-sampling-pattern}.
 
 \begin{figure}
@@ -1016,7 +1016,7 @@ integration \eqref{eq:integrate-impact-params} as
     I_\text{obs}(E_\text{obs}) \ \d r_\text{em} \d g^\ast,
 \end{equation}
 where we can use Liouville's theorem \eqref{eq:liouville-theorem} to express the
-observed intensity as the emitted intensity, and write $E_\text{em} =
+observed intensity in terms of the emitted intensity, and write $E_\text{obs} =
 E_\text{line}g$ . The integrand is then only a function of $r_\text{em}$ and
 $g^\ast$. We here see a new meaning for the Cunningham transfer functions,
 namely as the Green's function of an annulus $r_\text{em}$ in response to some
@@ -1082,7 +1082,7 @@ determined from evaluating the integrand at $h$ or $1 - h$ respectively.
 
 We use $h = 2 \times 10^{-6}$, and evaluate the integral over $\d g^\ast$ using
 a 7$^\text{th}$ order Gauss-Kronrod quadrature scheme, which avoids evaluating
-the integral directly at $h$ and $1 - h$ \citep{}. Finer grids for $r_\text{em}$
+the integral directly at $h$ and $1 - h$. Finer grids for $r_\text{em}$
 and $g^\ast$ are constructed to help with numerical accuracy and stability, with
 the finer bins subsequently rebinned into the desired output grid\footnote{The
     grid in $r$ should be regularly spaced, e.g. $\sim 1 / r$, reflecting the
@@ -1093,9 +1093,9 @@ transfer functions in a tabular format simple.  }.
 
 By formulating the Cunningham transfer function integration with the time
 component, we can use the same transfer function table to compute both
-line-profiles and reverberation lags efficiently, with arbitrary intensity
+line-profiles and timing properties (e.g., X-ray reverberation lags) efficiently, with arbitrary intensity
 functions $I_\text{em}$. We note that extensions to $I_\text{em}$ that require,
-for example, the photon emission angle on the disc $\mu = cos(\theta)$, are
+for example, the photon emission angle on the disc $\mu = \cos(\theta)$ \citep{matt_reflection_1993}, are
 simple to include.
 
 % These transfer function integration methods may be checked for consistency
@@ -1357,7 +1357,7 @@ direct $(\alpha, \beta)$ photon binning. This is useful especially for unusual
 disc geometries, where obscuration effects make calculating the Cunningham
 transfer functions difficult, as described in
 \ref{sec:partially-obscured-functions}. In Figure \ref{fig:line-profile-ssd} we
-show line profiles for the SSD model using a fixed power-law emissivity
+show line profiles for the \citet{shakura_black_1973} Disc (SSD) model using a fixed power-law emissivity
 function, with both numerical methods yielding identical line profiles,
 indicating our datum plane method is valid.
 
