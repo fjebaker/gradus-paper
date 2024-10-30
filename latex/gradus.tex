@@ -1297,20 +1297,20 @@ on numerical errors.
 \todo{Energy conservation, deflection problem, shadow, tests for naked-singularities}
 
 
-\subsection{Emissivity curves}
+\subsection{Emissivity profiles}
 
-To test our implementation of Section \ref{sec:emissivity-profiles}, we
-calculate the emissivity profiles on the surface of a thin equatorial accretion
-disc illuminated by an on-axis lamppost corona to test our results against
+To test our implementation of the emissivity profile calculations described in Section \ref{sec:emissivity-profiles}, we
+model a thin equatorial accretion
+disc illuminated by an on-axis lamppost corona, comparing our results against
 \cite{wilkins_understanding_2012} and \cite{dauser_irradiation_2013}. These are
 shown in Figure \ref{fig:emissivity-profiles} and are in good agreement with
-published results. Also shown is the effect of the Shapiro delay $t$, on the
+the published results. Also shown is the effect of the Shapiro delay $t$, on the
 arrival time of a photon at a given radius on the disc.
 
 \begin{figure}
 	\centering
 	\includegraphics[width=0.99\linewidth]{figures/emissivity.point-source.pdf}
-    \caption{Emissivity profiles of a lamppost point source for various heights
+    \caption{Emissivity profiles, $\varepsilon(r)$ for a lamppost point source illuminating a thin, equatorial disc at various heights
         above the spin axis of a maximally spinning Kerr black hole ($a =
         0.998$). Panel a) shows the emissivity profiles in arbitrary flux units.
         Panel b) is the $\alpha$ exponent of the emissivity profile found by
