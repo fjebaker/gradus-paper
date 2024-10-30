@@ -1182,7 +1182,7 @@ Morris-Thorne wormhole, Johannsen-Psaltis metric, the Einstein-Maxwell
 Dilaton-Axion metric \todo{citations for these}, the No-$\mathbb{Z}_2$ metric, and
 the Kerr-Newman metric, complete with the ability to specify the electromagnetic
 potential vector, from which external accelerations $a^\mu$ in
-\eqref{eq:geodesic_equation} are calculated.
+equation \eqref{eq:geodesic_equation} are calculated.
 
 \subsection{Extensibility}
 
@@ -1226,10 +1226,10 @@ example of the methods we have developed to permit this.
 \section{Test problems}
 \label{sec:test-problems}
 
-This section verifies our code against a number of different tests from the
-literature, and discusses the impact of the extensions to our numerical methods.
+In this section we validate our code by comparing with test cases from the
+literature, and discuss the impact of the extensions to our numerical methods.
 
-We also use this to illustrate the use of different integration algorithms when
+We also illustrate the impact of different integration algorithms when
 computing second order ODE systems. In particular we focus on Tsitouras, Faegin
 10, Vern 6 and the commonly used RK4 \todo{citations needed}.
 
@@ -1238,7 +1238,7 @@ computing second order ODE systems. In particular we focus on Tsitouras, Faegin
 Since our method for integration does not use constants of motion directly, the
 stability of the integrator may be gauged by calculating these constants or
 other invariant quantities along the trajectory. In Figure
-\ref{fig:dot-stability} is shown the invariant $v_\mu v^\mu$ for a geodesic that
+\ref{fig:dot-stability} we show the invariant $v_\mu v^\mu$ for a geodesic that
 spirals into a maximally spinning black hole. The magnitude of the invariant,
 here a proxy for the \emph{stability}, is shown for a sample of integration algorithms,
 along with the time-to-solution for the geodesic. Note this solving time
@@ -1252,7 +1252,7 @@ includes the time to initialize the integrator, calculate the full trajectory
     tolerances $\text{abstol} = \text{reltol} = 10^{-9}$. Panel a) shows the
     null-geodesic of the Kerr spacetime, $a = 0.998$, for impact parameters
     $\alpha = 5$ and $\beta = 0$ integrated from the starting position $x^r =
-    10^4 \rg$ and $x^\theta = \pi / 2$.  . All of the algorithms considered
+    10^4 \rg$ and $x^\theta = \pi / 2$. All of the algorithms considered
     yield the same solution. Panel b) shows the integration time for the
     geodesic considered. The integration time is approximately equal for all of
     the algorithms except for RK4. Panel c) shows the value of the conserved
@@ -1289,7 +1289,7 @@ on numerical errors.
 \begin{figure}
 	\centering
 	\includegraphics[width=0.94\linewidth]{figures/deflection.iyer-hansen.pdf}
-	\caption{Deflection angle in the Kerr spacetime ($M = 1$, $a = 0.998$) for geodesics in the equatorial plane over a range of impact parameters $\alpha$. Upper panel: numerical deflection $\delta x^r$ calculated with  $x^r_\text{start} = 2 \times 10^8 \, \rg$, absolute and relative tolerances set to $10^{-14}$, and effective infinity $4 \times 10^8\, \rg$, shown with the numerical solutions for $\hat{\alpha}$. Lower panel: the absolute relative error between the numeric and analytic deflection angles for different integration algorithms.}
+	\caption{Deflection angle in the Kerr spacetime ($a = 0.998$) for geodesics in the equatorial plane over a range of impact parameters $\alpha$. Upper panel: numerical deflection $\delta x^\phi$ calculated with  $x^r_\text{start} = 2 \times 10^8 \, \rg$, absolute and relative tolerances set to $10^{-14}$, and effective infinity $4 \times 10^8\, \rg$, shown with the numerical solutions for $\hat{\alpha}$. Lower panel: the absolute relative error between the numeric and analytic deflection angles for different integration algorithms.}
 	\label{fig:deflection-angle}
 \end{figure}
 
