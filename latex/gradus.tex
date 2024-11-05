@@ -1334,14 +1334,15 @@ Section \ref{sec:observers-and-emitters}.
 
 \subsection{Line profiles}
 
-Transfer functions are integrated as described in Section
+The rest-frame accretion disc spectrum is modified by relativistic effects producing an observed spectrum in which emission lines have a broad and skewed \emph{line profile}.
+To calculate these line profiles, transfer functions are integrated for a particular emissivity profile as described in Section
 \ref{sec:transfer-function-integration}, neglecting the timing components.
 Figure \ref{fig:relline-comparison} compares the line profiles computed using
 the transfer functions of \Gradus and the \relline model of
 \cite{dauser_broad_2010}\footnote{We compare against the \relline v2.3 with
 table v0.5a distributed in the Relxill package
 \url{http://www.sternwarte.uni-erlangen.de/~dauser/research/relxill/}. These are
-the latest versions at time of writing.}. We see good agreement to within $\sim
+the latest versions at the time of writing.}. We see good agreement to within $\sim
 1\%$ accuracy.
 
 \begin{figure}
@@ -1364,28 +1365,29 @@ indicating our datum plane method is valid.
 \begin{figure}
 	\centering
 	\includegraphics[width=0.99\linewidth]{figures/lineprofiles.ssd.pdf}
-	\caption{Line profiles for the SSD with $\dot{M} / \dot{M}_\text{Edd} = 0.3$ for different observer inclinations $\theta_\text{obs}$ and emissivity $I_\text{em} = \varepsilon(r_\text{em}) = r_\text{em}^{-3}$. The transfer functions are calculated as in Figure \ref{fig:relline-comparison}, and integrated over the same limits. The light-grey lines correspond to the geometric thin disc ($\dot{M} / \dot{M}_\text{Edd} = 0$), and differ only for steep inclinations due to obscuration of inner $r_\text{em}$. Left panel is the the maximally spinning Kerr spacetime, whereas the right panel is the Schwarzschild spacetime.}
+	\caption{Line profiles for the SSD with $\dot{M} / \dot{M}_\text{Edd} = 0.3$ for different observer inclinations $\theta_\text{obs}$ and emissivity $I_\text{em} = \varepsilon(r_\text{em}) = r_\text{em}^{-3}$. The transfer functions are calculated as in Figure \ref{fig:relline-comparison}, and integrated over the same limits. The light-grey lines correspond to the geometric thin disc ($\dot{M} / \dot{M}_\text{Edd} = 0$), and differ only for steep inclinations due to obscuration of the inner $r_\text{em}$. Left panel is the the maximally spinning Kerr spacetime, whereas the right panel is the Schwarzschild spacetime.}
 	\label{fig:line-profile-ssd}
 \end{figure}
 
 
-\subsection{Reverberation lags}
+\subsection{Reverberation time lags}
 \label{sec:lag-transfer-functions}
 
 AGN and XRBs exhibit a phenomena where the high energy X-ray emission from the
-corona is observed both directly and a short delay later after being reprocess
-by the accretion disc. The time delay between the direct and reflected
+corona is observed both directly and a short delay later after being reprocessed
+by the accretion disc. The time delay between the direct and ``reflected''
 components is increased by the effects of strong gravity on the light travel
-time, and therefore depends on properties of the black hole. These lags are
+time, and therefore depends on properties of the black hole, as well as depending on the disc and corona geometry. These lags are
 known as \textit{reverberation lags} (see e.g. \cite{uttley_x-ray_2014} or
 \cite{cackett_reverberation_2021} for a review). Reverberation lags are
-typically expressed as a time lag as a function of Fourier phase frequency of
+very difficult to observe in light curves directly, so
+typically the time lag as a function of Fourier phase frequency of
 the driving continuum signal, or as a time lag between energy bands.
 
 Simulating either the lag-frequency or lag-energy spectra involves computing a
 set of transfer functions that record the arrival time and observed energy of
-each flux element \citep{reynolds_x-ray_1999}. See Figure
-\ref{fig:lag-frequency-transfer-functions} for examples. By convention the
+each flux element \citep{reynolds_x-ray_1999}. Two example transfer functions are shown in Figure
+\ref{fig:lag-frequency-transfer-functions}. By convention the
 origin of the time axis is set to the (mean) arrival time of the continuum
 emission. We disambiguate these transfer functions from others by referring to
 them as the \textit{lag transfer functions}. They are calculated by re-binning
@@ -1438,8 +1440,9 @@ Following \cite{cackett_modelling_2014}, we define the \textit{response
 fraction} $R$ as the ratio of reflected to continuum flux. The impulse response
 in the Fourier domain is the scaled Fourier transform
 \begin{equation}
-	\mathscr{F}_\psi(f) := R \int_{0}^\infty \psi(t) \e^{-2\pi i f t} \d t.
+	\mathscr{F}_\psi(f) := R \int_{0}^\infty \psi(t) \e^{-2\pi i f t} \d t
 \end{equation}
+at frequency $f$.
 The phase difference between the reflected and continuum flux is
 \begin{equation}
 	\phi(f) = \tan^{-1} \left(
@@ -1464,7 +1467,7 @@ is unity.
 
 The time lag is defined as
 \begin{equation}
-	\tau(f) := \frac{\phi}{2 \pi f},
+	\tau(f) := \frac{\phi(f)}{2 \pi f},
 \end{equation}
 and relates the observed time lag to the Fourier frequency of the driving signal (lower panel of Figure \ref{fig:reverberation-thin}).
 
@@ -1485,13 +1488,13 @@ We find good agreement with \cite{cackett_modelling_2014} for all cases.
 
 \subsubsection{Lag-energy spectra}
 
-Lag-energy spectra are calculated within specific frequency bands $f + \Delta
+Lag-energy spectra show the time lag as a function of energy within specific frequency bands $f + \Delta
 f$. Since we have mandated for consistency with \cite{cackett_modelling_2014}
 that the reflected flux of the \FeKa line is equal to the continuum flux,
 the reference energy band is $E/E_\text{em} = 1$.  For the impulse response of
 each energy channel (rows in the lag transfer functions), the lag-frequency
 spectrum is calculated. The mean lag within $f + \Delta f$ is determined, and
-plotted as a function of energy. In Figure \ref{fig:lag-energy} is illustrated
+plotted as a function of energy. Figure \ref{fig:lag-energy} shows
 the time lag as a function of energy relative to the \FeKa band,
 to be compared to Figure 11 in \cite{cackett_modelling_2014}. As with the
 lag-frequency spectra, we attribute the differences in the low frequency band to
@@ -1506,7 +1509,7 @@ larger low frequency lag.
 $h=10$. The different colours now correspond to the frequency bands used to
 calculate the lag-energy spectrum (shown in the inset panel). The solid lines,
 as before, denote the razor thin disc, whereas the dotted lines are the
-Shakura-Sunyaev disc.}
+Shakura-Sunyaev disc with $\dot{M} / \dot{M}_\text{Edd} =0.3$.}
 	\label{fig:lag-energy}
 \end{figure}
 
