@@ -971,9 +971,9 @@ bin. Depending on the timing resolution required, is it imperative that the
 integration is performed over a \emph{fine} $g$ grid. In full:
 \begin{enumerate}
     \item Interpolate the values of the transfer function, $f$, $t$, and
-        $g_\text{min}$, and $g_\text{max}$, for the current radius $\rhoem_i$.
+        $g_\text{min}$, and $g_\text{max}$, for the current radius $\rhoem$.
     \item Calculate the trapezoidal integration weighting for the radial
-        coordinate $\omega_i = \Delta r_i r_i$. Any other quantities that only
+        coordinate $\omega_i = \Delta \rhoem \rhoem$. Any other quantities that only
         depend on $\rhoem$ may similarly be factored into this weighting. The
         emissivity function can be included here, should it depend only on
         cylindrical radius, $I_\text{em}(\rhoem)$.
@@ -981,16 +981,17 @@ integration is performed over a \emph{fine} $g$ grid. In full:
         $g = E / E_\text{line}$. The only requirement for this grid is that it
         is has at least twice the resolution of the output matrix. This can be
         increased for better resolution at a computational cost.
-    \item For each bin in the fine $g$ grid, integrate $f$ over this bin. Record
-        $t_\text{min} = t(g_\text{min})$ and $t_\text{max} = t(g_\text{max})$.
-        A caution: depending on the interpolation scheme or implementation, if
-        $f$ is a function of $g$ instead of $g^\ast$, a $g / (g_\text{max} -
-        g_\text{min})$ change-of-variable factor must be included in the
-        integrand.
-    \item Sum $\omega_i F_i(E, t)$ to the bin corresponding to $E =
-        gE_\text{line}$, and $t(g^\ast)$ for each branch. If either $\Delta E$
-        or $\Delta t$ straddles an output bin, the flux components in each bin
-        must be weighted appropriately and summed into their corresponding bins.
+    \item For each bin in the fine $g$ grid, integrate both branches of $f$ over
+        this bin. Record $t_\text{min} = t(g_\text{min})$ and $t_\text{max} =
+        t(g_\text{max})$.  A caution: depending on the interpolation scheme or
+        implementation, if $f$ is a function of $g$ instead of $g^\ast$, a $g /
+        (g_\text{max} - g_\text{min})$ change-of-variable factor must be
+        included in the integrand.
+    \item Add $\omega_i F_i(E, t)$ to the bin corresponding to the energy $E =
+        gE_\text{line}$ and time $t$. If the range $g_\text{min}$ to
+        $g_\text{max}$ straddles an output bin in either energy or time, the
+        flux components in each bin must be weighted appropriately and summed
+        into their corresponding bins.
 \end{enumerate}
 
 A caveat exists, namely that the integrand for each branch may still in practice
@@ -1138,27 +1139,30 @@ through gradient-enhanced optimisers, where mathematical optimisation is needed.
 \section{Test problems}
 \label{sec:test-problems}
 
-In this section we validate our code by comparing with a number of standard
-test cases from the literature, and discuss the impact of the extensions to our
-numerical methods.
-Unless otherwise stated, all test problems are integrated with the Tsitouras 5-4
-algorithm \citep{tsitouras_rungekutta_2011}. We also consider Faegin's
-10$^\text{th}$ order Runge-Kutta method, the explicit Runge-Kutta 4$^\text{th}$
-order algorithm \citep{press_numerical_2007}, and Verner's ``Most Efficient''
-6-5 Runge-Kutta method.  These are all implemented in the Julia
-DifferentialEquations.jl package \citep{rackauckas_differential_2017}.
+In this section we validate our code using a number of standard test cases from
+the literature. Unless otherwise stated, all test problems are integrated with
+the Tsitouras 5-4 algorithm \citep{tsitouras_rungekutta_2011}. We also consider
+Faegin's 10$^\text{th}$ order Runge-Kutta method, the explicit Runge-Kutta
+4$^\text{th}$ order algorithm \citep{press_numerical_2007}, and Verner's ``Most
+Efficient'' 6-5 Runge-Kutta method.  These are all implemented in the Julia
+DifferentialEquations.jl package \citep{rackauckas_differential_2017}, and used
+to highlight and small numerical differences that accompany the choice of ODE
+integrator.
+
+Many of the test problems are taken from \citet{gold_verification_2020} for ease
+of comparison.
 
 \subsection{Integration accuracy and stability}
 
-Since our method for integration does not use constants of motion directly, the
-stability of the integrator may be evaluated by calculating these constants or
-other invariant quantities along the trajectory. In Figure
-\ref{fig:dot-stability} we show the invariant $v_\mu v^\mu$ for a geodesic that
-spirals into a maximally spinning black hole. The magnitude of the invariant is
-shown for a sample of integration algorithms, along with the time-to-solution
-for the geodesic. Note that this solving time includes the time to initialize the
-integrator, calculate the full trajectory (with interpolants), and package the
-solution structure.
+Our integration method does not use the geodesic constants of motion directly,
+and so the stability of the integrator may be evaluated by calculating these or
+other invariants along the trajectory. In Figure \ref{fig:dot-stability} we show
+the invariant $v_\mu v^\mu$ for a geodesic that spirals into a maximally
+spinning black hole. The magnitude of the invariant is shown for a sample of
+integration algorithms, along with the time-to-solution for the geodesic. Note
+that this solving time includes the time to initialize the integrator, calculate
+the full trajectory (with interpolants), and package the solution structure in
+memory.
 
 \begin{figure}
     \centering
@@ -1177,19 +1181,19 @@ solution structure.
     \label{fig:dot-stability}
 \end{figure}
 
-To test accuracy we calculate the angular deflection. The deflection is
-the difference in $x^\phi$ of a geodesic traveling from positive to negative
-infinity, that is
+To assert the accuracy we calculate the angular deflection problem. The
+deflection is the difference in $x^\phi$ of a geodesic traveling from positive
+to negative infinity, that is
 \begin{equation}
     \delta x^\phi :=
-        x^\phi_{+\infty} - x^\phi_{-\infty}
+        \left.x^\phi\right\rvert_{+\infty} - \left.x^\phi\right\rvert_{-\infty}
         - \pi,
 \end{equation}
 where $\pi$ is the angular change for a trajectory that experiences no
 deflection. Semi-analytic solutions for the deflection angle in the Kerr
 spacetime have been calculated for equatorial geodesics in
 \cite{iyer_lights_2009}. The authors use elliptical integrals to find the
-coordinate differences. We follow their notation and denote the \emph{analytic}
+coordinate differences. We follow their notation and denote the analytic
 deflection angle $\hat{\alpha}$.
 
 Figure \ref{fig:deflection-angle} shows the deflection angle as a function of
@@ -1210,12 +1214,12 @@ on numerical errors.
 
 \subsection{Emissivity profiles}
 
-To test our implementation of the emissivity profile calculations described in Section \ref{sec:emissivity-profiles}, we
-model a thin equatorial accretion
-disc illuminated by an on-axis lamppost corona, comparing our results against
+To test our implementation of the emissivity profile calculations described in
+Section \ref{sec:emissivity-profiles}, we model a thin equatorial accretion disc
+illuminated by an on-axis lamppost corona, comparing against
 \cite{wilkins_understanding_2012} and \cite{dauser_irradiation_2013}. These are
-shown in Figure \ref{fig:emissivity-profiles} and are in good agreement with
-the published results. Also shown is the effect of the Shapiro delay $t$, on the
+shown in Figure \ref{fig:emissivity-profiles} and are in good agreement with the
+published results. Also shown is the effect of the Shapiro delay $t$, on the
 arrival time of a photon at a given radius on the disc.
 
 \begin{figure}
@@ -1234,27 +1238,20 @@ arrival time of a photon at a given radius on the disc.
     \label{fig:emissivity-profiles}
 \end{figure}
 
-Modifying the geometry, or adding instantaneous velocities to the corona have
-been explored in \cite{gonzalez_probing_2017}. The emissivity curves calculated
-are for extended corona are then the time-averaged emissivities on the disc.
-These emissivities can be approximately calculated using a Monte-Carlo approach,
-by sampling (uniformly) random points in the volume of the corona as the sources
-of isotropic emission. The relevant transformations for mapping the local
-emission vectors back to the global coordinates is the same as discussed in
-Section \ref{sec:observers-and-emitters}.
-
 \subsection{Line profiles}
 
-The rest-frame accretion disc spectrum is modified by relativistic effects producing an observed spectrum in which emission lines have a broad and skewed \emph{line profile}.
-To calculate these line profiles, transfer functions are integrated for a particular emissivity profile as described in Section
+The rest-frame accretion disc spectrum is modified by relativistic effects
+producing an observed spectrum in which emission lines have a broad and skewed
+\emph{line profile}.  To calculate these line profiles, transfer functions are
+integrated for a particular emissivity profile as described in Section
 \ref{sec:transfer-function-integration}, neglecting the timing components.
 Figure \ref{fig:relline-comparison} compares the line profiles computed using
 the transfer functions of \Gradus and the \relline model of
 \cite{dauser_broad_2010}\footnote{We compare against the \relline v2.3 with
-table v0.5a distributed in the Relxill package
-\url{http://www.sternwarte.uni-erlangen.de/~dauser/research/relxill/}. These are
-the latest versions at the time of writing.}. We see good agreement to within $\sim
-1\%$ accuracy.
+    table v0.5a distributed in the Relxill package
+\url{http://www.sternwarte.uni-erlangen.de/~dauser/research/relxill/}. These
+are the latest versions at the time of writing.}. We see good agreement to
+within $\sim 1\%$ relative difference across all parameters.
 
 \begin{figure}
     \centering
@@ -1265,13 +1262,12 @@ the latest versions at the time of writing.}. We see good agreement to within $\
 
 In addition to comparing to published results, \Gradus offers self-consistent
 checks by calculating line profiles using both Cunningham transfer functions and
-direct $\alpha, \beta$ photon binning. This is useful especially for unusual
-disc geometries, where obscuration effects make calculating the Cunningham
-transfer functions difficult, as described in
-\ref{sec:partially-obscured-functions}. In Figure \ref{fig:line-profile-ssd} we
-show line profiles for the \citet{shakura_black_1973} Disc (SSD) model using a fixed power-law emissivity
-function, with both numerical methods yielding identical line profiles,
-indicating our datum plane method is valid.
+direct image plane binning. This particularly useful for the thick disc case,
+where obscuration effects make calculating the Cunningham transfer functions
+additionally difficult, as described in \ref{sec:partially-obscured-functions}.
+In Figure \ref{fig:line-profile-ssd} we show line profiles for the
+\citet{shakura_black_1973} disc (SSD) model using a fixed power-law emissivity
+function. Both methods yield identical line profiles.
 
 \begin{figure}
     \centering
@@ -1284,30 +1280,23 @@ indicating our datum plane method is valid.
 \subsection{Reverberation lags}
 \label{sec:lag-transfer-functions}
 
-AGN and XRBs exhibit a phenomena where the high energy X-ray emission from the
-corona is observed both directly and a short delay later after being reprocessed
-by the accretion disc. The time delay between the direct and ``reflected''
+The time delay between the corona's direct and the subsequent disc's reflected
 components is increased by the effects of strong gravity on the light travel
-time, and therefore depends on properties of the black hole, as well as
-depending on the disc and corona geometry. These lags are known as
-\textit{reverberation lags} (see e.g. \cite{uttley_x-ray_2014} or
+time. The effect, termed \emph{reverberation lag}, is therefore dependent on
+properties of the black hole, as well as depending on the disc and corona
+geometry (see e.g.  \cite{uttley_x-ray_2014} or
 \cite{cackett_reverberation_2021} for a review).
-% Reverberation lags difficult to
-% observe in light curves directly, and so are typically expressed as a time lag
-% as a function of Fourier phase frequency of the driving continuum signal, or as
-% a time lag between energy bands.
 
 Simulating either the lag-frequency or lag-energy spectra involves computing a
 set of transfer functions that record the arrival time and observed energy of
-each flux element \citep{reynolds_x-ray_1999}. Two example transfer functions are shown in Figure
-\ref{fig:lag-frequency-transfer-functions}. By convention the
-origin of the time axis is set to the (mean) arrival time of the continuum
-emission. We disambiguate these transfer functions from others by referring to
-them as the \textit{lag transfer functions}. They are calculated by re-binning
-image planes after ray-tracing the relevant quantities. We devised a method for
-calculating the lag transfer functions using the Cunningham transfer functions,
-described in \ref{sec:transfer-function-integration}. In this section, we verify
-our methods by comparing with results in the literature.
+each flux element \citep{reynolds_x-ray_1999}. We distinguish these transfer
+functions from others by referring to them as the \textit{lag transfer
+functions}. Two examples are shown in Figure
+\ref{fig:lag-frequency-transfer-functions}. By convention the origin of the time
+axis is set to the arrival time of the continuum emission and is unambiguous for
+a lamppost corona. We here test our method for calculating high resolution lag
+transfer functions using the Cunningham transfer functions, described in
+\ref{sec:transfer-function-integration}.
 
 % The lag transfer functions depend on the choice of observer inclination,
 % spacetime, coronal model, and disc model. The inclination of the observer is
@@ -1336,19 +1325,13 @@ the text).}
 
 \subsubsection{Lag-frequency spectra}
 
-% and allows us to construct high resolution lag transfer functions of
-% \cite{reynolds_x-ray_1999} with little additional computational time (see
-% Section \ref{sec:lag-transfer-functions}).
-
 Summing the lag transfer functions (Figure
 \ref{fig:lag-frequency-transfer-functions}) over the energy axis for a given
 energy range yields an \textit{impulse response function} $\psi(t)$, which
 encodes how the disc responds to the impulse of a coronal flash.
-% This impulse
-% response depends on the properties of the illuminating corona, accretion disc,
-% spacetime, and inclination of the observer.
-Examples for different lamppost
-heights over the full energy range are shown in the top panel of Figure
+
+Examples for different lamppost heights over the full energy range are shown in
+the top panel of Figure
 \ref{fig:reverberation-thin}.
 
 Following \cite{cackett_modelling_2014}, we define the \textit{response
@@ -1374,9 +1357,9 @@ through the $+1$ in the denominator.
 A subtlety to address here in the normalisation of the impulse responses, as we
 do not fully model the continuum spectrum. We assume, as in
 \cite{cackett_modelling_2014}, that the reflected flux of the line is equal to
-the continuum flux ($R = 1$). Therefore, we normalise the impulse response
-functions by dividing by a factor $Q = \int \psi_{\text{Fe K}\alpha}(t)$, so
-that the area under the line impulse response function is unity.
+the continuum flux ($R = 1$). We normalise the impulse response functions by
+dividing by a factor $Q = \int \psi_{\text{Fe K}\alpha}(t)$, so that the area
+under the line impulse response function is unity.
 
 
 The time lag is defined as
@@ -1445,24 +1428,21 @@ fluid as a function of radial coordinate. There are five free parameters in this
 specification that can be used to control the model, for which they give 5
 standardized tests.
 
-We have implemented their model and see very good agreement across all of the
-tests, shown in Figure \ref{fig:gold-test-problems}. Our covariant radiative
-transfer implementation therefore reproduces the same results as other GRRT
-codes to within standard tolerances.
+We have implemented their test cases and see very good agreement, shown in
+Figure \ref{fig:gold-test-problems}.
 
 \subsection{Other spacetimes}
 
-Reflection and reverberation features have been explored beyond the Kerr
-spacetime as a means of study the ``no-hair theorem'' \citep[for a review,
-see][]{bambi_testing_2022}. To test our implementation, we compare the line
+To test our implementation for other spacetimes and to ensure the
+spacetime-agnostic implementation functions correctly, we compare the line
 profiles calculated with \Gradus to those calculated in
 \citet{johannsen_testing_2010}. Our lineprofiles, calculated via Cunningham
 transfer function integration, are shown in Figure
 \ref{fig:reflection-johannsen}. We find excellent agreement with the published
 line profiles in \citet{johannsen_testing_2010}. We demonstrate the flexibilty
-of the code by implementing the Einstein-Maxwell-Dilaton-Axion metric derived
-in \citet{garcia_class_1995} and calculate lineprofiles for various values of
-the $b$ constant, shown in Figure \ref{fig:reflection-emda}.
+of the code by implementing the Einstein-Maxwell-Dilaton-Axion metric derived in
+\citet{garcia_class_1995} and calculate lineprofiles for various values of the
+$b$ constant, shown in Figure \ref{fig:reflection-emda}.
 
 \begin{figure}
     \centering
@@ -1470,9 +1450,6 @@ the $b$ constant, shown in Figure \ref{fig:reflection-emda}.
     \caption{\todo{caption}}
     \label{fig:reflection-johannsen}
 \end{figure}
-
-As a demonstration of the capabilities of \Gradus, we also compute sample
-line profiles for the Einstein-Maxwell-Axion-Dilaton spacetime.
 
 \begin{figure}
     \centering
@@ -1540,7 +1517,7 @@ occurs when the coronal height is comparable to the height of the disc.}
 \section{Conclusions}
 \label{sec:conclusion}
 
-\Gradus is new open-source and publicly available general relativistic
+\Gradus is new a open-source and publicly available general relativistic
 ray-tracing software that can be used in a variety of X-ray spectral modelling.
 The software is able to reproduce results from other simulation works for a
 variety of test problems related to stability and numerical accuracy. We have
@@ -1570,8 +1547,11 @@ code.
 This work is supported by the UKRI AIMLAC CDT funded by grant EP/S023992/1.
 
 We thank Jiachen Jiang, Cosimo Bambi and Askar Abdikamalov for sharing their
-software for comparisons, and thank Corbin Taylor for making the
-\texttt{fenrir} code, along with many example scripts, public at our request. FB thanks Rosie for her expert debugging assistance. All figures created using Makie.jl \citep{DanischKrumbiegel2021}, using the color scheme of \cite{wong_points_2011}.
+software for comparisons, and thank Corbin Taylor for making the \texttt{fenrir}
+code, along with many example scripts, public at our request. FB thanks Rosie
+for her expert debugging assistance. All figures created using Makie.jl
+\citep{DanischKrumbiegel2021}, using the color scheme of
+\citet{wong_points_2011}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Data Availability}
