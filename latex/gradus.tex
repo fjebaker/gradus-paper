@@ -38,6 +38,9 @@
 \usepackage{tcolorbox}
 \usepackage{listings}
 \usepackage{xspace}
+
+% TODO: remove me, i am just here to suppress some warnings
+\pdfsuppresswarningpagegroup=1
 \pdfminorversion=7
 
 %%%%%%%%%%%% CUSTOM COMMANDS %%%%%%%%%%%%%%%%%%%%%
@@ -91,9 +94,25 @@ $^{1}$H. H. Wills Physics Laboratory, Tyndall Avenue, Bristol BS8 1TL, UK
 \label{firstpage}
 \pagerange{\pageref{firstpage}--\pageref{lastpage}}
 \maketitle
+
 % Abstract of the paper
 \begin{abstract}
-    We introduce \Gradus, an open-source...
+We introduce \Gradus, an open-source and publicly available general relativistic
+ray-tracing toolkit for X-ray spectral modelling in arbitrary spacetimes. Our
+software is written in the Julia programming language, and makes use of
+automatic differentiation in computing the Christoffel symbols during geodesic
+integration, and in propagating derivatives through the entire ray-tracer. Our
+numerical methods are detailed, and our models are validated using a number of
+tests and comparisons to other codes. The differentiability is used to optimally
+calculate Cunningham transfer functions, which are used to efficiently
+pre-compute relativistic effects in spectral models. A method is described for
+calculating transfer functions for disc with non-zero vertical height, including
+the treatment of self-obscuration. An extension of the transfer function
+formalism that includes timing information is described, and used to calculate
+high-resolution reverberation lag spectra for a lamppost corona. The
+lag--frequency and lag--energy spectra for a Shakura--Sunyaev accretion disc
+with various lamppost heights and Eddington ratios are calculated, and the
+general impact of disc thickness in reflection models is discussed.
 \end{abstract}
 
 % Select between one and six entries from the list of approved keywords.
@@ -109,13 +128,13 @@ accretion, accretion discs -- black hole physics -- gravitation -- line: profile
 %%% INTRODUCTION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
 
-General relativistic ray-tracing (GRRT) is a computational technique used in
-spectral modelling that computes the trajectory of individuals photons through a
-given spacetime. It enables the calculation of spectral components and radiative
-processes in strong gravity around black holes, neutron stars, and other compact
-objects, making the technique invaluable for models of the inner regions of the
-accretion flow. The general relativistic (GR) effects cause significant
-deviations from the classical results in the observed spectra
+General relativistic ray-tracing (GRRT) is a computational technique for
+calculating the trajectory of individuals particles through a given spacetime.
+It enables the calculation of spectral components and radiative processes in
+strong gravity around black holes, neutron stars, and other compact objects,
+making the technique invaluable for models of the inner regions of the accretion
+flow. The general relativistic (GR) effects cause significant deviations from
+the classical results in the observed spectra
 \citep[e.g.][]{cunningham_optical_1973, fabian_long_2002}, timing
 \citep[e.g.][]{stella_measuring_1990, reynolds_x-ray_1999}, and appearance
 \citep[e.g.][]{luminet_image_1979}. It is therefore crucially important that
@@ -348,7 +367,7 @@ calculating two columns of the Jacobian entirely.
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.99\linewidth]{figures/skycoords.pdf}
+    \includegraphics[width=0.99\columnwidth]{figures/skycoords.pdf}
     \caption{
     Geometry of the local sky for an observer or emitter. The image plane
     (yellow) is perpendicular to the $e_{(r)}$ axis, which, for an observer,
@@ -670,7 +689,7 @@ model.
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.95\linewidth]{figures/emissivity.coronal-traces.pdf}
+    \includegraphics[width=0.95\columnwidth]{figures/emissivity.coronal-traces.pdf}
     \caption{An illustration of the methods described in the text for
         calculating the emissivity of a lamppost corona: the colourful lines are
         the null-geodesics of a lamppost model illuminating the accretion disc
@@ -852,7 +871,7 @@ to extrema in $g^\ast$, as shown in Figure \ref{fig:transfer-sampling-pattern}.
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.95\linewidth]{figures/transfer-functions.sampling.pdf}
+    \includegraphics[width=0.95\columnwidth]{figures/transfer-functions.sampling.pdf}
     \caption{Transfer functions of the Kerr spacetime ($a = 0.998$) for various
         observer inclinations, showing the sample pattern of $g^\ast$ that our
         algorithm (described in the text) produces. The higher density of points
@@ -899,7 +918,7 @@ specific approach and the use of AD.
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.95\linewidth]{figures/datum-plane.pdf}
+    \includegraphics[width=0.95\columnwidth]{figures/datum-plane.pdf}
     \caption{Cross-sectional slice of geodesics traced from a distant observer
         against a datum plane (horizontal blue line) through a thick disc
         (curved black line). The observer `sees' the solid geodesics
@@ -1183,7 +1202,7 @@ memory.
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.95\linewidth]{figures/stability.conservation.pdf}
+    \includegraphics[width=0.95\columnwidth]{figures/stability.conservation.pdf}
     \caption{A comparison of different ODE integration algorithms using the
         default tolerances $\text{abstol} = \text{reltol} = 10^{-9}$. Panel a)
         shows the null-geodesic of the Kerr spacetime, $a = 0.998$, for impact
@@ -1225,7 +1244,7 @@ on numerical errors.
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.94\linewidth]{figures/deflection.iyer-hansen.pdf}
+    \includegraphics[width=0.94\columnwidth]{figures/deflection.iyer-hansen.pdf}
     \caption{Deflection angle in the Kerr spacetime ($a = 0.998$) for geodesics
         in the equatorial plane over a range of impact parameters $\alpha$.
         Upper panel: numerical deflection $\delta x^\phi$ calculated with
@@ -1249,7 +1268,7 @@ arrival time of a photon at a given radius on the disc.
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.99\linewidth]{figures/emissivity.point-source.pdf}
+    \includegraphics[width=0.99\columnwidth]{figures/emissivity.point-source.pdf}
     \caption{Emissivity profiles, $\varepsilon(\rho)$ for a lamppost point
         source illuminating a thin, equatorial disc at various heights above the
         spin axis of a maximally spinning Kerr black hole ($a = 0.998$). Panel
@@ -1281,7 +1300,7 @@ within $\sim 1\%$ relative difference across all parameters.
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.99\linewidth]{figures/lineprofiles.comparison.pdf}
+    \includegraphics[width=0.99\columnwidth]{figures/lineprofiles.comparison.pdf}
     \caption{Comparison of line profiles calculated by integrating transfer
         functions with emissivity $I_\text{em} = \varepsilon(\rhoem) =
         \rhoem^{-3}$ using \Gradus and \relline. The transfer functions are
@@ -1331,11 +1350,14 @@ transfer functions using the Cunningham transfer functions, described in
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.97\linewidth]{figures/transfer-functions.2d.pdf}
+    \includegraphics[width=0.97\columnwidth]{figures/transfer-functions.2d.pdf}
     \caption{Two-dimensional transfer functions for the maximally spinning Kerr
-        spacetime ($a = 0.998$) for two different observer inclinations. These are
-        calculated by integrating the time-dependent transfer functions (details
-        in the text).}
+        spacetime ($a = 0.998$) for two different observer inclinations. The
+        colouring represents the logarithm of the flux in that particular bin in
+        arbitrary units. The brighter the bin, the more flux is present. These
+        are calculated by integrating the time-dependent Cunningham transfer
+        functions
+    (details in the text).}
     \label{fig:lag-frequency-transfer-functions}
 \end{figure}
 
@@ -1388,7 +1410,7 @@ agreement with \cite{cackett_modelling_2014} for all cases.
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.98\linewidth]{figures/reverberation.thin-disc.pdf}
+    \includegraphics[width=0.98\columnwidth]{figures/reverberation.thin-disc.pdf}
     \caption{Impulse responses and lag--frequency spectra of a lamppost model in
         the Kerr spacetime ($a = 0.998$) for different heights of the lamppost
         model. The solid lines are the razor-thin disc case, whereas the dotted
@@ -1417,7 +1439,7 @@ larger low frequency lag.
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.98\linewidth]{figures/reverberation.lag-energy.pdf}
+    \includegraphics[width=0.98\columnwidth]{figures/reverberation.lag-energy.pdf}
     \caption{Lag--energy spectra for the same setup as in Figure
     \ref{fig:reverberation-thin} but only for case where the lamppost height is
     $h=10$. The different colours now correspond to the frequency bands used to
@@ -1469,7 +1491,7 @@ transfer functions may be tabulated and readily used in spectral models.
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.99\linewidth]{figures/lineprofiles.johannsen-comparison.pdf}
+    \includegraphics[width=0.99\columnwidth]{figures/lineprofiles.johannsen-comparison.pdf}
     \caption{Sample lineprofiles for the various values of the deformation
     parameter $\epsilon$ for the metric described in
     \citet{johannsen_testing_2013}. Both cases assume a powerlaw emissivity profile
@@ -1479,7 +1501,7 @@ transfer functions may be tabulated and readily used in spectral models.
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.99\linewidth]{figures/lineprofile.emda.pdf}
+    \includegraphics[width=0.99\columnwidth]{figures/lineprofile.emda.pdf}
     \caption{The same as in Figure \ref{fig:reflection-johannsen} but for the
     metric described in \citet{garcia_class_1995}.}
     \label{fig:reflection-emda}
@@ -1507,7 +1529,7 @@ the blue and red shifted sides of the accretion disc, see Figure
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.99\linewidth]{figures/lineprofiles.ssd.pdf}
+    \includegraphics[width=0.99\columnwidth]{figures/lineprofiles.ssd.pdf}
     \caption{Line profiles for the SSD with $\dot{M} / \dot{M}_\text{Edd} = 0.3$ for different observer inclinations $\theta_\text{obs}$ and emissivity $I_\text{em} = \varepsilon(\rhoem) = \rhoem^{-3}$. The transfer functions are calculated as in Figure \ref{fig:relline-comparison}, and integrated over the same limits. The light-grey lines correspond to the geometric thin disc ($\dot{M} / \dot{M}_\text{Edd} = 0$), and differ only for steep inclinations due to obscuration of the inner $\rhoem$. Left panel is the the maximally spinning Kerr spacetime, whereas the right panel is the Schwarzschild spacetime.}
     \label{fig:line-profile-ssd}
 \end{figure}
