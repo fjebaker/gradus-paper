@@ -38,6 +38,7 @@
 \usepackage{tcolorbox}
 \usepackage{listings}
 \usepackage{xspace}
+\pdfminorversion=7
 
 %%%%%%%%%%%% CUSTOM COMMANDS %%%%%%%%%%%%%%%%%%%%%
 
@@ -46,9 +47,10 @@
 \newcommand{\revisit}[1]{{\color{cyan} #1}}
 \newcommand{\notes}[1]{{\color{cyan} #1}}
 
-\newcommand{\Gradus}{Gradus.jl\xspace}
+\newcommand{\Gradus}{{\sc Gradus.jl}\xspace}
 \newcommand{\FeKa}{Fe K$\alpha$ }
 \newcommand{\relline}{\texttt{relline} }
+\newcommand{\software}[1]{{\sc #1}}
 
 \newcommand{\e}{\text{e}}
 \renewcommand{\d}{\text{d}}
@@ -136,8 +138,8 @@ X-ray reverberation, and the accompanying use of GRRT.
 
 In the interest of computational performance, GRRT results are commonly
 pre-computed for spectral models \citep{laor_line_1991}. For example, in
-reflection spectra models, such as \texttt{relline} / \texttt{relxill}
-\citep{dauser_broad_2010, dauser_relativistic_2016} or \texttt{kyn} \todo{cite
+reflection spectra models, such as \software{relline} / \software{relxill}
+\citep{dauser_broad_2010, dauser_relativistic_2016} or \software{kyn} \todo{cite
 dovciak}, tabular GRRT data is integrated with an emissivity function to rapidly
 compute the spectral components. A consequence of pre-computation is that only a
 limited parameter domain can be sampled, and assumptions concerning, say, the
@@ -157,10 +159,10 @@ used in concert with other models.
 % \citet{fukumura_iron_2004} study a spiral velocity structure; a conical disc
 % structure is explored by \citet{wu_iron_2007} including sub-Keplerian orbits and
 % the effects of self-occulting of the disc, \citet{taylor_exploring_2018,
-% taylor_x-ray_2018_reverb} calculate tabular line profile models and
-% reverberation features for a disc with the Shakura-Sunyaev height profile,
+% taylor_x-ray_2018} calculate tabular line profile models and
+% reverberation features for a disc with the Shakura--Sunyaev height profile,
 % \citet{thomsen_relativistic_2022} model X-ray reverberation in super-Eddington
-% accretion flows, and \citet{abdikamalov_testing_2020} study a Novikov-Thorne
+% accretion flows, and \citet{abdikamalov_testing_2020} study a Novikov--Thorne
 % disc in the \citet{johannsen_regular_2013} spacetime.
 
 There has recently been increased interest in ``tests of relativity'', studying
@@ -192,18 +194,20 @@ of that can reliably do so for other disc geometries, velocity structures, and
 spacetimes. Perhaps the closest example is the work of
 \citep{taylor_exploring_2018}, however this still has some caveats in usability
 and extensibility. It is to address this gap that we present a new publicly
-available GRRT code, Gradus.jl\footnote{Open-source and available under GPL 3.0
-license at \url{https://github.com/astro-group-bristol/Gradus.jl}.}, written in
-the Julia programming language \citep{Bezanson_Julia_A_fresh_2017}. Models
-created with \Gradus can be readily used in spectral fitting packages, such as
-XSPEC \citep{arnaud_xspec_1996} or SpectralFitting.jl \citneeded.
+available GRRT code, Gradus.jl\footnote{Available under GPL 3.0 license at
+\url{https://github.com/astro-group-bristol/Gradus.jl}. Please submit bug
+reports either under Issues, or directly via email to the corresponding
+author.}, written in the Julia programming language
+\citep{Bezanson_Julia_A_fresh_2017}. Models created with \Gradus can be readily
+used in spectral fitting packages, such as \software{XSPEC}
+\citep{arnaud_xspec_1996} or \software{SpectralFitting.jl} \citneeded.
 
 % We maintain C-ABI
 % compatible wrappers for integrating the transfer function tables that have
 % similar capabilities as popular convolution models\footnote{We use the Zig
 %     programming language \url{https://ziglang.org/} to wrap the spectral models.
 %     This allows us to statically compile models for a wide variety of targets.
-% Models can then be downloaded and imported into e.g. XSPEC without the need for
+% Models can then be downloaded and imported into e.g. \software{XSPEC} without the need for
 % any additional tools.}. \Gradus additionally allows for constructing custom
 % convolution kernels within a component modelling framework that can be made to
 % more closely match the assumptions made in their models with respect to, for
@@ -219,16 +223,16 @@ software is detailed in terms of its features. Section \ref{sec:test-problems}
 assesses the validity of the code using a number of test problems from the
 literature, and compares results to other published codes.
 \ref{sec:applications} shows illustrative simulation results that examine the
-effect of disc thickness on the X-ray reverberation lag computed using \Gradus.
-Some conclusions, intended applications, and future work are given in Section
-\ref{sec:conclusion}.
+effect of disc thickness on the line profile and reverberation lag computed
+using \Gradus. Some conclusions, intended applications, and future work are
+given in Section \ref{sec:conclusion}.
 
 %%% NUMERICAL METHODS %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Numerical methods}
 \label{sec:numerical-methods}
 
 For simplicity, we focus on stationary, axisymmetric spacetimes in the
-Boyer-Lindquist coordinates. Such spacetimes have metrics of the form
+Boyer--Lindquist coordinates. Such spacetimes have metrics of the form
 \begin{equation}
 \label{eq:stationary_axisymmetric_metric}
     g_{\mu\nu}
@@ -330,7 +334,7 @@ differentiation (AD), to calculate the Jacobian of the metric Our method is to
 compute the Jacobian of the metric ($\partial_{\sigma} g_{\mu \nu}$) needed in
 Eq.  \eqref{eq:christoffel} with automatic differentiation (AD)\footnote{We were
     made aware by colleagues of the independently developed code Mahakala of
-    \citet{sharma_mahakala_2023} that uses the same AD approach.}.  This allows
+    \citet{sharma_mahakala_2023} that uses a similar AD approach.}.  This allows
     us to compute the Christoffel symbols \emph{on-the-fly}, and only requires
 an implementation of the non-zero metric components for a given metric. If
 the class of spacetime exhibits additional symmetries, these can be
@@ -432,7 +436,7 @@ coordinate transformation from the LNRF is
     v_\mu = \e^{(\nu)}_{\phantom{(\nu)}\mu}\  v_{(\nu)}
 \end{equation}
 where the local tetrad (basis vectors) $\e^{(\nu)}_{\phantom{(\nu)}\mu}$ are
-found using the theorem of Gram-Schmidt \citep[][Appendix
+found using the theorem of Gram--Schmidt \citep[][Appendix
 \ref{appendix:gram-schmidt}]{schmidt_uber_1989}. The formalism may be extended
 for a local frame in motion, where the frame velocity modifies the mapping by a
 local Lorenz transformation, $\Lambda^{(\kappa)}_{\phantom{(\kappa)}(\nu)}$, as
@@ -441,7 +445,7 @@ local Lorenz transformation, $\Lambda^{(\kappa)}_{\phantom{(\kappa)}(\nu)}$, as
 \end{equation}
 This Lorenz transformation may be absorbed into the tetrad basis, mandating the
 velocity of the frame in the global coordinates as $\utensor{\e}{(t)}{\mu}$ and
-orthogonalizing using the theorem of Gram-Schmidt.
+orthogonalizing using the theorem of Gram--Schmidt.
 
 These calculations may also be derived from the constants of motion of a
 particular geodesic, namely energy $E$, angular momentum $L$, and the Carter
@@ -523,7 +527,7 @@ singularity, or otherwise is some arbitrary cut-off radius for the integration.
 The geometry of an accretion disc or object is also expressed as a boundary of
 the chart. By terminating the integration when the geodesic intersects such a
 boundary, the geodesic is said to have intersected the surface of the disc or
-object, where it is labeled accordingly. These labels, termed \emph{status
+object, where it is labelled accordingly. These labels, termed \emph{status
 codes}, are used during analysis to group geodesic solutions together.
 
 Close to the inner radius the adaptive time step of certain ODE integration
@@ -573,7 +577,7 @@ on the disc. It is equivalently the \emph{emissivity profile}, since the line
 strength in the back-scattered (reflected) spectrum is modelled to be
 proportional to the illuminating flux.  The illumination profile is related to
 the ionization parameter $\xi$ of the accretion disc
-\citep{laor_line_1991,ross_reflection_1993, wilkins_understanding_2012}, itself
+\citep{laor_line_1991,ross_effects_1993,wilkins_understanding_2012}, itself
 given by
 \begin{equation}
     \xi = \frac{4 \pi F_i}{n_\text{H}}
@@ -590,7 +594,7 @@ a configuration is known as the ``lamppost'' corona
 \citep[e.g.][]{fukumura_accretion_2007}.  The effects of extended axis-symmetric
 coronae have been explored in \citet{wilkins_towards_2016}, and the emissivity
 profile for additional geometries have been computed in
-\citet{gonzalez_probing_2017}. Conventional methods use a Monte-Carlo sampling
+\citet{gonzalez_probing_2017}. Conventional methods use a Monte--Carlo sampling
 approach for extended coronae, which can be expensive to compute and some form
 of tabulation. We note that \Gradus includes a novel formulation for computing
 time-dependent emissivity profiles for extended coronae, detailed in \todo{Baker
@@ -659,8 +663,9 @@ $\varepsilon$ is weighted similarly,\begin{equation}
 \end{equation}
 A conceptual illustration of the two methods is shown in Figure
 \ref{fig:coronal-tracing}. The latter method converges much faster than the
-former Monte-Carlo sampling approach, however is only valid for the lamppost
+former Monte--Carlo sampling approach, however is only valid for the lamppost
 model.
+
 \begin{figure}
     \centering
     \includegraphics[width=0.95\linewidth]{figures/emissivity.coronal-traces.pdf}
@@ -668,7 +673,7 @@ model.
         calculating the emissivity of a lamppost corona: the colourful lines are
         the null-geodesics of a lamppost model illuminating the accretion disc
         around in a maximally spinning Kerr spacetime ($a = 0.998$). Panel a) is
-        the Monte-Carlo approach, where the initial velocity vector of the
+        the Monte--Carlo approach, where the initial velocity vector of the
         photon is sampled isotropically on the local sky of the emitter. The
         number density on the disc in a given annulus is then used as a proxy
         for the flux density. Panel b) shows how the symmetry of the lamppost can
@@ -795,7 +800,7 @@ the disc $\rho = x^r (\mathcal{R}) \sin x^\theta(\mathcal{R})$, using the same
 alternating root-finder as in Section \ref{sec:special-orbits}.
 
 Second, we must determine the extrema of $g$ over the $\rhoem$ ring. The
-extremal $g$ are found by using the Golden-Section bracketing method of
+extremal $g$ are found by using the Golden--Section bracketing method of
 \cite{Optim.jl-2018} to extremize $g(\vartheta)$, solving a new geodesic at each
 step. We make the assumption that extremal $g$ approximately coincide with
 extremal $\beta = 0$, and therefore shift the domain to $\vartheta \in [ -\pi/2,
@@ -964,7 +969,7 @@ the matrix must be chosen with some degree of care.
 The integration over $\d \rhoem$ is performed using a trapezoidal scheme, as it
 is sufficiently accurate and performant. The integration over $\d g^\ast$
 requires more care, particularly around the extremal values, for which we use a
-7$^\text{th}$ order Gauss-Kronrod quadrature integration scheme. The flux for a
+7$^\text{th}$ order Gauss--Kronrod quadrature integration scheme. The flux for a
 particular energy $F(E)$ is evaluated for each branch over a small output bin in
 $g$, whereas $t$ is determined by evaluating $t(g^\ast)$ at the limits of the
 bin. Depending on the timing resolution required, is it imperative that the
@@ -1079,7 +1084,7 @@ and integrating \eqref{eq:covariant-radiative-transfer} along a given geodesic.
 programming language \citep{Bezanson_Julia_A_fresh_2017}. We use the
 DifferentialEquations.jl ODE solving library with ForwardDiff.jl for
 forward-mode automatic differentiation \citep{RevelsLubinPapamarkou2016}. The
-code is available via the \texttt{Pkg} Julia package manger in a registry
+code is available via the \software{Pkg} Julia package manger in a registry
 maintained by the University of Bristol astrophysics
 group\footnote{\url{https://github.com/astro-group-bristol/AstroRegistry/}}. The
 software is multi-threaded for CPUs, with limited GPU support.
@@ -1090,16 +1095,16 @@ software is extensively tested with a suite of unit and integration tests. The
 tests are constructed both by comparing numerical algorithms to specific
 analytic counterparts, and by comparing against snapshots of results in the
 literature. \Gradus implements many algorithms for solving the same problem,
-providing the choice of which algorithm to use depending on the context of the
+providing the choice of which method to use depending on the context of the
 problem. The multitude of algorithms are also used as a self-consistency test,
 to ensure the validity of our implementations.
 
 \Gradus aims to make exploring new spacetime models simple by only requiring the
 non-zero metric components to be implemented. To this end and for comparison, we
 maintain a catalogue of metric implementations, including the Kerr spacetime,
-Morris-Thorne wormhole, Johannsen-Psaltis metric, the Einstein-Maxwell
-Dilaton-Axion metric \todo{citations for these}, the No-$\mathbb{Z}_2$ metric,
-and the Kerr-Newman metric, complete with the ability to specify the
+Morris--Thorne wormhole, Johannsen--Psaltis metric, the Einstein--Maxwell
+Dilaton--Axion metric \todo{citations for these}, the No-$\mathbb{Z}_2$ metric,
+and the Kerr--Newman metric, complete with the ability to specify the
 electromagnetic potential vector, from which external accelerations $a^\mu$ in
 equation \eqref{eq:geodesic_equation} are calculated.
 
@@ -1142,9 +1147,9 @@ through gradient-enhanced optimisers, where mathematical optimisation is needed.
 In this section we validate our code using a number of standard test cases from
 the literature. Unless otherwise stated, all test problems are integrated with
 the Tsitouras 5-4 algorithm \citep{tsitouras_rungekutta_2011}. We also consider
-Faegin's 10$^\text{th}$ order Runge-Kutta method, the explicit Runge-Kutta
+Faegin's 10$^\text{th}$ order Runge--Kutta method, the explicit Runge--Kutta
 4$^\text{th}$ order algorithm \citep{press_numerical_2007}, and Verner's ``Most
-Efficient'' 6-5 Runge-Kutta method.  These are all implemented in the Julia
+Efficient'' 6-5 Runge--Kutta method.  These are all implemented in the Julia
 DifferentialEquations.jl package \citep{rackauckas_differential_2017}, and used
 to highlight and small numerical differences that accompany the choice of ODE
 integrator.
@@ -1260,23 +1265,6 @@ within $\sim 1\%$ relative difference across all parameters.
     \label{fig:relline-comparison}
 \end{figure}
 
-In addition to comparing to published results, \Gradus offers self-consistent
-checks by calculating line profiles using both Cunningham transfer functions and
-direct image plane binning. This particularly useful for the thick disc case,
-where obscuration effects make calculating the Cunningham transfer functions
-additionally difficult, as described in \ref{sec:partially-obscured-functions}.
-In Figure \ref{fig:line-profile-ssd} we show line profiles for the
-\citet{shakura_black_1973} disc (SSD) model using a fixed power-law emissivity
-function. Both methods yield identical line profiles.
-
-\begin{figure}
-    \centering
-    \includegraphics[width=0.99\linewidth]{figures/lineprofiles.ssd.pdf}
-    \caption{Line profiles for the SSD with $\dot{M} / \dot{M}_\text{Edd} = 0.3$ for different observer inclinations $\theta_\text{obs}$ and emissivity $I_\text{em} = \varepsilon(\rhoem) = \rhoem^{-3}$. The transfer functions are calculated as in Figure \ref{fig:relline-comparison}, and integrated over the same limits. The light-grey lines correspond to the geometric thin disc ($\dot{M} / \dot{M}_\text{Edd} = 0$), and differ only for steep inclinations due to obscuration of the inner $\rhoem$. Left panel is the the maximally spinning Kerr spacetime, whereas the right panel is the Schwarzschild spacetime.}
-    \label{fig:line-profile-ssd}
-\end{figure}
-
-
 \subsection{Reverberation lags}
 \label{sec:lag-transfer-functions}
 
@@ -1287,7 +1275,7 @@ properties of the black hole, as well as depending on the disc and corona
 geometry (see e.g.  \cite{uttley_x-ray_2014} or
 \cite{cackett_reverberation_2021} for a review).
 
-Simulating either the lag-frequency or lag-energy spectra involves computing a
+Simulating either the lag--frequency or lag--energy spectra involves computing a
 set of transfer functions that record the arrival time and observed energy of
 each flux element \citep{reynolds_x-ray_1999}. We distinguish these transfer
 functions from others by referring to them as the \textit{lag transfer
@@ -1323,7 +1311,7 @@ the text).}
     \label{fig:lag-frequency-transfer-functions}
 \end{figure}
 
-\subsubsection{Lag-frequency spectra}
+\subsubsection{Lag--frequency spectra}
 
 Summing the lag transfer functions (Figure
 \ref{fig:lag-frequency-transfer-functions}) over the energy axis for a given
@@ -1373,12 +1361,12 @@ agreement with \cite{cackett_modelling_2014} for all cases.
 \begin{figure}
     \centering
     \includegraphics[width=0.98\linewidth]{figures/reverberation.thin-disc.pdf}
-    \caption{Impulse responses and lag-frequency spectra of a lamppost model in
+    \caption{Impulse responses and lag--frequency spectra of a lamppost model in
         the Kerr spacetime ($a = 0.998$) for different heights of the lamppost
         model. The solid lines are the razor-thin disc case, whereas the dotted
-        lines are for the Shakura-Sunyaev disc solution with $\dot{M} /
+        lines are for the Shakura--Sunyaev disc solution with $\dot{M} /
     \dot{M}_\text{Edd} = 0.3$. Panel a) shows the impulse responses summed
-across all energy bands, and panel b) shows the corresponding lag-frequency
+across all energy bands, and panel b) shows the corresponding lag--frequency
 spectra of the impulse responses. }
     \label{fig:reverberation-thin}
 \end{figure}
@@ -1386,28 +1374,28 @@ spectra of the impulse responses. }
 
 \subsubsection{Lag-energy spectra}
 
-Lag-energy spectra show the time lag as a function of energy within specific frequency bands $f + \Delta
+Lag--energy spectra show the time lag as a function of energy within specific frequency bands $f + \Delta
 f$. Since we have mandated for consistency with \cite{cackett_modelling_2014}
 that the reflected flux of the \FeKa line is equal to the continuum flux,
 the reference energy band is $E/E_\text{em} = 1$.  For the impulse response of
-each energy channel (rows in the lag transfer functions), the lag-frequency
+each energy channel (rows in the lag transfer functions), the lag--frequency
 spectrum is calculated. The mean lag within $f + \Delta f$ is determined, and
 plotted as a function of energy. Figure \ref{fig:lag-energy} shows
 the time lag as a function of energy relative to the \FeKa band,
 to be compared to Figure 11 in \cite{cackett_modelling_2014}. As with the
-lag-frequency spectra, we attribute the differences in the low frequency band to
+lag--frequency spectra, we attribute the differences in the low frequency band to
 the weak field approximation employed by the other authors, which results in a
 larger low frequency lag.
 
 \begin{figure}
     \centering
     \includegraphics[width=0.98\linewidth]{figures/reverberation.lag-energy.pdf}
-    \caption{Lag-energy spectra for the same setup as in Figure
+    \caption{Lag--energy spectra for the same setup as in Figure
     \ref{fig:reverberation-thin} but only for case where the lamppost height is
 $h=10$. The different colours now correspond to the frequency bands used to
-calculate the lag-energy spectrum (shown in the inset panel). The solid lines,
+calculate the lag--energy spectrum (shown in the inset panel). The solid lines,
 as before, denote the razor thin disc, whereas the dotted lines are the
-Shakura-Sunyaev disc with $\dot{M} / \dot{M}_\text{Edd} =0.3$.}
+Shakura--Sunyaev disc with $\dot{M} / \dot{M}_\text{Edd} =0.3$.}
     \label{fig:lag-energy}
 \end{figure}
 
@@ -1439,8 +1427,8 @@ profiles calculated with \Gradus to those calculated in
 \citet{johannsen_testing_2010}. Our lineprofiles, calculated via Cunningham
 transfer function integration, are shown in Figure
 \ref{fig:reflection-johannsen}. We find excellent agreement with the published
-line profiles in \citet{johannsen_testing_2010}. We demonstrate the flexibilty
-of the code by implementing the Einstein-Maxwell-Dilaton-Axion metric derived in
+line profiles in \citet{johannsen_testing_2010}. We demonstrate the flexibility
+of the code by implementing the Einstein--Maxwell--Dilaton--Axion metric derived in
 \citet{garcia_class_1995} and calculate lineprofiles for various values of the
 $b$ constant, shown in Figure \ref{fig:reflection-emda}.
 
@@ -1458,41 +1446,82 @@ $b$ constant, shown in Figure \ref{fig:reflection-emda}.
     \label{fig:reflection-emda}
 \end{figure}
 
-\section{Application to thick discs reverberation lags}
+\section{Applications to thick discs}
 \label{sec:applications}
 
-Our thick disc transfer function calculation method described in Section
-\ref{sec:partially-obscured-functions} allows spectra for arbitrary disc
-geometries to be efficiently computed. We demonstrate this by calculating high
-resolution lag-energy spectra for the SSD, with self-consistent emissivity and
-light-crossing profiles for the lamppost model, similar to
-\citet{taylor_x-ray_2018_reverb}. The results are shown in Figure
-\ref{fig:reverb-thick-discs} for different Eddington accretion rates. The
-self-obscuration of the disc has here the same effect as in the line profiles.
-As the inclination steepens towards the plane of the disc, the highest blue
-shifted component moves to lower energies due to obscuration. In tandem with
-this is a decrease in the time lag relative to the thin disc case, which is
-comparable to the thickness of the disc. At lower inclinations, the effect of
-the disc thickness is negligible.
+The Cunningham transfer function algorithm described in Section
+\ref{sec:partially-obscured-functions} is here used to calculate line profiles
+and reverberation lag features from a lamppost corona for the SSD, similar to,
+and in agreement with work by other authors
+\citep{taylor_exploring_2018,taylor_x-ray_2018}.
 
-In Figure \ref{fig:reverb-thick-discs-corona}, the lamppost height is changed
-for a fixed Eddington ratio. For low coronal heights, the thickness of the disc
-has a significant impact on the emissivity and light-crossing profiles, which
-therefore distorts the observed lag-energy profile across all inclinations and
-Fourier frequencies. Distant regions of the accretion disc have their
-contributions to the observed reflection flux suppressed, as the corona is
-obscured by the disc. Due to its proximity to the central singularity, the
-light travel time is compounded over the height of the disc, resulting in
-dramatically decreased lags. The effect of lamppost height is pronounced, and can
-significantly change the shape of the lag-energy profile.
+Illustrative results for the line profiles with a fixed emissivity function
+$\varepsilon(\rhoem) = \rhoem^{-3}$ for the SSD are shown in Figure
+\ref{fig:line-profile-ssd}. The line profiles are largely unchanged except at
+steep inclination, where the blue shifted contributions of the disc change.  As
+we can approximately consider the different energy ranges to originate from
+different radii on the disc \cite{gates_on_2024}, we can interpret the thick
+disc as obscuring the blue shifted contributions. This obscuration is
+preferential due to the rotation of the black hole generating an asymmetry in
+the blue and red shifted sides of the accretion disc, see Figure
+\ref{fig:transfer-parameterisation}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.99\linewidth]{figures/lineprofiles.ssd.pdf}
+    \caption{Line profiles for the SSD with $\dot{M} / \dot{M}_\text{Edd} = 0.3$ for different observer inclinations $\theta_\text{obs}$ and emissivity $I_\text{em} = \varepsilon(\rhoem) = \rhoem^{-3}$. The transfer functions are calculated as in Figure \ref{fig:relline-comparison}, and integrated over the same limits. The light-grey lines correspond to the geometric thin disc ($\dot{M} / \dot{M}_\text{Edd} = 0$), and differ only for steep inclinations due to obscuration of the inner $\rhoem$. Left panel is the the maximally spinning Kerr spacetime, whereas the right panel is the Schwarzschild spacetime.}
+    \label{fig:line-profile-ssd}
+\end{figure}
+
+Our reverberation lag results, for a fixed corona height $h=10 \rg$ with
+different Eddington ratios, are shown in Figure \ref{fig:reverb-thick-discs}. We
+interpret these results similar to the impact on the lineprofiles, in that only
+at steep inclinations, where obscuration is prominent, is a pronounced
+difference between the thin and thick disc case visible. There is also generally a decrease in the lag
+across the energy range due to the reduced distance photons must travel to hit
+the surface of the disc.
+
+At lower inclinations, below $60^\circ$, the effect of the thick disc in the
+lag--energy spectrum for a corona at $h \geq 10 \rg$ is negligible, even at
+moderate Eddington ratios $\dot{M} / \dot{M}_\text{Edd} = 0.3$. From an
+observational perspective, the reduced lag for such a configuration would likely
+only be detectable in the high energy deficit, however such a detection would
+require a steep inclination angle, likely accompanying high degrees of
+extinction and obscuration from other regions in the plane of the disc or torus.
+
+In Figure \ref{fig:reverb-thick-discs-corona}, the lag--energy spectrum for
+different lamppost heights is shown. A low corona has a much more prominent
+effect than a high corona, greatly reducing the lag and changing the shape of
+the spectrum. These effects can be principally attributed to two reasons. First,
+the much greater relative difference in light travel time from the corona to the
+thick disc when the lamppost is low, compounded by the light--crossing times due
+to the proximity to the black hole. This means the reprocessed reflected
+component occurs much earlier, diluting the lag significantly across the entire
+energy range. Second, the reduced illumination at distant radii on the disc
+suppresses the emissivity profile and therefore flux contributions from those
+regions. This will reduce the impulse response around the line energy $E / E_0 =
+1$, in turn diluting the lag at difference Fourier frequencies, and changing the
+shape of the lag--enregy spectra.
+
+Notably, for a low corona, a marked difference between the thin and thick disc
+lag--energy profiles exists for all inclinations and frequencies. This would be
+in principle observable with current data, and would be degenerate with other
+fitted parameters including black hole mass. We note that this effect can also
+be attributed to the geometry of the corona \citep[see
+e.g.][]{wilkins_towards_2016}.
+
+Degeneracies of these models and their relative importance will be explored in
+conjunction with our work on modelling radially extended corona using novel
+time-dependent emissivity functions in a forthcoming paper \todo{Baker \& Young,
+in prep}.
 
 \begin{figure*}
     \centering
     \includegraphics[width=0.99\linewidth]{figures/reverberation.thick-disc.pdf}
-    \caption{Lag-energy profiles for the SSD, using the same colour scheme as in
+    \caption{Lag--energy profiles for the SSD, using the same colour scheme as in
         Figure \ref{fig:lag-energy}. For all figures the Kerr spacetime
         ($a=0.998$) is used with a lamppost corona, $h = 10 \rg$. The light grey
-        lines show the corresponding razor-thin disc lag-energy profiles. The
+        lines show the corresponding razor-thin disc lag--energy profiles. The
         columns show the effect of changing the Eddington ratio $\dot{M} /
         \dot{M}_\text{Edd}$, and the rows are changing the inclination. When
         $\theta \lesssim 40^\circ$, the differences between the thin disc and
@@ -1517,37 +1546,49 @@ occurs when the coronal height is comparable to the height of the disc.}
 \section{Conclusions}
 \label{sec:conclusion}
 
-\Gradus is new a open-source and publicly available general relativistic
-ray-tracing software that can be used in a variety of X-ray spectral modelling.
-The software is able to reproduce results from other simulation works for a
-variety of test problems related to stability and numerical accuracy. We have
-demonstrated novel methods within \Gradus for calculating high resolution
-reverberation lags efficiently for thick accretion discs using the Cunningham
-transfer function formalism.
+\Gradus is a new open-source and publicly available general relativistic
+ray-tracing toolkit. It is designed to be extensible to a wide number of
+problems, and uses sophisticated algorithms to produce high-resolution
+simulations efficiently. The numerical methods and some implementation details
+have been discussed, and \Gradus has been tested against a number of standard
+problems in the literature. \Gradus has applied to calculating line profile and
+reverberation results for the standard Shakura--Sunyaev accretion disc, and the
+effects of obscuration and lamp post corona height discussed. Illustrative line
+profile simulations for non-Kerr space times have also been shown, and any
+result calculated with Gradus can switch the spacetime trivially, expediting
+the process of developing new codes for new metrics.
 
-The software can be used to compute the transfer functions for a wide variety of
-models. New spectral models for new assumptions or model component can be
-rapidly developed, and the implementations are designed for users to be able to
-construct their own simulations with ease.
+Our software can reliably compute the Cunningham transfer functions used in
+spectral models for a variety of accretion flows. This permits us to create fast
+line profile models that treat e.g. both the lamp post height and Eddington
+ratio of a SSD as free parameters, and allowing us to build on the work of
+\citet{jiang_black_20222}. Anticipated applications are to calculate
+transfer function tables for turbulent velocity profiles
+\citep{pariev_line_1998}, for warped accretion discs
+\citep[e.g.][]{hartnoll_reprocessed_2001}, for conical or sub-Keplerian discs
+\citep[e.g.][]{wu_iron_2007}, and more.
 
-Immediate applications that we are working on with \Gradus are for fitting the
-disc thickness as a free parameter, iterating on work by \todo{jiachen's paper}.
-We have also developed a method for rapidly computing reflection and
-reverberation signatures from geometrically extended coronal models \todo{cite
-in prep}. Future work on the software will extend the ray-tracing capabilities
-to include polarisation transport, which we can efficiently pre-compute using
-the same Cunningham transfer function approach as used for timing and
-reverberation lags presented in this work.
+Our modelling work has advanced already beyond what we have presented in this
+work, including a novel time-dependent emissivity method for computing the line
+profiles and reverberation lags of extended coronal geometries sufficiently
+quickly for use in spectral fitting \todo{Baker \& Young, in prep.}. We have
+also formalised a method for using generalised Cunningham transfer functions to
+integrate arbitrary quantities of the accretion disc. This will be applied to
+absorption layers on the accretion disc \citep{fabian_blueshifted_2020} and
+polarisation quantities from Comptonising slabs on the accretion disc
+\citep[e.g.][]{poutanen_the_1996}. An early demonstration is in this paper using
+timing information to compute high resolution reverberation lags.
 
-We encourage the community to contact us with interesting problems that may be
-tackled using \Gradus as we are happy to assist with new applications of the
-code.
+We are happy to assist with new applications of \Gradus, and encourage members
+of the community to contact us with interesting problems. Our ultimate aim is to
+make \Gradus a useful tool for quickly exploring and producing X-ray spectral
+models of compact objects.
 
 \section*{Acknowledgements}
 This work is supported by the UKRI AIMLAC CDT funded by grant EP/S023992/1.
 
 We thank Jiachen Jiang, Cosimo Bambi and Askar Abdikamalov for sharing their
-software for comparisons, and thank Corbin Taylor for making the \texttt{fenrir}
+software for comparisons, and thank Corbin Taylor for making the \software{fenrir}
 code, along with many example scripts, public at our request. FB thanks Rosie
 for her expert debugging assistance. All figures created using Makie.jl
 \citep{DanischKrumbiegel2021}, using the color scheme of
