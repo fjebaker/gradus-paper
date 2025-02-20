@@ -1,7 +1,7 @@
-\section{Orthonormalization with Gram-Schmidt}
+\section{Orthonormalization with Gram--Schmidt}
 \label{appendix:gram-schmidt}
 
-The theorem of Gram-Schmidt states that it is always possible to construct a set of orthonormal vectors in any inner-product space $\mathbb{R}^n$, and uses a projection-subtraction procedure as a proof \citep{schmidt_uber_1989}. Starting with $n$ linearly independent vectors $\vector{v}_n$, and denoting the projection of a vector $\vector{u}$ along the direction of $\vector{v}$ as
+The theorem of Gram--Schmidt states that it is always possible to construct a set of orthonormal vectors in any inner-product space $\mathbb{R}^n$, and uses a projection-subtraction procedure as a proof \citep{schmidt_uber_1989}. Starting with $n$ linearly independent vectors $\vector{v}_n$, and denoting the projection of a vector $\vector{u}$ along the direction of $\vector{v}$ as
 \begin{equation}
 \mathrm{P}_{\vector{v}}\left(\vector{u}\right) := \frac{\vector{v} \cdot \vector{u}}{\vector{u} \cdot \vector{u}}\ \vector{u} = \frac{g_{\mu\nu} v^\mu u^\nu}{g_{\sigma\rho} u^\sigma u^\rho} \vector{u},
 \end{equation}
@@ -29,4 +29,4 @@ Other sensible frames require different initial vectors, and care must be taken 
     \vector{v}_4 &= \left(1, 1, 1, 1\right) \mapsto \dtensor{\e}{(\phi)}{\mu}.
 \end{align}
 
-Our implementation of the Gram-Schmidt procedure is accurate up to machine-level with the analytic tetrads for the LNRF in \cite{bardeen_rotating_1972}, their Equation (3.2), and for the moving source ZAMO frame in \cite{gonzalez_probing_2017}, their Equation (10).
+Our implementation of the Gram--Schmidt procedure is accurate up to machine-level with the analytic tetrads for the LNRF in \cite{bardeen_rotating_1972}, their Equation (3.2), and for the moving source ZAMO frame in \cite{gonzalez_probing_2017}, their Equation (10).
