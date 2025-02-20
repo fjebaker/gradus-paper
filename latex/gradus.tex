@@ -122,7 +122,7 @@ deviations from the classical results in the observed spectra
 such effects are included in spectral models of accretion onto compact objects.
 
 GRRT has a long history in spectral modelling, with widespread use in modelling
-reflection spectra \citep[e.g.][]{fabian_x-ray_1989}, accretion disc emissivity
+reflection spectra \citep{fabian_x-ray_1989}, accretion disc emissivity
 due to the X-ray corona \citep[e.g.][]{wilkins_understanding_2012,
 wilkins_towards_2016}, emission and absorption features
 \citep[e.g.][]{ruszkowski_absorption_2002}, spectral energy densities of quasars
@@ -139,8 +139,8 @@ X-ray reverberation, and the accompanying use of GRRT.
 In the interest of computational performance, GRRT results are commonly
 pre-computed for spectral models \citep{laor_line_1991}. For example, in
 reflection spectra models, such as \software{relline} / \software{relxill}
-\citep{dauser_broad_2010, dauser_relativistic_2016} or \software{kyn} \todo{cite
-dovciak}, tabular GRRT data is integrated with an emissivity function to rapidly
+\citep{dauser_broad_2010, dauser_relativistic_2016} or \software{kyn}
+\citep{dovciak_extended_2004}, tabular GRRT data is integrated with an emissivity function to rapidly
 compute the spectral components. A consequence of pre-computation is that only a
 limited parameter domain can be sampled, and assumptions concerning, say, the
 disc geometry or velocity structure become baked into the tabulated data. Many
@@ -350,13 +350,14 @@ calculating two columns of the Jacobian entirely.
     \centering
     \includegraphics[width=0.99\linewidth]{figures/skycoords.pdf}
     \caption{
-    Geometry of the local sky for an observer or emitter. The image plane (yellow) is
-    perpendicular to the $e_{(r)}$ axis, which for an observer points towards
-    the global origin and therefore the central singularity. The momenta
-    $v_{(\phi)}$ and $v_{(\theta)}$ are used to calculate the impact parameters
-    on the image plane, $\alpha$ and $\beta$ respectively. For emitters, the
-    angles $(\Upsilon, \Psi)$ are used to parameterize points on the local sky,
-    that may be decomposed onto the basis $e_{(i)}$ to find $v_{(\mu)}$.
+    Geometry of the local sky for an observer or emitter. The image plane
+    (yellow) is perpendicular to the $e_{(r)}$ axis, which, for an observer,
+    points towards the the central singularity. The momenta $v_{(\phi)}$ and
+    $v_{(\theta)}$ are used to calculate the impact parameters on the image
+    plane, $\alpha$ and $\beta$ respectively. For emitters, the angles
+    $(\Upsilon, \Psi)$ are used to parameterize vectors that point on the local
+    sky, which may subsequently be decomposed onto the basis $e_{(i)}$ to find
+    $v_{(\mu)}$.
     }
     \label{fig:observer-coordinates}
 \end{figure}
@@ -425,12 +426,13 @@ the Cartesian to spherical coordinate transformation. The component $v_{(t)}$ is
 defined as the negative of the energy in the local frame, and $-v_{(t)}=E=1$
 without loss of generality.
 
-The transformation between local and global frame depends on the choice of local
-frame. The natural choice is the \emph{locally non-rotating frame}
-\citep[LNRF;][]{bardeen_rotating_1972}. This frame follows strictly
-circular world lines with $x^r = \text{const.}$ and $x^\phi = \omega t +
-\text{const.}$, with angular velocity $\omega = -g_{t\phi} / g_{\phi\phi}$. The
-coordinate transformation from the LNRF is
+Directions and momenta are easiest to express in a local frame and then
+transformed back to the global coordinates. The question arises which local
+frame to use and the natural answer is the locally non-rotating frame
+\citep[LNRF;][]{bardeen_rotating_1972}. This frame follows strictly circular
+world lines with $x^r = \text{const.}$ and $x^\phi = \omega t + \text{const.}$,
+with angular velocity $\omega = -g_{t\phi} / g_{\phi\phi}$. The transformation
+from the LNRF is
 \begin{equation}
     \label{eq:local-to-global-velocity}
     v_\mu = \e^{(\nu)}_{\phantom{(\nu)}\mu}\  v_{(\nu)}
@@ -805,7 +807,7 @@ extremal $g$ are found by using the Golden--Section bracketing method of
 step. We make the assumption that extremal $g$ approximately coincide with
 extremal $\beta = 0$, and therefore shift the domain to $\vartheta \in [ -\pi/2,
 3\pi/4)$ to ensure the maxima and minima are away from the edges of the domain
-to help the optimizer.
+to help the optimiser.
 
 The importance of accurately calculating $g_\text{min}$ and $g_\text{max}$ is
 difficult to overstate: small errors here will dramatically alter the shape of
@@ -853,15 +855,15 @@ to extrema in $g^\ast$, as shown in Figure \ref{fig:transfer-sampling-pattern}.
     \includegraphics[width=0.95\linewidth]{figures/transfer-functions.sampling.pdf}
     \caption{Transfer functions of the Kerr spacetime ($a = 0.998$) for various
         observer inclinations, showing the sample pattern of $g^\ast$ that our
-        algorithm (described in the text) produces. The higher
-        density of points around extremal $g^\ast$ is due to the optimizer we
-        employ to determine the extremal points. Note that for the high
-        inclination case ($\theta = 85^\circ$) there is slight numerical noise
-        very close to $g^\ast = 1$. This noise is in the region excluded by the
-        integration scheme, and therefore contributes negligible error in
-        calculations involving transfer functions. There is also a high density
-        of points on the lower branch of the transfer function, which is an
-        artefact of the projection of the disc onto the observer's plane.
+        algorithm (described in the text) produces. The higher density of points
+        around extremal $g^\ast$ is due to the optimiser
+        that determines the extremal points. Note that for the high inclination
+        case ($\theta = 85^\circ$) there is slight numerical noise very close to
+        $g^\ast = 1$. This noise is in the region excluded by the integration
+        scheme, and therefore contributes negligible error in calculations
+        involving transfer functions. There is also a high density of points on
+        the lower branch of the transfer function, which is an artefact of the
+        projection of the disc onto the observer's plane.
     }
     \label{fig:transfer-sampling-pattern}
 \end{figure}
@@ -878,7 +880,7 @@ calculating Cunningham transfer functions is modified through the use of
 
 We define a \emph{datum plane} to be an infinite plane at some scale height
 $z_\text{em} = \rhoem \cos \theta$, and used as the manifold over which the
-optimizer solves the projection of the ring with radius $\rhoem$. The datum
+optimiser solves the projection of the ring with radius $\rhoem$. The datum
 plane is in essence a cut-off for integration such that all geodesics terminate
 with the same $z$, see Figure \ref{fig:datum-plane-tracing}.
 
@@ -900,7 +902,7 @@ specific approach and the use of AD.
     \includegraphics[width=0.95\linewidth]{figures/datum-plane.pdf}
     \caption{Cross-sectional slice of geodesics traced from a distant observer
         against a datum plane (horizontal blue line) through a thick disc
-        (curved black line). The observer ``sees'' the solid geodesics
+        (curved black line). The observer `sees' the solid geodesics
         intersecting the disc, whereas for the purposes of calculating the
         Cunningham transfer functions, we continue integrating along the dashed
         line until intersecting the datum plane. For geodesic A the observer
@@ -914,7 +916,15 @@ specific approach and the use of AD.
 \begin{figure*}
     \centering
     \includegraphics[width=0.99\linewidth]{figures/transfer-functions.plots.pdf}
-    \caption{Transfer functions $f$ and timing $t$ for fixed $\rhoem$ for different observer inclinations $\theta_\text{obs}$ and $r_\text{obs} = 10^3 \rg$. Panels a) and b) Schwarzschild spacetime with equatorial thin disc and $\rhoem = 11\, \rg$. Panels c) and d) Maximally spinning Kerr spacetime $a=0.998$ with equatorial thin disc and $\rhoem = 4 \, \rg$ (see also \citealp{bambi_testing_2017}, their Figure 1). Panel e) and f) Maximally spinning Kerr spacetime $a=0.998$, with SSD $\dot{M} / \dot{M}_\text{Edd} = 0.3$ and $\rhoem = 4\, \rg$, showing obscuration at steep inclination.}
+    \caption{Transfer functions $f$ and timing $t$ for fixed $\rhoem$ for
+        different observer inclinations $\theta_\text{obs}$ and $r_\text{obs} =
+        10^3 \rg$. Panels a) and b) Schwarzschild spacetime with equatorial thin
+        disc and $\rhoem = 11\, \rg$. Panels c) and d) Maximally spinning Kerr
+        spacetime $a=0.998$ with equatorial thin disc and $\rhoem = 4 \, \rg$
+        \citep[see also][their Figure 1]{bambi_testing_2017}. Panel e) and f)
+        Maximally spinning Kerr spacetime $a=0.998$, with SSD $\dot{M} /
+        \dot{M}_\text{Edd} = 0.3$ and $\rhoem = 4\, \rg$, showing obscuration at steep
+        inclination.}
     \label{fig:transfer-functions}
 \end{figure*}
 
@@ -1102,11 +1112,13 @@ to ensure the validity of our implementations.
 \Gradus aims to make exploring new spacetime models simple by only requiring the
 non-zero metric components to be implemented. To this end and for comparison, we
 maintain a catalogue of metric implementations, including the Kerr spacetime,
-Morris--Thorne wormhole, Johannsen--Psaltis metric, the Einstein--Maxwell
-Dilaton--Axion metric \todo{citations for these}, the No-$\mathbb{Z}_2$ metric,
-and the Kerr--Newman metric, complete with the ability to specify the
-electromagnetic potential vector, from which external accelerations $a^\mu$ in
-equation \eqref{eq:geodesic_equation} are calculated.
+Morris--Thorne wormhole \citep{morris_wormholes_1988}, Johannsen metric
+\cite{johannsen_regular_2013}, the Einstein--Maxwell--Dilaton--Axion metric
+\citep{garcia_class_1995}, the No-$\mathbb{Z}_2$ metric
+\citep{chen_observational_2024}, and the Kerr--Newman
+metric \citep[e.g.][]{hackmann_charged_2013}, complete with the ability to
+specify the electromagnetic potential vector from which external accelerations
+$a^\mu$ in equation \eqref{eq:geodesic_equation} are calculated.
 
 The design of \Gradus prioritizes usability and extensibility, which comes at a
 small performance cost: our aim is not to implement the fastest, semi-analytic
@@ -1172,17 +1184,18 @@ memory.
 \begin{figure}
     \centering
     \includegraphics[width=0.95\linewidth]{figures/stability.conservation.pdf}
-    \caption{A comparison of different ODE integration algorithms using the default
-    tolerances $\text{abstol} = \text{reltol} = 10^{-9}$. Panel a) shows the
-    null-geodesic of the Kerr spacetime, $a = 0.998$, for impact parameters
-    $\alpha = 5$ and $\beta = 0$ integrated from the starting position $x^r =
-    10^4 \rg$ and $x^\theta = \pi / 2$. All of the algorithms considered
-    yield the same solution. Panel b) shows the integration time for the
-    geodesic considered. The integration time is approximately equal for all of
-    the algorithms except for RK4. Panel c) shows the value of the conserved
-    quantity $g_{\mu \nu} v^\mu v^\nu = 0$ along the trajectory, used as a
-    measure of stability of the integration algorithm.
-}
+    \caption{A comparison of different ODE integration algorithms using the
+        default tolerances $\text{abstol} = \text{reltol} = 10^{-9}$. Panel a)
+        shows the null-geodesic of the Kerr spacetime, $a = 0.998$, for impact
+        parameters $\alpha = 5$ and $\beta = 0$ integrated from the starting
+        position $x^r = 10^4 \rg$ and $x^\theta = \pi / 2$. All of the
+        algorithms considered yield almost identical solutions. Panel b) shows
+        the integration time for the geodesic considered. The integration time
+        is approximately equal for all of the algorithms except for RK4, which
+        is significantly longer. Panel c) shows the value of the conserved
+        quantity $g_{\mu \nu} v^\mu v^\nu = 0$ along the trajectory, used as a
+        measure of stability of the integration algorithm.
+    }
     \label{fig:dot-stability}
 \end{figure}
 
@@ -1213,7 +1226,14 @@ on numerical errors.
 \begin{figure}
     \centering
     \includegraphics[width=0.94\linewidth]{figures/deflection.iyer-hansen.pdf}
-    \caption{Deflection angle in the Kerr spacetime ($a = 0.998$) for geodesics in the equatorial plane over a range of impact parameters $\alpha$. Upper panel: numerical deflection $\delta x^\phi$ calculated with  $x^r_\text{start} = 2 \times 10^8 \, \rg$, absolute and relative tolerances set to $10^{-14}$, and effective infinity $4 \times 10^8\, \rg$, shown with the numerical solutions for $\hat{\alpha}$. Lower panel: the absolute relative error between the numeric and analytic deflection angles for different integration algorithms.}
+    \caption{Deflection angle in the Kerr spacetime ($a = 0.998$) for geodesics
+        in the equatorial plane over a range of impact parameters $\alpha$.
+        Upper panel: numerical deflection $\delta x^\phi$ calculated with
+        $x^r_\text{start} = 2 \times 10^8 \, \rg$, absolute and relative
+        tolerances set to $10^{-14}$, and effective infinity $4 \times 10^8\,
+        \rg$, shown with the numerical solutions for $\hat{\alpha}$. Lower
+        panel: the absolute relative error between the numeric and analytic
+        deflection angles for different integration algorithms.}
     \label{fig:deflection-angle}
 \end{figure}
 
@@ -1230,15 +1250,16 @@ arrival time of a photon at a given radius on the disc.
 \begin{figure}
     \centering
     \includegraphics[width=0.99\linewidth]{figures/emissivity.point-source.pdf}
-    \caption{Emissivity profiles, $\varepsilon(\rho)$ for a lamppost point source illuminating a thin, equatorial disc at various heights
-        above the spin axis of a maximally spinning Kerr black hole ($a =
-        0.998$). Panel a) shows the emissivity profiles in arbitrary flux units.
-        Panel b) is the $\alpha$ exponent of the emissivity profile found by
-        differentiating the emissivity profile as $r^{-\alpha}$.  Panel a) and
-        b) are to be compared to Figures 2 and 3 in
-        \citet{dauser_irradiation_2013}. Panel c) is the light-travel time of
-        the photon from the lamppost to the disc. The increase in light travel
-        time at small radii is due to the strong gravity effects.
+    \caption{Emissivity profiles, $\varepsilon(\rho)$ for a lamppost point
+        source illuminating a thin, equatorial disc at various heights above the
+        spin axis of a maximally spinning Kerr black hole ($a = 0.998$). Panel
+        a) shows the emissivity profiles in arbitrary flux units.  Panel b) is
+        the $\alpha$ exponent of the emissivity profile found by differentiating
+        the emissivity profile assuming $r^{-\alpha}$. Panel a) and b) are to be
+        compared to Figures 2 and 3 in \citet{dauser_irradiation_2013}. Panel c)
+        is the light-travel time of the photon from the lamppost to the disc.
+        The increase in light travel time at small radii is due to the strong
+        gravity effects.
 }
     \label{fig:emissivity-profiles}
 \end{figure}
@@ -1261,7 +1282,14 @@ within $\sim 1\%$ relative difference across all parameters.
 \begin{figure}
     \centering
     \includegraphics[width=0.99\linewidth]{figures/lineprofiles.comparison.pdf}
-    \caption{Comparison of line profiles calculated by integrating transfer functions with emissivity $I_\text{em} = \varepsilon(\rhoem) = \rhoem^{-3}$ using \Gradus and \relline. The transfer functions are calculated for an observer at $r_\text{obs} = 1000\rg$ and $\theta_\text{obs} = 40^\circ$, and integrated between $r_\text{in} = \risco$ and $r_\text{out} = 50 \rg$. Left panel is the the maximally spinning Kerr spacetime, whereas the right panel is the Schwarzschild spacetime.}
+    \caption{Comparison of line profiles calculated by integrating transfer
+        functions with emissivity $I_\text{em} = \varepsilon(\rhoem) =
+        \rhoem^{-3}$ using \Gradus and \relline. The transfer functions are
+        calculated for an observer at $r_\text{obs} = 1000\rg$ and
+        $\theta_\text{obs} = 40^\circ$, and integrated between $r_\text{in} =
+        \risco$ and $r_\text{out} = 50 \rg$. Left panel is the maximally
+        spinning Kerr spacetime, whereas the right panel is the Schwarzschild
+        spacetime.}
     \label{fig:relline-comparison}
 \end{figure}
 
@@ -1305,9 +1333,9 @@ transfer functions using the Cunningham transfer functions, described in
     \centering
     \includegraphics[width=0.97\linewidth]{figures/transfer-functions.2d.pdf}
     \caption{Two-dimensional transfer functions for the maximally spinning Kerr
-    spacetime ($a = 0.998$) for two different observer inclinations. These are
-    calculated by integrating the time-dependent transfer functions (details in
-the text).}
+        spacetime ($a = 0.998$) for two different observer inclinations. These are
+        calculated by integrating the time-dependent transfer functions (details
+        in the text).}
     \label{fig:lag-frequency-transfer-functions}
 \end{figure}
 
@@ -1365,9 +1393,9 @@ agreement with \cite{cackett_modelling_2014} for all cases.
         the Kerr spacetime ($a = 0.998$) for different heights of the lamppost
         model. The solid lines are the razor-thin disc case, whereas the dotted
         lines are for the Shakura--Sunyaev disc solution with $\dot{M} /
-    \dot{M}_\text{Edd} = 0.3$. Panel a) shows the impulse responses summed
-across all energy bands, and panel b) shows the corresponding lag--frequency
-spectra of the impulse responses. }
+        \dot{M}_\text{Edd} = 0.3$. Panel a) shows the impulse responses summed
+        across all energy bands, and panel b) shows the corresponding lag--frequency
+        spectra of the impulse responses. }
     \label{fig:reverberation-thin}
 \end{figure}
 
@@ -1392,10 +1420,10 @@ larger low frequency lag.
     \includegraphics[width=0.98\linewidth]{figures/reverberation.lag-energy.pdf}
     \caption{Lag--energy spectra for the same setup as in Figure
     \ref{fig:reverberation-thin} but only for case where the lamppost height is
-$h=10$. The different colours now correspond to the frequency bands used to
-calculate the lag--energy spectrum (shown in the inset panel). The solid lines,
-as before, denote the razor thin disc, whereas the dotted lines are the
-Shakura--Sunyaev disc with $\dot{M} / \dot{M}_\text{Edd} =0.3$.}
+    $h=10$. The different colours now correspond to the frequency bands used to
+    calculate the lag--energy spectrum (shown in the inset panel). The solid lines,
+    as before, denote the razor thin disc, whereas the dotted lines are the
+    Shakura--Sunyaev disc with $\dot{M} / \dot{M}_\text{Edd} =0.3$.}
     \label{fig:lag-energy}
 \end{figure}
 
@@ -1405,7 +1433,13 @@ Shakura--Sunyaev disc with $\dot{M} / \dot{M}_\text{Edd} =0.3$.}
 \begin{figure*}
     \centering
     \includegraphics[width=0.99\linewidth]{figures/radiative-transfer.gold.pdf}
-    \caption{Intensity images calculated with \Gradus of the radiative transfer analytic test models specified in \citet{gold_verification_2020} with resolution $128 \times 128$ pixels, and impact parameters ranging between $-15\, \rg$ and $15\, \rg$, and observer position $r_\text{obs} = 1000\, \rg$ and inclination $\theta_\text{obs} = 60^\circ$. The test cases correspond to the test parameters in their Table 1. The colouring is the intensity for the geodesic corresponding to that pixel normalized over the total intensity .}
+    \caption{Intensity images calculated with \Gradus of the radiative transfer
+    analytic test models specified in \citet{gold_verification_2020} with
+    resolution $128 \times 128$ pixels, and impact parameters ranging between $-15\,
+    \rg$ and $15\, \rg$, and observer position $r_\text{obs} = 1000\, \rg$ and
+    inclination $\theta_\text{obs} = 60^\circ$. The test cases correspond to the
+    test parameters in their Table 1. The colouring is the intensity for the
+    geodesic corresponding to that pixel normalized over the total intensity .}
     \label{fig:gold-test-problems}
 \end{figure*}
 
@@ -1424,25 +1458,30 @@ Figure \ref{fig:gold-test-problems}.
 To test our implementation for other spacetimes and to ensure the
 spacetime-agnostic implementation functions correctly, we compare the line
 profiles calculated with \Gradus to those calculated in
-\citet{johannsen_testing_2010}. Our lineprofiles, calculated via Cunningham
+\citet{johannsen_testing_2013}. Our lineprofiles, calculated via Cunningham
 transfer function integration, are shown in Figure
 \ref{fig:reflection-johannsen}. We find excellent agreement with the published
-line profiles in \citet{johannsen_testing_2010}. We demonstrate the flexibility
-of the code by implementing the Einstein--Maxwell--Dilaton--Axion metric derived in
-\citet{garcia_class_1995} and calculate lineprofiles for various values of the
-$b$ constant, shown in Figure \ref{fig:reflection-emda}.
+line profile. We demonstrate the flexibility
+of the code by implementing the Einstein--Maxwell--Dilaton--Axion metric derived
+in \citet{garcia_class_1995} and calculate lineprofiles for various values of
+the $b$ constant, shown in Figure \ref{fig:reflection-emda}. These Cunningham
+transfer functions may be tabulated and readily used in spectral models.
 
 \begin{figure}
     \centering
     \includegraphics[width=0.99\linewidth]{figures/lineprofiles.johannsen-comparison.pdf}
-    \caption{\todo{caption}}
+    \caption{Sample lineprofiles for the various values of the deformation
+    parameter $\epsilon$ for the metric described in
+    \citet{johannsen_testing_2013}. Both cases assume a powerlaw emissivity profile
+    with photon index $3$.}
     \label{fig:reflection-johannsen}
 \end{figure}
 
 \begin{figure}
     \centering
     \includegraphics[width=0.99\linewidth]{figures/lineprofile.emda.pdf}
-    \caption{\todo{caption}}
+    \caption{The same as in Figure \ref{fig:reflection-johannsen} but for the
+    metric described in \citet{garcia_class_1995}.}
     \label{fig:reflection-emda}
 \end{figure}
 
@@ -1499,7 +1538,8 @@ to the proximity to the black hole. This means the reprocessed reflected
 component occurs much earlier, diluting the lag significantly across the entire
 energy range. Second, the reduced illumination at distant radii on the disc
 suppresses the emissivity profile and therefore flux contributions from those
-regions. This will reduce the impulse response around the line energy $E / E_0 =
+regions. This will reduce the impulse response around the line energy $E /
+E_\text{em} =
 1$, in turn diluting the lag at difference Fourier frequencies, and changing the
 shape of the lag--enregy spectra.
 
@@ -1553,14 +1593,14 @@ simulations efficiently. The numerical methods and some implementation details
 have been discussed, and \Gradus has been tested against a number of standard
 problems in the literature. \Gradus has applied to calculating line profile and
 reverberation results for the standard Shakura--Sunyaev accretion disc, and the
-effects of obscuration and lamp post corona height discussed. Illustrative line
+effects of obscuration and lamppost corona height discussed. Illustrative line
 profile simulations for non-Kerr space times have also been shown, and any
 result calculated with Gradus can switch the spacetime trivially, expediting
 the process of developing new codes for new metrics.
 
 Our software can reliably compute the Cunningham transfer functions used in
 spectral models for a variety of accretion flows. This permits us to create fast
-line profile models that treat e.g. both the lamp post height and Eddington
+line profile models that treat e.g. both the lamppost height and Eddington
 ratio of a SSD as free parameters, and allowing us to build on the work of
 \citet{jiang_black_20222}. Anticipated applications are to calculate
 transfer function tables for turbulent velocity profiles
