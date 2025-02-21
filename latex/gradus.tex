@@ -173,7 +173,7 @@ used in concert with other models.
 % accretion flows, and \citet{abdikamalov_testing_2020} study a Novikov--Thorne
 % disc in the \citet{johannsen_regular_2013} spacetime.
 
-There has recently been increased interest in ``tests of relativity'', studying
+There has recently been increased interest in `tests of relativity', studying
 spacetime solutions that deviate from a Kerr black hole (e.g.
 \citealt{johannsen_testing_2010, chrusciel_stationary_2012, bambi_testing_2022,
 patra_accretion_2023, chen_observational_2024},). These include spacetimes that
@@ -306,7 +306,7 @@ classes depending on the sign of $\mu^2$; namely $\mu^2 = 0$ corresponding to
 \emph{null geodesics}, $\mu^2 < 0$ to \emph{time-like geodesics}, and $\mu^2 >
 0$ to \emph{space-like geodesics}. Null geodesics are the trajectories of
 photons, time-like geodesics are the trajectories of massive particles, and
-space-like geodesics are the trajectories of exotic ``faster-than-light''
+space-like geodesics are the trajectories of exotic `faster-than-light'
 particles (e.g. tachyons).
 
 As with the position, it is sufficient to specify the three-vector $\vel{i}$,
@@ -325,7 +325,7 @@ geodesics in the forward direction as if they had travelled \textit{backwards}.
 Photons can therefore be traced from an observer towards the black hole, and
 calculations performed as if they had been emitted from near the black hole and
 travelled towards the observer. This seeming triviality cannot be understated in
-an implementation of GRRT: it means only the ``observed'' geodesics need to be
+an implementation of GRRT: it means only the `observed' geodesics need to be
 traced, and will appear to alter the directions of rotations. There is
 consequently an additional minus sign when determining the dot products of
 velocity vectors calculated using this trick.
@@ -376,10 +376,10 @@ the convenience of parameterisation, as will be seen.
 
 For observers, we are interested in the sparse set of emitted photons which
 reach an image plane representing the observer's field of view. We use a
-``pinhole camera'' setup, where every geodesic originates from the same point at
+`pinhole camera' setup, where every geodesic originates from the same point at
 the observer, but with a velocity vector that has a slight angular offset in
 order to intersect a particular point on the projected image plane. This is in
-contrast to a setup where each ``pixel'' originates from an offset position, but
+contrast to a setup where each `pixel' originates from an offset position, but
 with parallel velocity vectors.
 
 The parameters representing the local sky are shown in
@@ -578,7 +578,7 @@ emitting (start) and observing (end) media respectively.
 
 
 
-\subsection{Illumination and emissivity profiles}
+\subsection{Disc illumination and emissivity profiles}
 \label{sec:emissivity-profiles}
 
 The presence of an illuminating source near the accretion disc, termed the
@@ -592,15 +592,14 @@ given by
 \begin{equation}
     \xi = \frac{4 \pi F_i}{n_\text{H}}
 \end{equation}
-where $F_i$ is the total illuminating X-ray flux in a given energy band $i$, often in the range $0.01 - 100
-\text{ keV}$, and $n_\text{H}$ is the co-moving hydrogen density
-\citep{ross_effects_1993}.
-For our purposes, we will drop factors considered to be constant, and use
-$\varepsilon \propto F_i$ directly.
+where $F_i$ is the total illuminating X-ray flux in a given energy band $i$,
+often in the range $0.01 - 100 \text{ keV}$, and $n_\text{H}$ is the co-moving
+hydrogen density \citep{ross_effects_1993}.  For our purposes, we will drop
+factors considered to be constant, and use $\varepsilon \propto F_i$ directly.
 
 The geometry of the corona is unknown. It is often modelled, for simplicity, as
 a point source on the spin axis of the black hole that emits isotropically. Such
-a configuration is known as the ``lamppost'' corona
+a configuration is known as the `lamppost' corona
 \citep[e.g.][]{fukumura_accretion_2007}.  The effects of extended axis-symmetric
 coronae have been explored in \citet{wilkins_towards_2016}, and the emissivity
 profile for additional geometries have been computed in
@@ -783,15 +782,15 @@ or $1$, resulting in numerically better behaved functions at extremal $g^\ast$.
 
 As a note, the name \emph{transfer functions} is a more general term and used
 elsewhere, for example in reverberation simulations discussed later. To avoid
-ambiguity, we henceforth refer to functions of the kind defined in equation
-\eqref{eq:cunn-transfer-function} as \emph{relativistic} or \emph{Cunningham
-transfer functions}. Furthermore, the Cunningham transfer functions are referred
-to as having ``upper'' and ``lower'' branches between extremal $g^\ast$, as
-shown in Figure~\ref{fig:transfer-sampling-pattern}, stemming from the
-double-valued nature of $g^\ast$. When the emission from the disc is not
-isotropic, the distinction between these branches becomes important, as the
-geodesic that connects the disc element to the observer makes a different cosine
-angle $\mu$ to the disc surface.
+ambiguity, we henceforth refer to functions of the kind defined in
+equation~\eqref{eq:cunn-transfer-function} as \emph{relativistic} or
+\emph{Cunningham transfer functions}. Furthermore, the Cunningham transfer
+functions are referred to as having `upper' and `lower' branches between
+extremal $g^\ast$, as shown in Figure~\ref{fig:transfer-sampling-pattern},
+stemming from the double-valued nature of $g^\ast$. When the emission from the
+disc is not isotropic, the distinction between these branches becomes important,
+as the geodesic that connects the disc element to the observer makes a different
+cosine angle $\mu$ to the disc surface.
 
 \subsubsection{Calculating Cunningham transfer functions}
 
@@ -917,7 +916,7 @@ The Jacobian is calulated by tracing against the thick disc and is combined with
 a check to see if a patch of the disc is obscured. This obscuration check is
 used to mask values of the transfer functions, as in
 Figure~\ref{fig:transfer-functions}. This method is in effect analogous to the
-``imaginary photons'' of \cite{abdikamalov_testing_2020}, formalized for our
+`imaginary photons' of \cite{abdikamalov_testing_2020}, formalized for our
 specific approach and the use of AD.
 
 \begin{figure*}
@@ -1167,8 +1166,8 @@ In this section we validate our code using a number of standard test cases from
 the literature. Unless otherwise stated, all test problems are integrated with
 the Tsitouras 5-4 algorithm \citep{tsitouras_rungekutta_2011}. We also consider
 Faegin's 10$^\text{th}$ order Runge--Kutta method, the explicit Runge--Kutta
-4$^\text{th}$ order algorithm \citep{press_numerical_2007}, and Verner's ``Most
-Efficient'' 6-5 Runge--Kutta method.  These are all implemented in the Julia
+4$^\text{th}$ order algorithm \citep{press_numerical_2007}, and Verner's `Most
+Efficient' 6-5 Runge--Kutta method.  These are all implemented in the Julia
 DifferentialEquations.jl package \citep{rackauckas_differential_2017}, and used
 to highlight and small numerical differences that accompany the choice of ODE
 integrator.
@@ -1224,8 +1223,8 @@ deflection angle $\hat{\alpha}$.
 Figure~\ref{fig:deflection-angle} shows the deflection angle as a function of
 impact parameter $\alpha$, along with a  measure of the error for the different
 integration algorithms. There is asymptotic behaviour of the error as $\lvert
-\alpha \rvert$ increases. This is related to our approximation of an ``observer
-at infinity'' discussed in Section~\ref{sec:observers-and-emitters}. As can be
+\alpha \rvert$ increases. This is related to our approximation of an `observer
+at infinity' discussed in Section~\ref{sec:observers-and-emitters}. As can be
 expected, the error increases if $x^r_\text{start}$ is decreased, and
 vice-versa. Here we again see the impact that the choice of integrator can have
 on numerical errors.
