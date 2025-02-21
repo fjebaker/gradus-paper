@@ -30,13 +30,13 @@
 
 %%%%% AUTHORS - PLACE YOUR OWN PACKAGES HERE %%%%%
 \usepackage{xspace}
-
-% TODO: remove me, i am just here to suppress some warnings
 \usepackage{tcolorbox}
-\newcommand{\todo}[1]{{\noindent \bf \color{red} TODO: #1}}
-\newcommand{\citneeded}{{\bf \color{red} $^{\text{citation needed}}$}}
-\pdfsuppresswarningpagegroup=1
-\pdfminorversion=7
+
+% % TODO: remove me, i am just here to suppress some warnings
+% \newcommand{\todo}[1]{{\noindent \bf \color{red} TODO: #1}}
+% \newcommand{\citneeded}{{\bf \color{red} $^{\text{citation needed}}$}}
+% \pdfsuppresswarningpagegroup=1
+% \pdfminorversion=7
 
 %%%%%%%%%%%% CUSTOM COMMANDS %%%%%%%%%%%%%%%%%%%%%
 \newcommand{\FeKa}{Fe K$\alpha$ }
@@ -210,7 +210,8 @@ reports either under Issues, or directly via email to the corresponding
 author.}, written in the Julia programming language
 \citep{Bezanson_Julia_A_fresh_2017}. Models created with \Gradus can be readily
 used in spectral fitting packages, such as \software{XSPEC}
-\citep{arnaud_xspec_1996} or \software{SpectralFitting.jl} \citneeded.
+\citep{arnaud_xspec_1996} or \software{SpectralFitting.jl} (Baker et al. in
+preparation).
 
 % We maintain C-ABI
 % compatible wrappers for integrating the transfer function tables that have
@@ -608,8 +609,8 @@ profile for additional geometries have been computed in
 \citet{gonzalez_probing_2017}. Conventional methods use a Monte--Carlo sampling
 approach for extended coronae, which can be expensive to compute and some form
 of tabulation. We note that \Gradus includes a novel formulation for computing
-time-dependent emissivity profiles for extended coronae, detailed in \todo{Baker
-\& Young, in prep.}).
+time-dependent emissivity profiles for extended coronae, detailed in (Baker
+\& Young in preparation).
 
 For the lamppost corona, when the emission is isotropic in the rest
 frame of the corona, i.e. locally, the emissivity profile is a function of only the
@@ -1570,8 +1571,8 @@ e.g.][]{wilkins_towards_2016}.
 
 Degeneracies of these models and their relative importance will be explored in
 conjunction with our work on modelling radially extended corona using novel
-time-dependent emissivity functions in a forthcoming paper \todo{Baker \& Young,
-in prep}.
+time-dependent emissivity functions in a forthcoming paper (Baker \& Young
+in preparation).
 
 \begin{figure*}
     \centering
@@ -1629,7 +1630,7 @@ transfer function tables for turbulent velocity profiles
 Our modelling work has advanced already beyond what we have presented in this
 work, including a novel time-dependent emissivity method for computing the line
 profiles and reverberation lags of extended coronal geometries sufficiently
-quickly for use in spectral fitting \todo{Baker \& Young, in prep.}. We have
+quickly for use in spectral fitting (Baker \& Young in preparation). We have
 also formalised a method for using generalised Cunningham transfer functions to
 integrate arbitrary quantities of the accretion disc. This will be applied to
 absorption layers on the accretion disc \citep{fabian_blueshifted_2020} and
