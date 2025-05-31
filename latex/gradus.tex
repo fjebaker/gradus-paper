@@ -86,23 +86,7 @@ $^{1}$H. H. Wills Physics Laboratory, Tyndall Avenue, Bristol BS8 1TL, UK
 
 % Abstract of the paper
 \begin{abstract}
-We introduce \Gradus, an open-source and publicly available general relativistic
-ray-tracing toolkit for X-ray spectral modelling in arbitrary spacetimes. Our
-software is written in the Julia programming language, making use of
-forward-mode automatic differentiation for computing the Christoffel symbols
-during geodesic integration, and for propagating derivatives through the entire
-ray-tracer. Relevant numerical methods are detailed, and our models are
-validated using a number of tests and comparisons to other codes. The
-differentiability is used to optimally calculate Cunningham transfer functions
--- used to efficiently pre-compute relativistic effects in spectral models. A
-method is described for calculating such transfer functions for disc with
-non-zero vertical height, including the treatment of self-obscuration. An
-extension of the transfer function formalism that includes timing information is
-described, and used to calculate high-resolution reverberation lag spectra for a
-lamppost corona. The lag--frequency and lag--energy spectra for a
-Shakura--Sunyaev accretion disc with various lamppost heights and Eddington
-ratios are calculated, and the general impact of disc thickness in reflection
-models is discussed.
+We introduce \Gradus, an open-source and publicly available general relativistic ray-tracing toolkit for X-ray spectral modelling in arbitrary spacetimes. Our software is written in the Julia programming language, making use of forward-mode automatic differentiation for computing the Christoffel symbols during geodesic integration, and for propagating derivatives through the entire ray-tracer. Relevant numerical methods are detailed, and our models are validated using a number of tests and comparisons to other codes. The differentiability is used to optimally calculate Cunningham transfer functions -- used to efficiently pre-compute relativistic effects in spectral models. A method is described for calculating such transfer functions for disc with non-zero vertical height, including the treatment of self-obscuration. An extension of the transfer function formalism that includes timing information is described, and used to calculate high-resolution reverberation lag spectra for a lamppost corona. The lag--frequency and lag--energy spectra for a Shakura--Sunyaev accretion disc with various lamppost heights and Eddington ratios are calculated, and the general impact of disc thickness in reflection models is discussed.
 \end{abstract}
 
 % Select between one and six entries from the list of approved keywords.
@@ -118,25 +102,24 @@ accretion, accretion discs -- black hole physics -- gravitation -- line: profile
 %%% INTRODUCTION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
 
-General relativistic ray-tracing (GRRT) is a computational technique for
-calculating the trajectory of individuals particles through a given spacetime.
-It enables the calculation of spectral components and radiative processes in
-strong gravity around black holes, neutron stars, and other compact objects,
-making the technique invaluable for models of the inner regions of the accretion
-flow. The general relativistic (GR) effects cause significant deviations from
-the classical results in the observed spectra
+General relativistic ray-tracing (GRRT) is a computational technique used to
+calculate the trajectory of individual particles through a spacetime.  It
+enables the simulation of spectral components and radiative processes in the
+strong gravity around black holes, neutron stars, and other compact objects, and
+is therefore invaluable for models of the inner regions of the accretion flow.
+In this region, the general relativistic (GR) effects cause significant
+deviations from the classical results in the observed spectra
 \citep[e.g.][]{cunningham_optical_1973, fabian_long_2002}, timing
 \citep[e.g.][]{stella_measuring_1990, reynolds_x-ray_1999}, and appearance
-\citep[e.g.][]{luminet_image_1979}. It is consequently important that such
-effects are included in spectral models of accretion onto compact objects.
+\citep[e.g.][]{luminet_image_1979}.
 
 GRRT has a long history in spectral modelling, with widespread use in
-calculating reflection spectra \citep{fabian_x-ray_1989}, accretion disc
-emissivity due to the X-ray corona \citep[e.g.][]{wilkins_understanding_2012,
-wilkins_towards_2016}, emission and absorption features
-\citep[e.g.][]{ruszkowski_absorption_2002}, spectral energy densities of quasars
-\citep[e.g.][]{hagen_estimating_2023}, variability such as reverberation lags or
-propagating fluctuations \citep[e.g.][]{ingram_public_2019}, the corona-disc
+calculating coronal illumination and accretion disc emissivity
+\citep[e.g.][]{wilkins_understanding_2012, wilkins_towards_2016}, reflection
+spectra \citep{fabian_x-ray_1989}, emission and absorption features
+\citep[e.g.][]{ruszkowski_absorption_2002}, spectral energy densities,
+\citep[e.g.][]{hagen_estimating_2023}, variabilities including reverberation lags or
+propagating fluctuations \citep[e.g.][]{ingram_public_2019}, the disc-corona
 connection in thermal lags \citep[e.g.][]{kammoun_hard_2019}, quasi-periodic
 oscillations \citep[QPOs, e.g.][]{tsang_iron_2013}, and so on.  We refer the
 reader to the reviews of \citet{reynolds_iron_lines_2003} and
@@ -145,84 +128,64 @@ X-ray spectroscopy, and \citet{uttley_x-ray_2014} and
 \citet{cackett_reverberation_2021} for reviews of X-ray reverberation, and the
 accompanying use of GRRT.
 
-In the interest of computational performance, GRRT results are commonly
-pre-computed for spectral models. For example, in
-reflection spectra models, such as \software{relline} / \software{relxill}
-\citep{dauser_broad_2010, dauser_relativistic_2016} or \software{kyn}
-\citep{dovciak_extended_2004}, tabular GRRT data is integrated with an emissivity function to rapidly
-compute the spectral components. A consequence of pre-computation is that only a
-limited parameter domain can be sampled, and assumptions concerning the
-disc geometry or velocity structure become baked into the tabulated data. Many
-GRRT models assume a razor-thin disc in the equatorial plane with strictly
-Keplerian velocity structure \citep[e.g.][]{laor_line_1991,dovciak_extended_2004,
-beckwith_iron_2004, brenneman_constraining_2006, dauser_broad_2010}. These
-assumptions may differ from the rest-frame models they are convolved with when
-used in concert with other models.
+Spectral models computed using GRRT will commonly pre-compute the relativistic
+effects, so that the models may be rapidly evaluated without invoking the
+ray-tracer, thereby opening the opportunity for parameter inference using
+optimisation methods. For example, in reflection spectra models, such as
+\software{relline} / \software{relxill} \citep{dauser_broad_2010,
+dauser_relativistic_2016} or \software{kyn} \citep{dovciak_extended_2004},
+pre-computed tabular GRRT data is integrated. A consequence of pre-computation
+is that only a select parameter domain is available and at limited resolution,
+and assumptions concerning the disc geometry or velocity structure may become
+baked into the tabulated data.  This may be problematic, as many GRRT-based
+models assume, for computational simplicity, a razor-thin disc in the equatorial
+plane with strictly Keplerian velocity structure
+\citep[e.g.][]{laor_line_1991,dovciak_extended_2004, beckwith_iron_2004,
+brenneman_constraining_2006, dauser_broad_2010}. Another model used in tandem
+may make different assumptions, leading to parameter inference that may yield
+erroneous results. There is therefore an interest in publicly available and
+performant GRRT codes that can be used to account for and pre-compute GR
+effects, but that can also be made to match the assumptions of other models.
 
-% The effects of other disc geometries and velocity structures have been explored
-% for some specific cases: the models of \citet{karas_light_1992} and
-% \citet{karas_vicinity_1992} examine the changing line profiles of hot spots
-% eclipsed in thick discs, \citet{pariev_line_1998} study the effects of turbulent
-% velocities in a Novikov-Thorne accretion discs,
-% \citet{hartnoll_reprocessed_2001} model a warped accretion disc,
-% \citet{fukumura_iron_2004} study a spiral velocity structure; a conical disc
-% structure is explored by \citet{wu_iron_2007} including sub-Keplerian orbits and
-% the effects of self-occulting of the disc, \citet{taylor_exploring_2018,
-% taylor_x-ray_2018} calculate tabular line profile models and
-% reverberation features for a disc with the Shakura--Sunyaev height profile,
-% \citet{thomsen_relativistic_2022} model X-ray reverberation in super-Eddington
-% accretion flows, and \citet{abdikamalov_testing_2020} study a Novikov--Thorne
-% disc in the \citet{johannsen_regular_2013} spacetime.
-
-There has recently been increased interest in `tests of relativity', studying
+There is additionally increased interest in `tests of relativity', studying
 spacetime solutions that deviate from a Kerr black hole (e.g.
 \citealt{johannsen_testing_2010, chrusciel_stationary_2012, bambi_testing_2022,
 patra_accretion_2023, chen_observational_2024},). A line of research looks to
 examine X-ray spectral properties of spacetimes that violate the
 \textit{no-hair} uniqueness theorems\footnote{In \emph{no-hair} theorems, `hair'
     is metaphor for additional information in the spacetime beyond mass, angular
-momentum, and charge.}. The interest is in part driven by observations made by
+momentum, and charge.}. This interest is in part driven by observations made by
 the Event Horizon Telescope collaboration of the `shadow' and photon ring of M87
-and Mgr A* \citep{the_event_horizon_telescope_collaboration_first_2019,
+and Sgr A* \citep{the_event_horizon_telescope_collaboration_first_2019,
 the_event_horizon_telescope_collaboration_first_2023}, as these have inspired a
-wealth of study into different spacetimes and the development of new GRRT and
-spectral models \citep[see][]{eht_non_kerr_2022}.
-Some efforts use disc spectra and line profiles to measure deviations from the
-Kerr spacetime, yielding seemingly tight constraints on the deformation
-parameters of some spacetime solutions
+wealth of study into different spacetimes and the development of new GRRT models
+\citep[see e.g.][]{eht_non_kerr_2022}. Other efforts use disc spectra and line
+profiles to measure deviations from the Kerr spacetime, yielding seemingly tight
+constraints on the deformation parameters of some spacetime solutions
 \citep[e.g.][]{bambi_precision_measuremets_2021}. To explore the use and
-validity of X-ray spectroscopy for such tests of relativity requires performant
-spectral models, and in turn pre-computed GRRT tables for alternative
-spacetimes.
+validity of X-ray spectroscopy for such tests of relativity requires flexible
+GRRT codes that are not specialised to a particular spacetime.
 
-In most spectral modelling applications, the GRRT pre-computed tabular data is a
-set of \textit{transfer functions} that can be used to efficiently calculate
-line profiles or convolution kernels. There are few immediately available public
-codes that can reliably calculate new transfer function tables, even for the
-simplified razor-thin Keplerian disc models, and none that the authors are aware
-of that can reliably do so for other disc geometries, velocity structures, and
-spacetimes. Perhaps the closest example is the work of
-\citep{taylor_exploring_2018}, however this still has some caveats in usability
-and extensibility. It is to address this gap that we present a new publicly
-available GRRT code, Gradus.jl\footnote{Available under GPL 3.0 license at
+In many spectral modelling applications, the pre-computed tabular GRRT data is a
+set of \textit{transfer functions} that can be used to efficiently include the
+GR effects. There are few immediately available public codes that can reliably
+calculate new transfer function tables, even assuming a razor-thin Keplerian
+disc models, and none that the authors are aware of that can reliably do so for
+other disc geometries, velocity structures, and spacetimes. Perhaps the closest
+example is the work of \citep{taylor_exploring_2018}, however this has some
+caveats related to calculating transfer function tables. It is to address this
+gap that we present a new publicly available GRRT code,
+\Gradus\footnote{Available under GPL 3.0 license at
 \url{https://github.com/astro-group-bristol/Gradus.jl}. Please submit bug
 reports either under Issues, or directly via email to the corresponding
 author.}, written in the Julia programming language
-\citep{Bezanson_Julia_A_fresh_2017}. Models created with \Gradus can be readily
-used in spectral fitting packages, such as \software{XSPEC}
-\citep{arnaud_xspec_1996} or \software{SpectralFitting.jl} (Baker et al. in
-preparation).
+\citep{Bezanson_Julia_A_fresh_2017}.
 
-% We maintain C-ABI
-% compatible wrappers for integrating the transfer function tables that have
-% similar capabilities as popular convolution models\footnote{We use the Zig
-%     programming language \url{https://ziglang.org/} to wrap the spectral models.
-%     This allows us to statically compile models for a wide variety of targets.
-% Models can then be downloaded and imported into e.g. \software{XSPEC} without the need for
-% any additional tools.}. \Gradus additionally allows for constructing custom
-% convolution kernels within a component modelling framework that can be made to
-% more closely match the assumptions made in their models with respect to, for
-% example, accretion disc geometry, disc velocity structure, or corona.
+% TODO: move somewhere else:
+% Models created with \Gradus can be readily
+% used in spectral fitting packages, such as \software{XSPEC}
+% \citep{arnaud_xspec_1996} or \software{SpectralFitting.jl} (Baker et al. in
+% preparation).
 
 The paper is organised in the following manner: in
 Section~\ref{sec:numerical-methods} we describe the numerical methods used in
@@ -255,25 +218,24 @@ Boyer--Lindquist coordinates. Such spacetimes have metrics of the form
 \end{equation}
 We adopt $(-, +, +, +)$ metric signature, and standard units $c = G
 = 1$. Greek indices ($\mu, \nu$) denote the four spacetime components, and Latin
-indices ($i, j$) the three spatial components. We write partial derivatives with
-respect to the coordinates $x^\mu$ as $\partial_\mu := \partial / \partial
-x^\mu$.
+indices ($i, j$) denote the three spatial components. We write partial
+derivatives with respect to the coordinates $x^\mu$ as $\partial_\mu := \partial
+/ \partial x^\mu$.
 
 \subsection{Geodesic integration}
 
 The trajectory of particles in curved space is determined by integrating the
-geodesic equation, termed \emph{tracing}, which are manifestly energy and
-angular momentum conserving paths. The integration may be formulated in a number
-of ways: as a second-order set of ordinary differential equations (ODEs),
-analytically integrated once to give a set of first-order (ODEs), or twice to
-give an expression of position in terms of elliptic integrals. The second-order
-ODE approach is conceptually the most simple and has the benefit that it
+geodesic equation, termed \emph{tracing}, which yields paths that are
+manifestly energy and angular momentum conserving. The integration may be
+formulated in a number of ways, namely as a second-order set of ordinary differential
+equations (ODEs), analytically integrated once to give a set of first-order
+(ODEs), or twice to give position in terms of elliptical
+integrals. The second-order ODE approach is conceptually the most simple,
 unambiguously calculates the position and velocity of the geodesic at each step
-of the integration. The formulation requires a metric and
-the metric connection (Christoffel symbols).
+of the integration, and is the formulation used in this paper.
 
 Using coordinates $x^\mu$, the geodesic equation with external acceleration
-$a^\mu$ ($=0$, generally) is written
+$a^\mu$ ($=0$) is written
 \begin{equation}
 \label{eq:geodesic_equation}
     \frac{\d^2 x^\mu}{\d \lambda^2}
@@ -282,9 +244,9 @@ $a^\mu$ ($=0$, generally) is written
     \vel{\sigma}
     = a^\mu,
 \end{equation}
-where $\lambda$ is an affine parameter and $v^\mu = \d x^\mu / \d \lambda$ is
+where $\lambda$ is an affine parameter and $v^\mu := \d x^\mu / \d \lambda$ is
 the four-velocity. The effects of spacetime curvature are encoded in the
-Christoffel symbols,
+Christoffel connection,
 \begin{equation}
 \label{eq:christoffel}
     \utensor{\Gamma}{\mu}{\nu\sigma}
@@ -293,13 +255,15 @@ Christoffel symbols,
         \partial_{\nu}g_{\rho \sigma}
         + \partial_{\sigma}g_{\rho \nu}
         - \partial_{\rho}g_{\sigma \nu}
-    \right).
+    \right),
 \end{equation}
-In the second-order ODE formulation, the geodesic equation is an initial value
-problem with four coupled equations that can be
+determined solely by the metric.
+
+In this formulation, the geodesic equation is an initial value
+problem that can be
 solved with a choice of initial $x^\mu$ and $\vel{\mu}$. We are free to to
 choose an initial 3-position $x^i$ (with $x^t = 0$ by convention), and constrain
-the velocity using the invariance
+the velocity using the geometric invariance
 \begin{equation}
 \label{eq:velocity_constraint}
     g_{\sigma\nu} \vel{\sigma} \vel{\nu} = \mu^2,
@@ -308,9 +272,9 @@ where $\mu$ is the invariant mass. This constraint gives rise to three solution
 classes depending on the sign of $\mu^2$; namely $\mu^2 = 0$ corresponding to
 \emph{null geodesics}, $\mu^2 < 0$ to \emph{time-like geodesics}, and $\mu^2 >
 0$ to \emph{space-like geodesics}. Null geodesics are the trajectories of
-photons, time-like geodesics are the trajectories of massive particles, and
-space-like geodesics are the trajectories of exotic `faster-than-light'
-particles (e.g. tachyons).
+photons through the spacetime, time-like geodesics are the trajectories of
+massive particles, and space-like geodesics are the trajectories of exotic
+`faster-than-light' particles.
 
 As with the position, it is sufficient to specify the three-vector $\vel{i}$,
 and use \eqref{eq:velocity_constraint} to determine $\vel{t}$ by rearranging
@@ -327,29 +291,24 @@ metric $t \rightarrow -t$, $\phi \rightarrow -\phi$ allows us to calculate
 geodesics in the forward direction as if they had travelled \textit{backwards}.
 Photons can therefore be traced from an observer towards the black hole, and
 calculations performed as if they had been emitted from near the black hole and
-travelled towards the observer. This seeming triviality cannot be understated in
-an implementation of GRRT: it means only the `observed' geodesics need to be
-traced, and will appear to alter the directions of rotations. There is
-consequently an additional minus sign when determining the dot products of
-velocity vectors calculated using this trick.
+travelled towards the observer. This seemingly trivial property cannot be
+understated in an implementation of GRRT: it means only the `observed' geodesics
+need to be traced, and will also appear to alter the directions of rotations
+when applied.
 
 Computing the geodesic equation requires some method of determining
-$\utensor{\Gamma}{\mu}{\nu\sigma}$.  These are usually implemented by-hand and
-can lead to a high degree of code complexity that scales poorly as the number of
-terms in the metric increases. Computer algebra systems are sometimes used
-instead, but this can lead to unnecessary computations in the final expressions
-due to lack of simplification, and the systems can even occasionally fail to
-calculate the Christoffel symbols if the metric becomes too complex.  An
-alternative is to use a numeric differentiation scheme, such as automatic
-differentiation (AD), to calculate the Jacobian of the metric Our method is to
-compute the Jacobian of the metric ($\partial_{\sigma} g_{\mu \nu}$) needed in
-Eq.  \eqref{eq:christoffel} with automatic differentiation (AD)\footnote{We were
-    made aware by colleagues of the independently developed code Mahakala of
-    \citet{sharma_mahakala_2023} that uses a similar AD approach.}.  This allows
-    us to compute the Christoffel symbols \emph{on-the-fly}, and only requires
-an implementation of the non-zero metric components for a given metric. If
-the class of spacetime exhibits additional symmetries, these can be
-exploited to reduce computation further: for example, metrics of the form
+$\utensor{\Gamma}{\mu}{\nu\sigma}$. This is usually analytically derived and
+implemented laboriously by-hand. Sometimes computer algebra systems are used to
+expedite the process, but this can lead to unnecessary computations in the final
+expressions, or at the very least a high degree of code complexity that scales
+poorly as the number of terms in the metric increases. Our alternative is to use
+a numeric differentiation scheme, such as automatic differentiation (AD), to
+calculate the Jacobian of the metric and therefore the Christoffel symbols
+\emph{on-the-fly}\footnote{We were made
+    aware by colleagues of the independently developed code Mahakala of
+\citet{sharma_mahakala_2023} that uses a similar AD approach.}. If the
+class of spacetime exhibits additional symmetries, these can be exploited to
+reduce computation further: for example, metrics of the form
 \eqref{eq:stationary_axisymmetric_metric} may exploit $\partial_t g_{\mu\nu} =
 \partial_{\phi} g_{\mu\nu} = 0$ (the principal Killing vectors) and avoid
 calculating two columns of the Jacobian entirely.
