@@ -33,7 +33,7 @@
 \usepackage{tcolorbox}
 
 % % TODO: remove me, i am just here to suppress some warnings
-% \newcommand{\todo}[1]{{\noindent \bf \color{red} TODO: #1}}
+\newcommand{\todo}[1]{{\noindent \bf \color{red} TODO: #1}}
 % \newcommand{\citneeded}{{\bf \color{red} $^{\text{citation needed}}$}}
 % \pdfsuppresswarningpagegroup=1
 % \pdfminorversion=7
@@ -332,9 +332,10 @@ calculating two columns of the Jacobian entirely.
     \label{fig:observer-coordinates}
 \end{figure}
 
-We use a different method to calculate the initial velocity $v^i$ depending on
-whether we are considering an \emph{observer} or an \emph{emitter}. This is for
-the convenience of parameterisation, as will be seen.
+A different method is used to calculate the initial velocity vectors $v^\mu$
+depending on whether an \emph{observer} or an \emph{emitter} is being
+considered. This is for the convenience of parameterisation, as will be
+explained.
 
 For observers, we are interested in the sparse set of emitted photons which
 reach an image plane representing the observer's field of view. We use a
@@ -342,7 +343,7 @@ reach an image plane representing the observer's field of view. We use a
 the observer, but with a velocity vector that has a slight angular offset in
 order to intersect a particular point on the projected image plane. This is in
 contrast to a setup where each `pixel' originates from an offset position, but
-with parallel velocity vectors.
+with parallel velocity vectors, mimicking a conventional image plane.
 
 The parameters representing the local sky are shown in
 Fig.~\ref{fig:observer-coordinates}, with the projection of the image plane
@@ -354,14 +355,13 @@ a set of \emph{impact parameters} from components of the local momenta $v_{(i)}$
 \end{align}
 where we have used indices in parentheses to denote the vector components in the
 local frame. The choice of subscript ($r, \theta, \phi$) is to anticipate
-identifying coordinate directions in the local and global (metric) bases, and to
-suggest some intuition as to the meaning of directions in the local frame.
+identifying coordinate directions in the local and global bases, and to suggest
+some intuition as to the meaning of directions in the local frame.
 
 Exploiting the invariance of four-momenta, similar to
 \eqref{eq:velocity_constraint}, we obtain a curve of solutions along $x^r$ for
-the local momenta of geodesics intersecting the image plane at specific
-$\alpha$ and
-$\beta$
+the local momenta of geodesics intersecting the image plane at specific $\alpha$
+and $\beta$
 \begin{align}
     \frac{v_{(r)}}{v_{(t)}} &= -\left( \sqrt{1 +
     \left(\frac{\alpha}{x^r}\right)^2 + \left(\frac{\beta}{x^r}\right)^2}
@@ -392,15 +392,15 @@ Cartesian coordinate system,
     \right),
 \end{equation}
 where the partial derivative matrix in square brackets denotes the Jacobian of
-the Cartesian to spherical coordinate transformation. The component $v_{(t)}$ is
-defined as the negative of the energy in the local frame, and $-v_{(t)}=E=1$
-without loss of generality.
+the Cartesian to spherical coordinate transformation. The constant of motion
+component $v_{(t)}$ is defined as the negative of the energy in the local frame,
+and $-v_{(t)}=E=1$ without loss of generality.
 
 Directions and momenta are easiest to express in a local frame and then
 transformed back to the global coordinates. The question arises which local
 frame to use and the natural answer is the locally non-rotating frame
 \citep[LNRF;][]{bardeen_rotating_1972}. This frame follows strictly circular
-world lines with $x^r = \text{const.}$ and $x^\phi = \omega t + \text{const.}$,
+world lines, $x^r = \text{const.}$ and $x^\phi = \omega t + \text{const.}$,
 with angular velocity $\omega = -g_{t\phi} / g_{\phi\phi}$. The transformation
 from the LNRF is
 \begin{equation}
@@ -408,51 +408,53 @@ from the LNRF is
     v_\mu = \e^{(\nu)}_{\phantom{(\nu)}\mu}\  v_{(\nu)}
 \end{equation}
 where the local tetrad (basis vectors) $\e^{(\nu)}_{\phantom{(\nu)}\mu}$ are
-found using the theorem of Gram--Schmidt \citep[][Appendix
-\ref{appendix:gram-schmidt}]{schmidt_uber_1989}. The formalism may be extended
-for a local frame in motion, where the frame velocity modifies the mapping by a
-local Lorenz transformation, $\Lambda^{(\kappa)}_{\phantom{(\kappa)}(\nu)}$, as
+found using the theorem of Gram--Schmidt
+\citep[][Appendix~\ref{appendix:gram-schmidt}]{schmidt_uber_1989}. The formalism
+may be extended for a local frame in motion, where the frame velocity modifies
+the mapping by a local Lorenz transformation,
+$\Lambda^{(\kappa)}_{\phantom{(\kappa)}(\nu)}$, as
 \begin{equation}
     v_\mu = \e^{(\nu)}_{\phantom{(\nu)}\mu}\  \Lambda^{(\kappa)}_{\phantom{(a)}(\nu)} v_{(\kappa)}.
 \end{equation}
 This Lorenz transformation may be absorbed into the tetrad basis, mandating the
-velocity of the frame in the global coordinates as $\utensor{\e}{(t)}{\mu}$ and
-orthogonalizing using the theorem of Gram--Schmidt.
+velocity of the frame in the global coordinates to be defined as
+$\utensor{\e}{(t)}{\mu}$ and orthogonalizing using the theorem of Gram--Schmidt.
 
 These calculations may also be derived from the constants of motion of a
 particular geodesic, namely energy $E$, angular momentum $L$, and the Carter
-constant $Q$ \citep{carter_global_1968}. A
-derivation of the LNRF and associated coordinate transformations is in
-\citet{cunningham_optical_1973}, where the authors derive the impact parameters under
-the assumption that the observer is in asymptotically flat space. Our
-calculations do not make this assumption, and can therefore use impact
-parameters anywhere in the spacetime, approximating an asymptotically flat
-space by positioning our observer at a large radial distance, say $r_\text{obs}
-> 10^4 \rg$. This approximation incurs an error of order $\sim1/r_\text{obs}$
-when compared to results using asymptotic impact parameters due to the energy and
-angular momentum differing by some small relative to the asymptotic result.
+constant $Q$ \citep{carter_global_1968}. A derivation of the LNRF and associated
+coordinate transformations is in \citet{cunningham_optical_1973}, where the
+authors derive the impact parameters under the assumption that the observer is
+in asymptotically flat space. Our calculations do not make this assumption, and
+can therefore use impact parameters anywhere in the spacetime, approximating an
+asymptotically flat space by positioning our observer at a large radial
+distance, say $r_\text{obs} > 10^4 \rg$. This approximation incurs an error of
+order $\sim1/r_\text{obs}$ when compared to results using asymptotic impact
+parameters due to the energy and angular momentum differing by some small
+relative to the asymptotic result.
 
 \subsection{Special orbits and horizons}
 \label{sec:special-orbits}
 
-Of particular interest when studying accretion processes are the Keplerian
-circular orbits. These are confined to the equatorial plane $(x^\theta = \pi/2)$
-in axis-symmetric spacetimes, and are used in a variety of accretion disc models
+Of particular interest for studying accretion processes are the Keplerian
+circular orbits. These are the circular orbits confined to the equatorial plane $(x^\theta = \pi/2)$
+in the axis-symmetric spacetimes, and are used in a variety of accretion disc models
 \citep{shakura_black_1973, sadowski_relativistic_2011}. They are stationary
 points of the Hamiltonian of a geodesic, and may be solved from the geodesic
-equation under the constraint $v^r = v^\theta = 0$. They are straightforward to
+equation under the constraint $v^r = v^\theta = 0$. These are straightforward to
 study analytically and have a general solution for metrics of the form
 \eqref{eq:stationary_axisymmetric_metric} \citep[see e.g.][and
 an extension towards $a^\mu \neq 0$ in Appendix
 \ref{appendix:circular-orbits}]{johannsen_regular_2013}.
 
-Circular orbits are classified as either stable or unstable
-\citep{wilkins_bound_1972,bardeen_rotating_1972}. There exists an innermost
-stable circular orbit radius (ISCO, denoted $\risco$), below which orbits
-are energetically hyperbolic: small perturbations will send test particles
-escaping to infinity or spiralling into the central singularity. The stability of
-an orbit depends on the sign of $\d E / \d x^r$, with $>0$ corresponding to
-energetically stable configurations. The ISCO is the critical point
+Circular orbits are classified as either stable or unstable depending on the
+energetics of the orbit \citep{wilkins_bound_1972,bardeen_rotating_1972}. There
+exists an innermost stable circular orbit radius (ISCO, denoted $\risco$), below
+which circular orbits are energetically hyperbolic -- that is, small
+perturbations will send test particles escaping to infinity or spiralling into
+the central singularity. The stability of an orbit depends on the sign of $\d E
+/ \d x^r$, with $>0$ corresponding to stable configurations. The ISCO is the
+critical point
 \begin{equation}
     \label{eq:isco-definition}
     0 = \left. \frac{\d E}{\d x^r} \right\rvert_{x^r := \risco}.
@@ -462,7 +464,7 @@ ISCO is the so-called \textit{plunging region} where $v^r \neq 0$. Emission from
 within the ISCO is generally disregarded in reflection and reverberation models,
 though for specific disc models and/or inner boundary torques emission from this
 region may be important \citep[see e.g.][]{reynolds_isco_1997,young_isco_1998,
-mummery_continuum_2024}.  \Gradus makes no concrete assumptions about the
+mummery_continuum_2024}. \Gradus makes no concrete assumptions about the
 plunging region, though will omit contributions from within the ISCO in this
 paper.
 
@@ -473,9 +475,11 @@ be calculated using a numerical technique. We use the NonlinearSolve.jl package
 to solve for the root \eqref{eq:isco-definition} using derivatives calculated
 using AD to high accuracy \citep{Pal_NonlinearSolve_jl_2023}.
 
-When no \textit{a priori} formula is known, we implement a numerical method for
-determining the event horizon radius.  Under axis-symmetry, the event horizon is
-the set of $(r, \theta)$ coordinates that satisfy
+The event horizon radius is the radius of the coordinate singularity of the
+spacetime. When no \emph{a priori} formula is known, we solve for this horizon
+radius using a similar numerical method as for the ISCO. For an axis-symmetry
+spacetime, the event horizon is the set of $(r, \theta)$ coordinates that
+satisfy
 \begin{equation}
     \label{eq:event_horizon}
     0 = \left. \frac{1}{g_{rr}} \right\rvert_{x^r =: r_s},
@@ -487,20 +491,23 @@ $x^\phi$.
 
 A \emph{chart} defines the boundaries of an integration domain that is used by
 the integrator to terminate the computation when the fate of a given geodesic is
-sealed. In practical terms, it is a set of `callback' functions in the
-integrator that are evaluated at every time step. They are used to classify the
-outcome of an integration, e.g. geodesic has fallen within the horizon, escaped
-to infinity, intersected with the disc, and so on. In the majority of cases, the
-inner and outer boundaries of the integration chart are the event horizon $r_s$
-and some \emph{effective infinity} $r_\infty$ respectively. This outer boundary
-denotes the region where a geodesic is assumed to escape the potential of the
-singularity, or otherwise is some arbitrary cut-off radius for the integration.
+inescapable. In practical terms, it is a set of \emph{callback functions} in the
+integrator that are evaluated at every time step to assess if the integration
+should be terminated when a given condition has been met. They are used to
+classify the outcome of an integration, e.g. whether a geodesic has fallen within the
+horizon, escaped to infinity, intersected with the disc, and so on. In the
+majority of cases, the inner and outer boundaries of the integration chart are
+the event horizon $r_s$ and some \emph{effective infinity} $r_\infty$
+respectively. This outer boundary denotes the region where a geodesic is assumed
+to escape the potential of the singularity, or otherwise some arbitrary
+outer cut-off radius for the integration depending on the problem being
+simulated.
 
 The geometry of an accretion disc or object is also expressed as a boundary of
 the chart. By terminating the integration when the geodesic intersects such a
-boundary, the geodesic is said to have intersected the surface of the disc or
-object, where it is labelled accordingly. These labels, termed \emph{status
-codes}, are used during analysis to group geodesic solutions together.
+boundary, the geodesic is said to have intersected the surface of the object,
+where it is labelled accordingly. These labels, termed \emph{status codes}, are
+used during analysis to filter or group geodesic solutions together.
 
 Close to the inner radius the adaptive time step of certain ODE integration
 algorithms will tends to zero due to near-singular derivatives, causing the
@@ -515,20 +522,20 @@ accuracy.
 \label{sec:computing-observables}
 
 In \Gradus, an \textit{observable} is any physical quantity calculated from a
-simulation. Computing an observable requires some or all tuples $(x^\mu, v^\mu)$
-along a geodesic, though often only the start and end points are necessary. An
-observable that requires multiple points along the geodesic can be calculated
-either coincidentally with the geodesic equation, or subsequently re-traced
-along the ray. Such quantities include parallel transport, polarisation, or
-radiative transfer quantities.  Calculating the quantities simultaneously has
-the benefit that the error tolerance in the integrator is sensitive to changes
-in the observable. The benefit of re-tracing is that for a given set of metric
-parameters and observer positions, the trajectory of the geodesic is unchanged,
-so the observable may be more efficiently recalculated.
+simulation. Computing an observable requires some or all pairs of $(x^\mu,
+v^\mu)$ along a geodesic, though frequently only the start and end points are
+necessary. An observable that requires multiple points along the geodesic can be
+calculated either coincidentally with the geodesic equation, or subsequently
+re-traced along the ray. Such quantities include parallel transport,
+polarisation, or radiative transfer quantities. Calculating the quantities
+simultaneously has the benefit that the error tolerance in the integrator is
+sensitive to changes in the observable. The benefit of re-tracing is that for a
+given set of metric parameters and observer positions, the trajectory of the
+geodesic is unchanged, so the observable may be more efficiently recalculated.
 
 A frequently used observables is the \emph{redshift}, $g$. This redshift
 includes the Doppler shift, special relativistic beaming, and gravitational
-redshift, and is compactly written as the ratio of energies between the start
+redshift. It is compactly written as the ratio of energies between the start
 and end point,
 \begin{equation}
 \label{eq:redshift}
@@ -538,45 +545,48 @@ g := \frac{E_\text{end}}{E_\text{start}} = \frac{\left. v_\mu u^\mu
 where $v_\mu$ are the geodesic (photon) momenta, and $u^\mu$ the velocity of the
 emitting (start) and observing (end) media respectively.
 
-
-
 \subsection{Disc illumination and emissivity profiles}
 \label{sec:emissivity-profiles}
 
-The presence of an illuminating source near the accretion disc, termed the
+The presence of an illuminating source near the accretion disc, such as a
 corona \citep{svensson_corona_1994}, will induce an \emph{illumination profile}
-on the disc. It is equivalently the \emph{emissivity profile}, since the line
+on the disc. It is equivalently the \emph{emissivity profile}, provided the line
 strength in the back-scattered (reflected) spectrum is modelled to be
-proportional to the illuminating flux.  The illumination profile is related to
+proportional to the illuminating flux. The illumination profile is related to
 the ionization parameter $\xi$ of the accretion disc
 \citep{laor_line_1991,ross_effects_1993,wilkins_understanding_2012}, itself
 given by
 \begin{equation}
-    \xi = \frac{4 \pi F_i}{n_\text{H}}
+    \xi = \frac{4 \pi F_i}{n_\text{e}}
 \end{equation}
 where $F_i$ is the total illuminating X-ray flux in a given energy band $i$,
-often in the range $0.01 - 100 \text{ keV}$, and $n_\text{H}$ is the co-moving
-hydrogen density \citep{ross_effects_1993}.  For our purposes, we will drop
-factors considered to be constant, and use $\varepsilon \propto F_i$ directly.
+often in the range $0.01 - 100 \text{ keV}$, and $n_\text{e}$ is the co-moving
+electron density \citep{ross_effects_1993}. This formulation assumes constant
+density throughout the disc. For our purposes, we will drop factors considered
+to be constant, and use $\varepsilon \propto F_i$ directly.
 
 The geometry of the corona is unknown. It is often modelled, for simplicity, as
 a point source on the spin axis of the black hole that emits isotropically. Such
 a configuration is known as the `lamppost' corona
-\citep[e.g.][]{fukumura_accretion_2007}.  The effects of extended axis-symmetric
-coronae have been explored in \citet{wilkins_towards_2016}, and the emissivity
-profile for additional geometries have been computed in
-\citet{gonzalez_probing_2017}. Conventional methods use a Monte--Carlo sampling
-approach for extended coronae, which can be expensive to compute and some form
-of tabulation. We note that \Gradus includes a novel formulation for computing
-time-dependent emissivity profiles for extended coronae, detailed in (Baker
-\& Young in preparation).
+\citep[e.g.][]{fukumura_accretion_2007}. For posterity, we note that the effects
+of extended axis-symmetric coronae have been previously explored, notably in
+\todo{cite wilkins 2012, and probably bambi's group's}
+\citet{wilkins_towards_2016}, and the emissivity profile for additional
+geometries have been computed in \citet{gonzalez_probing_2017}. These methods
+use a Monte--Carlo sampling approach for extended coronae, where the initial
+direction of photon on the local sky is randomly sampled on a sphere. This is
+computationally expensive, and can require some form of dense tabulation,
+however \Gradus provides implementations for these too. We also note that
+\Gradus has a novel formulation for computing fast time-dependent emissivity
+profiles for extended coronae that do not rely on Monte--Carlo methods (Baker \&
+Young in preparation).
 
-For the lamppost corona, when the emission is isotropic in the rest
-frame of the corona, i.e. locally, the emissivity profile is a function of only the
-cylindrical radius of the disc, $\rho = x^r \sin(x^\theta)$. The flux in an
-annulus is the number density of photons along with an intensity function $I$
-representing the emission spectrum of the corona. Up to a constant of
-proportionality, the emissivity function is
+In the case of the lamppost corona, when the emission is (locally) isotropic in
+the rest frame of the corona, the emissivity profile may be parameterised using
+only the cylindrical radius on the disc, $\rho = x^r \sin(x^\theta)$. The flux
+in an annulus $\rho + \d \rho$ is the number density of photons, along with an
+intensity function $I$ representing the emission spectrum of the corona. Up to a
+constant of proportionality, the emissivity function is
 \begin{equation}
     \varepsilon (\rho, \d \rho) = \frac{\mathcal{N}(\rho, \d \rho)}{\gamma
     \tilde{A}(\rho, \d \rho)} I(g),
@@ -589,34 +599,37 @@ due to the velocity of the disc.
 
 The relativistic corrections are as follows: for an infinitesimal area $\d A = \d
 \rho\d\phi$, the \textit{proper area} is calculated directly from the metric,
-and so
+such that
 \begin{equation}
     \d\tilde{A} = \sqrt{g_{rr} g_{\phi\phi}}\, \d \rho\, \d \phi,
 \end{equation}
 is the area as measured by a stationary observer in the disc. The relativistic
-Lorentz factor is calculated as
+Lorentz factor is calculated in the local frame
 \begin{equation}
     \gamma = \frac{1}{\sqrt{1 - \left(v^{(i)}\right)^2}},
 \end{equation}
 where $v^{(i)}$ are the spatial components of the angular velocity in the LNRF.
-These components are determined for a given basis
+These velocity components are determined for a given basis
 \begin{equation}
-    v^{(i)} = \frac{\utensor{\e}{(i)}{\mu}\, v^\mu}{\utensor{\e}{(t)}{\sigma}\, v^\sigma},
+    v^{(i)} = \frac{\utensor{\e}{(i)}{\mu}\, v^\mu}{\utensor{\e}{(t)}{\sigma}\,
+    v^\sigma}.
 \end{equation}
-where the special case of circular orbits in the equatorial plane only has
-$v^{(\phi)}$ non-zero.
+For the special case of circular orbits in the equatorial plane, only
+$v^{(\phi)}$ in this equation is non-zero.
 
 The emission spectrum for the illuminating corona is usually assumed to be a
-powerlaw $I(g) = g^{-\Gamma}$ with photon index $\Gamma$ For most applications
-$\Gamma = 2$ or $3$ \citep{mushotzky_agn_pl_1982,remillard_binaries_2006}.
+powerlaw $I(g) = g^{-\Gamma}$ with photon index $\Gamma$. For many applications
+$\Gamma$ is assumed to be around $2$ or $3$
+\citep{mushotzky_agn_pl_1982,remillard_binaries_2006}.
 
 Locally isotropic emission means the geodesics from the source are traced by
-sampling sky angles $\Upsilon$, $\Psi$ evenly on a sphere (see Figure
+sampling the sky angles $\Upsilon$, $\Psi$ evenly on a sphere (see Figure
 \ref{fig:observer-coordinates}). The angles are transformed via equations
 \eqref{eq:local-angle-to-velocity} and \eqref{eq:local-to-global-velocity} to
-find the initial velocities of the geodesics, which are then integrated to solve for
-their trajectories. When the emission is locally non-isotropic, the sampled
-distributions of $\Upsilon$, $\Psi$ may be appropriately weighted.
+find the initial velocities of the geodesics, which are then integrated to solve
+for their trajectories. When the emission is locally non-isotropic, the sampled
+distributions of $\Upsilon$, $\Psi$ may be appropriately weighted to give the
+desired pattern.
 
 The lamppost emissivity profile may alternatively
 be determined by exploiting symmetries as in \cite{dauser_irradiation_2013}.
