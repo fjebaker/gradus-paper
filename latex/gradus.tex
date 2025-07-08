@@ -548,22 +548,28 @@ emitting (start) and observing (end) media respectively.
 \subsection{Disc illumination and emissivity profiles}
 \label{sec:emissivity-profiles}
 
-The presence of an illuminating source near the accretion disc, such as a
-corona \citep{svensson_corona_1994}, will induce an \emph{illumination profile}
-on the disc. It is equivalently the \emph{emissivity profile}, provided the line
+The presence of an illuminating source near the accretion disc, such as a corona
+\citep{svensson_corona_1994}, will induce an \emph{illumination profile} on the
+disc. It is equivalently the \emph{emissivity profile}, provided the line
 strength in the back-scattered (reflected) spectrum is modelled to be
-proportional to the illuminating flux. The illumination profile is related to
-the ionization parameter $\xi$ of the accretion disc
-\citep{laor_line_1991,ross_effects_1993,wilkins_understanding_2012}, itself
-given by
+proportional to the illuminating flux. The illumination profile is the flux
+deposited by the source in a patch of the disc
+\citep{wilkins_understanding_2012}. It may be expressed as the ratio of source
+solid angle area to disc area, or in the limiting case as the areas become
+small,
+\begin{equation}
+    \varepsilon \propto I \frac{\d \Omega}{\d A}.
+\end{equation}
+The illumination profile is also related to the ionization parameter $\xi$ of
+the accretion disc \citep{laor_line_1991,ross_effects_1993}, itself given by
 \begin{equation}
     \xi = \frac{4 \pi F_i}{n_\text{H}}
 \end{equation}
-where $F_i$ is the total illuminating X-ray flux in a given energy band $i$,
-often in the range $0.01 - 100 \text{ keV}$, and $n_\text{H}$ is the co-moving
-hydrogen density \citep{ross_effects_1993}. This formulation assumes constant
-density throughout the disc. For our purposes, we will drop factors considered
-to be constant, and use $\varepsilon \propto F_i$ directly.
+where $F_i$ is the total illuminating X-ray flux in a particular energy band
+$i$, usually in the range $0.01 - 100 \text{ keV}$, and $n_\text{H}$ is the
+co-moving hydrogen number density \citep{ross_effects_1993}. This formulation
+assumes constant density throughout the disc. For our purposes, we will drop
+factors considered to be constant, and use $\varepsilon \propto F_i$ directly.
 
 The geometry of the corona is unknown. It is often modelled, for simplicity, as
 a point source on the spin axis of the black hole that emits isotropically. Such
@@ -572,7 +578,8 @@ a configuration is known as the `lamppost' corona
 of extended axis-symmetric coronae have been previously explored, notably in
 \todo{cite wilkins 2012, and probably bambi's group's}
 \citet{wilkins_towards_2016}, and the emissivity profile for additional
-geometries have been computed in \citet{gonzalez_probing_2017}. These methods
+geometries have been computed in \citet{gonzalez_probing_2017} and others
+\todo{cite all sorts of papers}. These methods
 use a Monte--Carlo sampling approach for extended coronae, where the initial
 direction of photon on the local sky is randomly sampled on a sphere. This is
 computationally expensive, and can require some form of dense tabulation,
@@ -603,7 +610,8 @@ such that
 \begin{equation}
     \d\tilde{A} = \sqrt{g_{rr} g_{\phi\phi}}\, \d \rho\, \d \phi,
 \end{equation}
-is the area as measured by a stationary observer in the disc. The relativistic
+is the area as measured by a stationary observer in the disc
+\citep[e.g.][]{wilkins_understanding_2012}. The relativistic
 Lorentz factor is calculated in the local frame
 \begin{equation}
     \gamma = \frac{1}{\sqrt{1 - \left(v^{(i)}\right)^2}},
@@ -619,36 +627,37 @@ $v^{(\phi)}$ in this equation is non-zero.
 
 The emission spectrum for the illuminating corona is usually assumed to be a
 powerlaw $I(g) = g^{-\Gamma}$ with photon index $\Gamma$. For many applications
-$\Gamma$ is assumed to be around $2$ or $3$
-\citep{mushotzky_agn_pl_1982,remillard_binaries_2006}.
-
-Locally isotropic emission means the geodesics from the source are traced by
-sampling the sky angles $\Upsilon$, $\Psi$ evenly on a sphere (see Figure
-\ref{fig:observer-coordinates}). The angles are transformed via equations
+$\Gamma$ is assumed to be $1 - 3$
+\citep{mushotzky_agn_pl_1982,remillard_binaries_2006}. For emission to be
+locally isotropic means the geodesics from the source are traced by sampling the
+sky angles $\Upsilon$, $\Psi$ evenly on a sphere (see Figure
+\ref{fig:observer-coordinates}). The angles are transformed via Equations
 \eqref{eq:local-angle-to-velocity} and \eqref{eq:local-to-global-velocity} to
 find the initial velocities of the geodesics, which are then integrated to solve
 for their trajectories. When the emission is locally non-isotropic, the sampled
 distributions of $\Upsilon$, $\Psi$ may be appropriately weighted to give the
 desired pattern.
 
-The lamppost emissivity profile may alternatively
-be determined by exploiting symmetries as in \cite{dauser_irradiation_2013}.
-Here, only a given slice with constant $\Psi$ is considered, where $\Upsilon$ is
-now evenly spaced. Pairs of geodesics separated by some small $\Delta \Upsilon$
-have endpoints on the disc separated by $\Delta r$, such that $\sin \Upsilon
-/ \Delta r \propto \mathcal{N}$ can be used as a proxy for the number
+The lamppost emissivity profile may alternatively be determined by exploiting
+symmetries as in \cite{dauser_irradiation_2013}.  Here, only a given slice with
+constant $\Psi$ is considered, where $\Upsilon$ is now evenly spaced. Pairs of
+geodesics separated by some small $\Delta \Upsilon$ have endpoints on the disc
+separated by $\Delta \rho$, such that $\sin (\Upsilon) \Delta \Upsilon / \Delta
+\rho \propto \mathcal{N}$ can be used as a proxy for the number
 density\footnote{The $\sin \Upsilon$ factor comes from the distribution being
-    isotropic. One may equivalently use $1/\Delta r \propto \mathcal{N}$ and
+    isotropic. One may equivalently use $1/\Delta \rho \propto \mathcal{N}$ and
     sample $\Upsilon \sim \cos (1 - 2 \mathcal{U})$, where $\mathcal{U}$ is a
     uniform distribution $\mathcal{U}(0,1)$. This result may be shown using the
-    inverse-CDF or Smirnov transform method.}. The emissivity is then written
-$\varepsilon$ is weighted similarly,\begin{equation}
-    \varepsilon(r, \Delta r) = \frac{\sin \Upsilon}{\gamma \tilde{A}(r, \Delta r)} I(g).
+inverse-CDF or Smirnov transform method.}. The emissivity is then written
+$\varepsilon$ is weighted similarly,
+\begin{equation}
+    \varepsilon(r, \Delta \rho) = \frac{\sin \Upsilon}{\gamma \tilde{A}(\rho)}
+    \frac{\Delta \Upsilon}{\Delta \rho} I(g).
 \end{equation}
 A conceptual illustration of the two methods is shown in Figure
 \ref{fig:coronal-tracing}. The latter method converges much faster than the
-former Monte--Carlo sampling approach, however is only valid for the lamppost
-model.
+former Monte--Carlo sampling approach, however is only valid for on axis coronal
+models.
 
 \begin{figure}
     \centering
@@ -701,36 +710,36 @@ element $\d \Omega$ by
     \label{eq:infinitesimal-flux}
     \d F(E) = I(E)\, \d \Omega,
 \end{equation}
-for observed energy $E$ and specific intensity $I$.
-\cite{cunningham_effects_1975} gives a relation between the observed
-and emitted intensities as derived using the \emph{reciprocity theorem} \citep[
-equivalently \emph{Liouville's theorem},][]{lindquist_louville_1966} with
+for observed energy $E$ and specific intensity $I$. The relation between the
+observed and emitted intensities is derived using the \emph{reciprocity theorem}
+\citep[equivalently \emph{Liouville's theorem},][]{lindquist_louville_1966} with
 \begin{equation}
 \label{eq:liouville-theorem}
     I_\text{obs}\left( E_\text{obs}\right) = g^3 I_\text{em}\left(E_\text{em}\right).
 \end{equation}
 For the intuition behind this relation, we refer the reader to
-\citet{ingram_public_2019}. Integrating over $\d \Omega$ to obtain the observed
-flux $F(E_\text{obs})$ is equivalent up to a constant to integrating over the
-image plane $\d \alpha \d
-\beta$,
+\citet{ingram_public_2019}.
+
+To obtain the flux as measured by the observer, we integrate over the observer
+field of view$\d \Omega$. This is up to a constant equivalent to integrating
+over the image plane $\d \alpha \d \beta$,
 \begin{equation}
 \label{eq:integrate-impact-params}
 F(E_\text{obs}) \propto \int I_\text{obs}(E_\text{obs}) \d \alpha \d \beta,
 \end{equation}
-which in practical terms is binning the geodesic in each pixel over bins of
-$\Delta E$.  Formulating the flux calculation in this way is computationally
+which in practical terms is binning the geodesic associated with each pixel into
+a grid of $E$. Formulating the flux calculation in this way is computationally
 simple but expensive, as the flux is computed on a pixel-by-pixel
 (geodesic-by-geodesic) basis. The emitted intensity $I_\text{em}$ depends on the
 disc emissivity, requiring both coordinate and redshift values for each geodesic
-to be stored in memory. These quantities are dependant on the metric,
-disc, and observer parameters, and this dependence limits the reuse of
-calculations between simulations -- an undesirable property for performant spectral models.
+to be stored in memory. These quantities are dependant on the metric, disc, and
+observer parameters, and this dependence limits the reuse of calculations
+between simulations -- an undesirable property for a portable spectral model.
 
 To avoid such problems, the relativistic effects in the flux calculation are
 often encoded in so-called \emph{transfer functions}
-\citep[e.g.][]{brenneman_constraining_2006}. The most ubiquitous formulation of these
-transfer functions was first introduced in \cite{cunningham_effects_1975}.
+\citep[e.g.][]{brenneman_constraining_2006}. The most ubiquitous formulation of
+these transfer functions was first introduced in \cite{cunningham_effects_1975}.
 There, they are defined
 \begin{equation}
     \label{eq:cunn-transfer-function}
@@ -748,24 +757,25 @@ themselves.
 The parameterization of $g^\ast$ is double-valued everywhere except at $g^\ast =
 0$ and $1$, with the two values of $g^\ast$ being attributed to the points along
 $\rhoem$ that are closest and furthest from the observer (see
-Figure~\ref{fig:transfer-parameterisation}). This leads to the interpretation of the
+Figure~\ref{fig:transfer-parameterisation}). This leads to an interpretation of the
 Cunningham transfer functions as recasting the projection of the accretion disc
-on the image plane from $(\alpha, \beta)$ to $(\rhoem, g^\ast)$, see Figure
+on the image plane from $(\alpha, \beta)$ to $(\rhoem, g^\ast)$, see
 Figure~\ref{fig:transfer-parameterisation}. The additional elliptical envelope in
 $g^\ast$ suppresses the singular values of the Jacobian as $g^\ast$ becomes $0$
-or $1$, resulting in numerically better behaved functions at extremal $g^\ast$.
+or $1$, resulting in numerically better behaved functions at extremal $g^\ast$
+that can be integrated over $g$.
 
 As a note, the name \emph{transfer functions} is a more general term and used
-elsewhere, for example in reverberation simulations discussed later. To avoid
+elsewhere, for example in reverberation lags discussed later. To avoid
 ambiguity, we henceforth refer to functions of the kind defined in
-equation~\eqref{eq:cunn-transfer-function} as \emph{relativistic} or
+Equation~\eqref{eq:cunn-transfer-function} as \emph{relativistic} or
 \emph{Cunningham transfer functions}. Furthermore, the Cunningham transfer
 functions are referred to as having `upper' and `lower' branches between
 extremal $g^\ast$, as shown in Figure~\ref{fig:transfer-sampling-pattern},
 stemming from the double-valued nature of $g^\ast$. When the emission from the
 disc is not isotropic, the distinction between these branches becomes important,
 as the geodesic that connects the disc element to the observer makes a different
-cosine angle $\mu$ to the disc surface.
+cosine angle $\mu := \cos x^\theta$ to the disc surface.
 
 \subsubsection{Calculating Cunningham transfer functions}
 
@@ -780,25 +790,31 @@ $\mathcal{R}(\vartheta)$, with $\alpha = \mathcal{R}(\vartheta) \cos(\vartheta)$
 and $\beta = \mathcal{R}(\vartheta) \sin(\vartheta)$. For a given $\vartheta$,
 the offset on the image plane $\mathcal{R}$ is found by root-finding the
 difference between $\rhoem$ and the projected endpoint of the geodesic on
-the disc $\rho = x^r (\mathcal{R}) \sin x^\theta(\mathcal{R})$, using the same
-alternating root-finder as in Section~\ref{sec:special-orbits}.
+the disc $\rho = x^r (\mathcal{R}) \sin x^\theta(\mathcal{R})$, using a novel
+root-finding method that takes advantage of the AD derivatives that can be
+calculated along a geodesic.  The method is principally a Newton-Raphson
+implementation with an additional pivot point that is used to estimate a
+bracketing interval, used if the Newton-Raphson method should fail. In such
+cases, the bracket is used with the Golden--Section implementation of
+\citep{Optim.jl-2018}.
 
-Second, we must determine the extrema of $g$ over the $\rhoem$ ring. The
-extremal $g$ are found by using the Golden--Section bracketing method of
-\cite{Optim.jl-2018} to extremize $g(\vartheta)$, solving a new geodesic at each
-step. We make the assumption that extremal $g$ approximately coincide with
-extremal $\beta = 0$, and therefore shift the domain to $\vartheta \in [ -\pi/2,
-3\pi/4)$ to ensure the maxima and minima are away from the edges of the domain
-to help the optimiser.
+Second, we must determine the extrema of $g$ over the $\rhoem$ ring. From the
+previously calculated $\vartheta$, the best estimate of the extrema of $g$ is
+used as a starting point for the same Golden--Section bracketing method, where
+each step of the extremiser calls the root-solving implementation to find the
+$\mathcal{R}(\vartheta)$ that intersects $\rhoem$. Since these extrema are
+usually close to the line along $\beta = 0$, we shift the domain of the problem
+to $\vartheta \in [ -\pi/2, 3\pi/4)$, which helps ensure the maxima and minima
+are away from the edges of the domain. This helps to construct contiguous
+brackets for the optimisers.
 
 The importance of accurately calculating $g_\text{min}$ and $g_\text{max}$ is
 difficult to overstate: small errors here will dramatically alter the shape of
 the transfer functions close to $g^\ast \rightarrow 0$ and $g^\ast \rightarrow
 1$, and have a high likelihood of sending $f$ to positive or negative infinity.
 Even when the extrema are determined to high accuracy, in practice, it is useful
-to employ a small truncation of $\delta g^\ast = h \sim 10^{-6}$ either side of
-the domain. This is discussed in the next section in further detail in the
-context of integrating under $f$.
+to employ a small truncation either side of the domain, as is discussed in the
+next section in the context of integrating $f$.
 
 Finally, the Jacobian is calculated by retracing all previously traced $(\alpha,
 \beta)$ that map to $\rhoem$ with AD. Other authors will here use
@@ -876,10 +892,11 @@ of calculating Cunningham transfer functions is modified through the use of
 \end{figure}
 
 We define a \emph{datum plane} to be an infinite plane at some scale height
-$z_\text{em} = \rhoem \cos \theta$, and used as the manifold over which the
+$z_\text{em} = h(\rhoem)$, where $h$ is the height of the disc above the
+equatorial plane. The datum plane is used as the manifold over which the
 optimiser solves the projection of the ring with radius $\rhoem$. The datum
 plane is in essence a cut-off for integration such that all geodesics terminate
-with the same $z$, see Figure~\ref{fig:datum-plane-tracing}.
+at the same height, see Figure~\ref{fig:datum-plane-tracing}.
 
 As before, we determine the extremal redshift over the ring $\rhoem$, including
 those geodesics from obscured regions of the disc. As the redshift depends only
@@ -957,14 +974,14 @@ output matrix.  Any evaluation of \eqref{eq:transfer-integration} that is
 outside of the energy and time limits is discarded, and therefore the axes of
 the matrix must be chosen with some degree of care.
 
-The integration over $\d \rhoem$ is performed using a trapezoidal scheme, as it
-is sufficiently accurate and performant. The integration over $\d g^\ast$
+The integration over $\d \rhoem$ is performed using a simple trapezoidal scheme,
+as it is sufficiently accurate and performant. The integration over $\d g^\ast$
 requires more care, particularly around the extremal values, for which we use a
 7$^\text{th}$ order Gauss--Kronrod quadrature integration scheme. The flux for a
 particular energy $F(E)$ is evaluated for each branch over a small output bin in
 $g$, whereas $t$ is determined by evaluating $t(g^\ast)$ at the limits of the
 bin. Depending on the timing resolution required, is it imperative that the
-integration is performed over a \emph{fine} $g$ grid. In full:
+integration is performed over a \emph{fine} $g$ grid. The method in full is:
 \begin{enumerate}
     \item Interpolate the values of the transfer function, $f$, $t$, and
         $g_\text{min}$, and $g_\text{max}$, for the current radius $\rhoem$.
@@ -972,17 +989,18 @@ integration is performed over a \emph{fine} $g$ grid. In full:
         coordinate $\omega_i = \Delta \rhoem \rhoem$. Any other quantities that only
         depend on $\rhoem$ may similarly be factored into this weighting. The
         emissivity function can be included here, should it depend only on
-        cylindrical radius, $I_\text{em}(\rhoem)$.
+        emission radius, i.e. $I_\text{em}(\rhoem)$.
     \item Construct the fine $g$ grid from $E_\text{min}$, $E_\text{max}$, using
         $g = E / E_\text{line}$. The only requirement for this grid is that it
-        is has at least twice the resolution of the output matrix. This can be
-        increased for better resolution at a computational cost.
+        is has at least twice the resolution of the output matrix to avoid
+        artifacts of interpolating $f$. This can be increased for better
+        resolution at computational cost.
     \item For each bin in the fine $g$ grid, integrate both branches of $f$ over
         this bin. Record $t_\text{min} = t(g_\text{min})$ and $t_\text{max} =
-        t(g_\text{max})$.  A caution: depending on the interpolation scheme or
-        implementation, if $f$ is a function of $g$ instead of $g^\ast$, a $g /
-        (g_\text{max} - g_\text{min})$ change-of-variable factor must be
-        included in the integrand.
+        t(g_\text{max})$. Caution must be taken, as depending on the
+        interpolation scheme or implementation, if $f$ is a function of $g$
+        instead of $g^\ast$, a $g / (g_\text{max} - g_\text{min})$
+        change-of-variable factor must be included in the integrand.
     \item Add $\omega_i F_i(E, t)$ to the bin corresponding to the energy $E =
         gE_\text{line}$ and time $t$. If the range $g_\text{min}$ to
         $g_\text{max}$ straddles an output bin in either energy or time, the
@@ -990,10 +1008,10 @@ integration is performed over a \emph{fine} $g$ grid. In full:
         into their corresponding bins.
 \end{enumerate}
 
-A caveat exists, namely that the integrand for each branch may still in practice
-diverge at $g^\ast \rightarrow (0, 1)$. The above integration is therefore only
-performed with support $g^\ast \in [h, 1 - h]$. Outside of this domain, the
-limits of the integrand can be taken to approximate the edges of the bin, as in
+The integrand for each branch may still in practice diverge at $g^\ast
+\rightarrow (0, 1)$. The above integration is therefore only performed with
+support $g^\ast \in [h, 1 - h]$. Outside of this domain, the limits of the
+integrand can be taken to approximate the edges of the bin, as in
 \cite{dauser_broad_2010},
 \begin{equation}
     F_\text{edge}(E,t) \propto 2\left( \sqrt{E_\text{max}} - \sqrt{E_\text{min}} \right).
@@ -1001,7 +1019,7 @@ limits of the integrand can be taken to approximate the edges of the bin, as in
 The constant of proportionality is determined by evaluating the integrand at $h$
 or $1 - h$ respectively.
 
-We use $h = 2 \times 10^{-8}$. The grid over $\rhoem$ over which the transfer
+We use $h = 2 \times 10^{-8}$. The grid in $\rhoem$ over which the transfer
 functions are interpolated should be irregularly spaced, e.g.  $\sim 1 / r$ or
 as a geometric series, reflecting the fact that the majority of the variation in
 $f$ occurs at small $r$. For $g^\ast$, the variation is approximately uniform
@@ -1013,11 +1031,10 @@ Formulating the Cunningham transfer function integration with a time component
 allows the same transfer function table to be used in computing both spectral
 and timing properties. The integration can be performed sufficiently fast for
 use with parameter inference. We also note that extensions to $I_\text{em}$ that
-require, for example, the photon emission angle on the disc $\mu =
-\cos(\theta)$, such as limb darkening or fluorescence
-\citep{matt_reflection_1993}, are straightforward to include. They require,
-however, that each transfer function branch is integrated separately, as
-previously noted.
+require, for example, the photon emission angle relative to the disc, such as
+limb darkening or fluorescence \citep{matt_reflection_1993}, are straightforward
+to include. They require, however, that each transfer function branch is
+integrated separately, as previously noted.
 
 % These transfer function integration methods may be checked for consistency
 % against slower but simpler direct binning of the image plane via equation
@@ -1044,8 +1061,8 @@ the redshift,
 \begin{equation}
     \nu = \frac{\nu_\text{obs}}{g}.
 \end{equation}
-In general, both coefficients $\alpha_\nu$ and $j_\nu$ are also functions of the
-position $x^\mu$.
+In general, both coefficients $\alpha_\nu$ and $j_\nu$ are fields that depend on
+the position $x^\mu$.
 
 The $\d s / \d \lambda$ derivative term is calculated by projecting the geodesic
 momentum $v_\mu$ onto the velocity $u^\mu$ of the medium, using the projection
@@ -1063,7 +1080,6 @@ such that for the particular case of null geodesics through a time-like medium
 \begin{equation}
     \left. \frac{\d s}{\d \lambda} \right\rvert_\lambda = - \left. v_\mu u^\mu \right\rvert_\lambda.
 \end{equation}
-
 The intensity is calculated by selecting $\nu_\text{obs} = E$ at the observer,
 and integrating \eqref{eq:covariant-radiative-transfer} along a given geodesic.
 
@@ -1074,11 +1090,12 @@ and integrating \eqref{eq:covariant-radiative-transfer} along a given geodesic.
 \Gradus is open-source and publicly available. It is implemented in the Julia
 programming language \citep{Bezanson_Julia_A_fresh_2017}. We use the
 DifferentialEquations.jl ODE solving library with ForwardDiff.jl for
-forward-mode automatic differentiation \citep{RevelsLubinPapamarkou2016}. The
-code is available via the \software{Pkg} Julia package manger in a registry
-maintained by the University of Bristol astrophysics
+forward-mode automatic differentiation
+\citep{rackauckas_differential_2017,RevelsLubinPapamarkou2016}. The code is
+available via the \software{Pkg} Julia package manger in a registry maintained
+by the University of Bristol astrophysics
 group\footnote{\url{https://github.com/astro-group-bristol/AstroRegistry/}}. The
-software is multi-threaded for CPUs, with limited GPU support.
+software supports multi-threaded execution for CPUs, with limited GPU support.
 
 \Gradus has a single expressive high-level programming interface for a variety
 of GRRT problems, with sensible defaults and optional fine-grained control. The
@@ -1086,12 +1103,12 @@ software is extensively tested with a suite of unit and integration tests. The
 tests are constructed both by comparing numerical algorithms to specific
 analytic counterparts, and by comparing against snapshots of results in the
 literature. \Gradus implements many algorithms for solving the same problem,
-providing the choice of which method to use depending on the context of the
-problem. The multitude of algorithms are also used as a self-consistency test,
-to ensure the validity of our implementations.
+providing the choice of which method to use depending on the context. The
+multitude of algorithms are also used as a self-consistency test, to ensure the
+validity of our various implementations.
 
 \Gradus aims to make exploring new spacetime models simple by only requiring the
-non-zero metric components to be implemented. To this end and for comparison, we
+non-zero metric components to be implemented. To this end, and for comparison, we
 maintain a catalogue of metric implementations, including the Kerr spacetime,
 Morris--Thorne wormhole \citep{morris_wormholes_1988}, Johannsen metric
 \cite{johannsen_regular_2013}, the Einstein--Maxwell--Dilaton--Axion metric
@@ -1099,7 +1116,7 @@ Morris--Thorne wormhole \citep{morris_wormholes_1988}, Johannsen metric
 \citep{chen_observational_2024}, and the Kerr--Newman
 metric \citep[e.g.][]{hackmann_charged_2013}, complete with the ability to
 specify the electromagnetic potential vector from which external accelerations
-$a^\mu$ in equation \eqref{eq:geodesic_equation} are calculated.
+$a^\mu$ in Equation~\eqref{eq:geodesic_equation} are calculated.
 
 The design of \Gradus prioritizes usability and extensibility, which comes at a
 small performance cost: our aim is not to implement the fastest, semi-analytic
@@ -1113,12 +1130,12 @@ quickly. To this end, we also include a number of visualization and plotting
 recipes to provide some intuition for the problem space.
 
 This design is possible with Julia's just-in-time compilation and multiple
-dispatch, also bringing additional benefits: different number types may be used
+dispatch, which also brings additional benefits: different number types may be used
 through the whole library, such as arbitrary precision floating point
 operations, symbolic types through Symbolics.jl \citep{symbolics_julia}, or the
 propagation of AD gradient information through an entire simulation.
 Consequently, our ray-tracer is entirely differentiable, which we make use of
-through gradient-enhanced optimisers, where mathematical optimisation is needed.
+through gradient-enhanced optimisers where mathematical optimisation is needed.
 
 % The shim we have implemented between our ODE problems and
 % DifferentialEquations.jl allows additional quantities to be integrated along
@@ -1257,8 +1274,12 @@ computed using the transfer functions of \Gradus and the \relline model of
 \cite{dauser_broad_2010}\footnote{We compare against the \relline v2.3 with
     table v0.5a distributed in the Relxill package
     \url{http://www.sternwarte.uni-erlangen.de/~dauser/research/relxill/}. These
-are the latest versions at the time of writing.}. We see good agreement to
-within $\sim 1\%$ relative difference across all parameters.
+are the latest versions at the time of writing.}. The spikes in residual
+coincide with discontinuous features in the lineprofiles, and stem from minor
+differences in the estimates of the extremal $g$. Very small differences here
+can shift the edges of the lineprofile, resulting in residual spikes that can be
+largely ignored. Overall, we see good agreement to within $\sim 1\%$ relative
+difference across all parameters.
 
 \begin{figure}
     \centering
@@ -1656,7 +1677,7 @@ this paper and all figures therein is freely available under GPL 3.0 license:
 \input{gradus.appendix.circular-orbits.tex}
 % \input{gradus.appendix.deflection-angle.tex}
 % \input{gradus.appendix.integrator-error.tex}
-% \input{gradus.appendix.continuum-time.tex}
+\input{gradus.appendix.continuum-time.tex}
 % \input{gradus.appendix.hamiltonian-formalism.tex}
 
 % \section{Some extra material}
