@@ -1375,9 +1375,13 @@ responses and lags are in good agreement for low coronal height, but start to
 differ by a few percent as the corona is moved to $h=10 \rg$ and $20 \rg$. The
 impulse response in \citet{cackett_modelling_2014} starts later with increasing
 $h$ than ours, and the low frequency lag is longer with increasing $h$. This
-difference is consistent with a constant multiplicative factor along the time /
-lag axes, which is likely due to the inclusion of a weak field approximation in
-\citet{cackett_modelling_2014} (see \ref{appendix:continuum}).
+difference is consistent with a constant multiplicative factor of $~ 1.1$ in the
+time axis of the impulse responses. The shapes of our impulse responses agree,
+merely their offset differs. These differences are consistent with a systematic
+offset in either the corona-to-disc, corona-to-observer, or disc-to-observer
+time, or some combination thereof. Most likely it is some disagreement in the
+corona-to-disc time, but with much modification to our code we are unable to
+reproduce exactly the results of \citet{cackett_modelling_2014}.
 
 \begin{figure}
     \centering
@@ -1392,7 +1396,6 @@ lag axes, which is likely due to the inclusion of a weak field approximation in
     \label{fig:reverberation-thin}
 \end{figure}
 
-
 \subsubsection{Lag-energy spectra}
 
 Lag--energy spectra show the time lag as a function of energy within specific frequency bands $f + \Delta
@@ -1403,10 +1406,7 @@ each energy channel (rows in the lag transfer functions), the lag--frequency
 spectrum is calculated. The mean lag within $f + \Delta f$ is determined, and
 plotted as a function of energy. Figure~\ref{fig:lag-energy} shows
 the time lag as a function of energy relative to the \FeKa band,
-to be compared to Figure 11 in \cite{cackett_modelling_2014}. As with the
-lag--frequency spectra, we attribute the differences in the low frequency band to
-the weak field approximation employed by the other authors, which results in a
-larger low frequency lag.
+to be compared to Figure 11 in \cite{cackett_modelling_2014}.
 
 \begin{figure}
     \centering
@@ -1545,16 +1545,15 @@ E_\text{em} =
 shape of the lag--enregy spectra.
 
 Notably, for a low corona, a marked difference between the thin and thick disc
-lag--energy profiles exists for all inclinations and frequencies. This would be
-in principle observable with current data, and would be degenerate with other
-fitted parameters including black hole mass. We note that this effect can also
-be attributed to the geometry of the corona \citep[see
-e.g.][]{wilkins_towards_2016}.
-
-Degeneracies of these models and their relative importance will be explored in
-conjunction with our work on modelling radially extended corona using novel
-time-dependent emissivity functions in a forthcoming paper (Baker \& Young
-in preparation).
+lag--frequency and lag--energy profiles exists for all inclinations. The shift
+in the lag is not precisely equivalent to a change in the coronal height, as the
+emissivity profiles of a geometrically thick disc are modified from the
+razor-thin counterparts \citep{taylor_exploring_2018}. With the current
+resolution and signal to noise of contemporary instruments, it would be
+difficult to disambiguate the effect of the disc height and coronal height. At
+low inclination, if the disc were thick but the model used to fit the data
+assumes a thin geometry, the recovered lag would be an overestimate, and
+therefore increase the uncertainty on the recovered black hole mass.
 
 \begin{figure*}
     \centering
@@ -1665,7 +1664,7 @@ this paper and all figures therein is freely available under GPL 3.0 license:
 \input{gradus.appendix.circular-orbits.tex}
 % \input{gradus.appendix.deflection-angle.tex}
 % \input{gradus.appendix.integrator-error.tex}
-\input{gradus.appendix.continuum-time.tex}
+% \input{gradus.appendix.continuum-time.tex}
 % \input{gradus.appendix.hamiltonian-formalism.tex}
 
 % \section{Some extra material}
