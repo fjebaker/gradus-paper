@@ -7,6 +7,11 @@ function _format_model(model)
     L"h = %$hh r_\text{g}"
 end
 
+function classical_time(theta, r, h)
+    v = r^2 - 2r * h * cos(theta) + h^2
+    sqrt(v)
+end
+
 function calculate_2d_transfer_function(m, x, model, itb, prof, radii)
     bins = collect(range(0.0, 1.5, 300))
     tbins = collect(range(0, 2000.0, 3000))
@@ -20,7 +25,7 @@ function calculate_2d_transfer_function(m, x, model, itb, prof, radii)
         bins,
         tbins;
         t0 = t0,
-        n_radii = 8000,
+        n_radii = 10000,
         rmin = minimum(radii),
         rmax = maximum(radii),
         h = 1e-8,
@@ -41,7 +46,7 @@ end
 
 m = KerrMetric(1.0, 0.998)
 x = SVector(0.0, 10_000.0, deg2rad(45), 0.0)
-radii = Gradus.Grids._inverse_grid(Gradus.isco(m), 1000.0, 200)
+radii = Gradus.Grids._inverse_grid(Gradus.isco(m), 1000.0, 400)
 
 # models
 model1 = LampPostModel(h = 2.0)
@@ -52,7 +57,7 @@ model4 = LampPostModel(h = 20.0)
 # thin disc
 d = ThinDisc(0.0, Inf)
 
-itb = Gradus.interpolated_transfer_branches(m, x, d, radii; verbose = true, β₀ = 2.0)
+itb = Gradus.interpolated_transfer_branches(m, x, d, radii; verbose = true)
 
 freq1, τ1, impulse1, time1 = calculate_lag_transfer(m, d, model1, radii, itb)
 freq2, τ2, impulse2, time2 = calculate_lag_transfer(m, d, model2, radii, itb)

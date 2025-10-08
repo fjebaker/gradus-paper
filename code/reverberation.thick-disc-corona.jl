@@ -35,7 +35,7 @@ function calculate_2d_transfer_function(m, x, model, itb, prof, radii)
         rmin = minimum(radii),
         rmax = maximum(radii),
         h = 1e-8,
-        g_grid_upscale = 3,
+        g_grid_upscale = 4,
     )
 
     flux[flux.==0] .= NaN
@@ -54,6 +54,7 @@ function calculate_lag_transfer(m, x, d, model, radii, itb)
 end
 
 function calculate_for_model(m, d, model)
+    radii = Gradus.Grids._geometric_grid(Gradus.isco(m), 1000.0, 500)
     # different angles
     angles = [10, 30, 60, 80]
     datas = map(angles) do angle
@@ -67,7 +68,6 @@ function calculate_for_model(m, d, model)
 end
 
 m = KerrMetric(1.0, 0.998)
-radii = Gradus.Grids._geometric_grid(Gradus.isco(m), 1000.0, 400)
 
 begin
     @info "Thick disc 1"

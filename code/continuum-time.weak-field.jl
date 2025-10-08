@@ -44,18 +44,7 @@ function calculate_reflection_time(m, heights, x)
 end
 
 function transition_function(r::T, R) where {T}
-    δr = 2.0
-    if r ≤ R
-        one(T)
-    elseif R ≤ r ≤ R + δr
-        t = (r - R) / δr
-        # use an arbitrarily steep smooth interpolation
-        # this one isn't perfect, but does a good job
-        k = atan(1e5t) * 2 / π
-        (1 - k)
-    else
-        zero(T)
-    end
+    Gradus._smooth_interpolate(r, R; δx = 10.0)
 end
 
 struct SwitchingMetric{M1,M2,T} <: AbstractStaticAxisSymmetric{T}
@@ -69,23 +58,16 @@ end
 
 function Gradus.metric_components(m::SwitchingMetric, rθ)
     r = rθ[1]
-    k = transition_function(r, m.R)
-    if k >= 1
-        Gradus.metric_components(m.m1, rθ)
-    elseif k <= 0
-        Gradus.metric_components(m.m2, rθ)
-    else
-        c1 = Gradus.metric_components(m.m1, rθ)
-        c2 = Gradus.metric_components(m.m1, rθ)
-        @. c1 * k + (1 - k) * c2
-    end
+    c1 = Gradus.metric_components(m.m1, rθ)
+    c2 = Gradus.metric_components(m.m2, rθ)
+    k = clamp(transition_function(r, m.R), 0, 1)
+    @. c1 * k + (1 - k) * c2
 end
 Gradus.inner_radius(m::SwitchingMetric) = Gradus.inner_radius(m.m1)
 Gradus.isco(m::SwitchingMetric) = Gradus.isco(m.m1)
 
 begin
-    heights = Gradus.Grids._geometric_grid(2.0, 100.0, 200) |> collect
-    push!(heights, 100.0)
+    heights = range(2.0, 110.0, 200) |> collect
 end
 
 x = SVector(0.0, 10_000.0, deg2rad(45), 0.0)
@@ -116,9 +98,9 @@ begin
     c1 = popfirst!(palette)
     c2 = popfirst!(palette)
     c3 = popfirst!(palette)
-    l1 = lines!(ax, heights, abs.(s_times1 .- s_times0), color = c1)
-    l2 = lines!(ax, heights, abs.(s_times2 .- s_times0), color = c2)
-    l3 = lines!(ax, heights, abs.(s_times3 .- s_times0), color = c3)
+    l3 = lines!(ax, heights, (s_times3 .- s_times0), color = c3)
+    l2 = lines!(ax, heights, (s_times2 .- s_times0), color = c2)
+    l1 = lines!(ax, heights, (s_times1 .- s_times0), color = c1)
 
     Legend(
         ga[1, 1],
@@ -179,7 +161,7 @@ x = SVector(0.0, 10_000.0, deg2rad(45), 0.0)
 radii = Gradus.Grids._inverse_grid(Gradus.isco(m), 1000.0, 200)
 
 # models
-model2 = LampPostModel(h = 20.0)
+model2 = LampPostModel(h = 10.0)
 
 # thin disc
 d = ThinDisc(0.0, Inf)
@@ -194,10 +176,31 @@ alt_m = s_m1
 Gradus._redshift_guard(m::SwitchingMetric, args...) = Gradus._redshift_guard(m.m1, args...)
 Gradus.ConstPointFunctions.redshift(m::SwitchingMetric, args...) = Gradus.ConstPointFunctions.redshift(m.m1, args...)
 
-alt_itb = Gradus.interpolated_transfer_branches(alt_m, x, d, radii; verbose = true)
+# gridding for the photon plane
+plane = PolarPlane(GeometricGrid(); Nr = 1200, Nθ = 1200, r_max = 700.0)
 
-alt_freq2, alt_τ2, alt_impulse2, alt_time2 =
-    calculate_lag_transfer(alt_m, d, model2, radii, alt_itb)
+# integrate source to disc and observer to disc
+tf = @time lagtransfer(
+    alt_m,
+    x,
+    ThinDisc(Gradus.isco(m), Inf),
+    model2
+    ;
+    plane = plane,
+    callback = domain_upper_hemisphere(),
+    n_samples = 1,
+    verbose = true,
+)
+prof = @time emissivity_profile(alt_m, ThinDisc(Gradus.isco(m), Inf), model2; n_samples = 1_000)
+alt_t0 = continuum_time(alt_m, x, model2)
+
+begin
+    alt_time, alt_E, alt_f = binflux(tf, prof; N_E = 1500, N_t = 3000, t0 = alt_t0, time_lims = (alt_t0, alt_t0 + 5000.0))
+    replace!(alt_f, NaN => 0.0)
+    Gradus._normalize!(alt_f, alt_E)
+    alt_impulse = Gradus.sum_impulse_response(alt_f)
+    alt_freq, alt_τ = @time lag_frequency(alt_time, alt_f)
+end
 
 begin
     palette = _default_palette()
@@ -217,8 +220,8 @@ begin
     l2 = lines!(ax2, freq2, τ2, label = _format_model(model2), color = color)
     lines!(
         ax2,
-        alt_freq2,
-        alt_τ2,
+        alt_freq,
+        alt_τ,
         label = _format_model(model2),
         linestyle = :dot,
         color = color,
