@@ -644,7 +644,7 @@ distributions of $\Upsilon$, $\Psi$ may be appropriately weighted to give the
 desired pattern.
 
 The lamppost emissivity profile may alternatively be determined by exploiting
-symmetries as in \cite{dauser_irradiation_2013}.  Here, only a given slice with
+symmetries as in \citet{dauser_irradiation_2013}.  Here, only a given slice with
 constant $\Psi$ is considered, where $\Upsilon$ is now evenly spaced. Pairs of
 geodesics separated by some small $\Delta \Upsilon$ have endpoints on the disc
 separated by $\Delta \rho$, such that $\sin (\Upsilon) \Delta \Upsilon / \Delta
@@ -738,7 +738,7 @@ spectral model.
 To avoid such problems, the relativistic effects in the flux calculation are
 encoded in so-called \emph{transfer functions}
 \citep[e.g.][]{brenneman_constraining_2006}. The most ubiquitous formulation of
-these transfer functions was first introduced in \cite{cunningham_effects_1975}.
+these transfer functions was first introduced in \citet{cunningham_effects_1975}.
 There, they are defined
 \begin{equation}
     \label{eq:cunn-transfer-function}
@@ -908,7 +908,7 @@ The Jacobian is calulated by tracing against the thick disc and is combined with
 a check to see if a patch of the disc is obscured. This obscuration check is
 used to mask values of the transfer functions, as in
 Figure~\ref{fig:transfer-functions}. This method is in effect analogous to the
-`imaginary photons' of \cite{abdikamalov_testing_2020}, formalized for our
+`imaginary photons' of \citet{abdikamalov_testing_2020}, formalized for our
 specific approach and the use of AD.
 
 \begin{figure*}
@@ -1012,7 +1012,7 @@ The integrand for each branch may still in practice diverge at $g^\ast
 \rightarrow (0, 1)$. The above integration is therefore only performed with
 support $g^\ast \in [h, 1 - h]$. Outside of this domain, the limits of the
 integrand can be taken to approximate the edges of the bin, as in
-\cite{dauser_broad_2010},
+\citet{dauser_broad_2010},
 \begin{equation}
     F_\text{edge}(E,t) \propto 2\left( \sqrt{E_\text{max}} - \sqrt{E_\text{min}} \right).
 \end{equation}
@@ -1107,7 +1107,7 @@ validity of our various implementations.
 non-zero metric components to be implemented. To this end, and for comparison, we
 maintain a catalogue of metric implementations, including the Kerr spacetime,
 Morris--Thorne wormhole \citep{morris_wormholes_1988}, Johannsen metric
-\cite{johannsen_regular_2013}, the Einstein--Maxwell--Dilaton--Axion metric
+\citep{johannsen_regular_2013}, the Einstein--Maxwell--Dilaton--Axion metric
 \citep{garcia_class_1995}, the No-$\mathbb{Z}_2$ metric
 \citep{chen_observational_2024}, and the Kerr--Newman
 metric \citep[e.g.][]{hackmann_charged_2013}, complete with the ability to
@@ -1191,7 +1191,7 @@ to negative infinity, that is
 where $\pi$ is the angular change for a trajectory that experiences no
 deflection. Semi-analytic solutions for the deflection angle in the Kerr
 spacetime have been calculated for equatorial geodesics in
-\cite{iyer_lights_2009}. The authors use elliptical integrals to find the
+\citet{iyer_lights_2009}. The authors use elliptical integrals to find the
 coordinate differences. We follow their notation and denote the analytic
 deflection angle $\hat{\alpha}$.
 
@@ -1223,7 +1223,7 @@ on numerical errors.
 To test our implementation of the emissivity profile calculations described in
 Section~\ref{sec:emissivity-profiles}, we model a thin equatorial accretion disc
 illuminated by an on-axis lamppost corona, comparing against
-\cite{wilkins_understanding_2012} and \cite{dauser_irradiation_2013}. These are
+\citet{wilkins_understanding_2012} and \citet{dauser_irradiation_2013}. These are
 shown in Figure~\ref{fig:emissivity-profiles} and are in good agreement with the
 published results. Also shown is the effect of the Shapiro delay $t$, on the
 arrival time of a photon at a given radius on the disc.
@@ -1254,7 +1254,7 @@ integrated for a particular emissivity profile as described in
 Section~\ref{sec:transfer-function-integration}, neglecting the timing
 components. Figure~\ref{fig:relline-comparison} compares the line profiles
 computed using the transfer functions of \Gradus and the \relline model of
-\cite{dauser_broad_2010}\footnote{We compare against the \relline v2.3 with
+\citet{dauser_broad_2010}\footnote{We compare against the \relline v2.3 with
     table v0.5a distributed in the Relxill package
     \url{http://www.sternwarte.uni-erlangen.de/~dauser/research/relxill/}. These
 are the latest versions at the time of writing.}. The spikes in residual
@@ -1285,8 +1285,8 @@ The time delay between the corona's direct and the subsequent disc's reflected
 components is increased by the effects of strong gravity on the light travel
 time. The effect, termed \emph{reverberation lag}, is therefore dependent on
 properties of the black hole, as well as depending on the disc and corona
-geometry (see e.g.  \cite{uttley_x-ray_2014} or
-\cite{cackett_reverberation_2021} for a review).
+geometry \citep[see e.g.][for review]{uttley_x-ray_2014,
+cackett_reverberation_2021}
 
 Simulating either the lag--frequency or lag--energy spectra involves computing a
 set of transfer functions that record the arrival time and observed energy of
@@ -1337,9 +1337,9 @@ encodes how the disc responds to the impulse of a coronal flash.
 Examples for different lamppost heights over the full energy range are shown in
 the top panel of Figure~\ref{fig:reverberation-thin}.
 
-Following \cite{cackett_modelling_2014}, we define the \textit{response
-fraction}, $R$, as the ratio of reflected to continuum flux. The impulse response
-in the Fourier domain is the scaled Fourier transform
+Following \citet{cackett_modelling_2014} (hereafter C14), we define the
+\textit{response fraction}, $R$, as the ratio of reflected to continuum flux.
+The impulse response in the Fourier domain is the scaled Fourier transform
 \begin{equation}
     \mathscr{F}_\psi(f) := R \int_{0}^\infty \psi(t) \e^{-2\pi i f t} \d t
 \end{equation}
@@ -1359,7 +1359,7 @@ through the $+1$ in the denominator.
 
 A subtlety to address here in the normalisation of the impulse responses, as we
 do not fully model the continuum spectrum. We assume, as in
-\cite{cackett_modelling_2014}, that the reflected flux of the line is equal to
+C14, that the reflected flux of the line is equal to
 the continuum flux ($R = 1$). We normalise the impulse response functions by
 dividing by a factor $Q = \int \psi_{\text{Fe K}\alpha}(t)$, so that the area
 under the line impulse response function is unity.
@@ -1371,18 +1371,19 @@ The time lag is defined as
 and relates the observed time lag to the Fourier frequency of the driving
 signal (lower panel of Figure~\ref{fig:reverberation-thin}).
 
-We find some small differences with \citet{cackett_modelling_2014}. Our impulse
-responses and lags are in good agreement for low coronal height, but start to
-differ by a few percent as the corona is moved to $h=10 \rg$ and $20 \rg$. The
-impulse response in \citet{cackett_modelling_2014} starts later with increasing
-$h$ than ours, and the low frequency lag is longer with increasing $h$. This
-difference is consistent with a constant multiplicative factor of $~ 1.1$ in the
-time axis of the impulse responses. The shapes of our impulse responses agree,
-merely their offset differs. These differences are consistent with a systematic
-offset in either the corona-to-disc, corona-to-observer, or disc-to-observer
-time, or some combination thereof. Most likely it is some disagreement in the
-corona-to-disc time, but with much modification to our code we are unable to
-reproduce exactly the results of \citet{cackett_modelling_2014}.
+We find some small differences with C14. Our impulse responses and lags are in
+good agreement for low coronal height, but start to differ by a few percent as
+the corona is moved to $h \geq 10 \rg$. The impulse response in C14 starts
+later, and the low frequency lag is longer with increasing $h$. This difference
+is consistent with a constant multiplicative factor of $\sim 1.1$ in the time
+axis of the impulse responses. The precise shapes of our impulse responses
+agree, merely their offset differs. These differences are consistent with a
+systematic offset in either the corona-to-disc, corona-to-observer, or
+disc-to-observer time, or some combination thereof. Most likely it is some
+disagreement in the corona-to-disc time, but with much modification to our code
+we are unable to reproduce exactly the results of C14. Our light travel times
+are consistent with the results of e.g. \citet{wilkins_origin_2013}, and we
+believe the systematic difference is not in our implementation.
 
 \begin{figure}
     \centering
@@ -1399,15 +1400,15 @@ reproduce exactly the results of \citet{cackett_modelling_2014}.
 
 \subsubsection{Lag-energy spectra}
 
-Lag--energy spectra show the time lag as a function of energy within specific frequency bands $f + \Delta
-f$. Since we have mandated for consistency with \cite{cackett_modelling_2014}
-that the reflected flux of the \FeKa line is equal to the continuum flux,
-the reference energy band is $E/E_\text{em} = 1$.  For the impulse response of
-each energy channel (rows in the lag transfer functions), the lag--frequency
-spectrum is calculated. The mean lag within $f + \Delta f$ is determined, and
-plotted as a function of energy. Figure~\ref{fig:lag-energy} shows
-the time lag as a function of energy relative to the \FeKa band,
-to be compared to Figure 11 in \cite{cackett_modelling_2014}.
+Lag--energy spectra show the time lag as a function of energy within specific
+frequency bands $f + \Delta f$. Since we have mandated for consistency with C14
+that the reflected flux of the \FeKa line is equal to the continuum flux, the
+reference energy band is $E/E_\text{em} = 1$.  For the impulse response of each
+energy channel (rows in the lag transfer functions), the lag--frequency spectrum
+is calculated. The mean lag within $f + \Delta f$ is determined, and plotted as
+a function of energy. Figure~\ref{fig:lag-energy} shows the time lag as a
+function of energy relative to the \FeKa band, to be compared to Figure 11 in
+C14.
 
 \begin{figure}
     \centering
@@ -1438,7 +1439,7 @@ to be compared to Figure 11 in \cite{cackett_modelling_2014}.
     \label{fig:gold-test-problems}
 \end{figure*}
 
-\cite{gold_verification_2020} specify an analytic model for testing radiative
+\citet{gold_verification_2020} specify an analytic model for testing radiative
 transfer codes (their Section 3.2, with results shown in their Figure 2 and 3).
 The model gives the emissivity and absorptivity coefficients of a (corotating)
 fluid as a function of radial coordinate. There are five free parameters in this
@@ -1494,7 +1495,7 @@ Figure~\ref{fig:line-profile-ssd}. The line profiles are similar to the razor
 thin disc case, except at steep inclination, where the blue shifted
 contributions of the disc are reduced. As we can approximately consider the
 different energy ranges to originate from different radii on the disc
-\cite{gates_on_2024}, we can interpret the thick disc as obscuring the blue
+\citep{gates_on_2024}, we can interpret the thick disc as obscuring the blue
 shifted contributions. This obscuration is preferential due to the rotation of
 the black hole generating an asymmetry in the blue and red shifted sides of the
 accretion disc, see Figure~
@@ -1552,7 +1553,7 @@ emissivity profiles of a geometrically thick disc are modified from the
 razor-thin counterparts \citep{taylor_x-ray_2018}. With the current resolution
 and signal to noise of contemporary instruments, it would be difficult to
 disambiguate the effect of the disc height and coronal height when $h \sim 3 - 10
-r_\text{g}$. The shape of the lag-energy spectrum for these heights for the thin
+r_\text{g}$. The shape of the lag--energy spectrum for these heights for the thin
 and thick discs is remarkably similar, however reduced in the case of the
 latter. Especially at lower inclination, if the disc were thick but the model
 used to fit the data assumes a thin geometry, the recovered lag would be an
