@@ -407,7 +407,8 @@ from the LNRF is
 \end{equation}
 where the local tetrad (basis vectors) $\e^{(\nu)}_{\phantom{(\nu)}\mu}$ are
 found using the theorem of Gram--Schmidt
-\citep[][Appendix~\ref{appendix:gram-schmidt}]{schmidt_uber_1989}. The formalism
+\citep[][Appendix~\ref{appendix:gram-schmidt}]{schmidt_uber_1989}, similar to
+\citet{wilkins_2020_isco}. The formalism
 may be extended for a local frame in motion, where the frame velocity modifies
 the mapping by a local Lorentz transformation,
 $\Lambda^{(\kappa)}_{\phantom{(\kappa)}(\nu)}$, as
@@ -1550,7 +1551,7 @@ in the lag is not precisely equivalent to a change in the coronal height, as the
 emissivity profiles of a geometrically thick disc are modified from the
 razor-thin counterparts \citep{taylor_x-ray_2018}. With the current resolution
 and signal to noise of contemporary instruments, it would be difficult to
-disambiguate the effect of the disc height and coronal height when $h ~ 3 - 10
+disambiguate the effect of the disc height and coronal height when $h \sim 3 - 10
 r_\text{g}$. The shape of the lag-energy spectrum for these heights for the thin
 and thick discs is remarkably similar, however reduced in the case of the
 latter. Especially at lower inclination, if the disc were thick but the model
@@ -1603,24 +1604,12 @@ the process of developing new codes for new metrics.
 
 Our software can reliably compute the Cunningham transfer functions used in
 spectral models for a variety of accretion flows. This permits us to create fast
-line profile models that treat e.g. both the lamppost height and Eddington
-ratio of a SSD as free parameters, and allowing us to build on the work of
-\citet{jiang_black_20222}. Anticipated applications are to calculate
-transfer function tables for turbulent velocity profiles
-\citep{pariev_line_1998}, for warped accretion discs
-\citep[e.g.][]{hartnoll_reprocessed_2001}, for conical or sub-Keplerian discs
-\citep[e.g.][]{wu_iron_2007}, and more.
-
-Our modelling work has advanced already beyond what we have presented in this
-work, including a novel time-dependent emissivity method for computing the line
-profiles and reverberation lags of extended coronal geometries sufficiently
-quickly for use in spectral fitting (Baker \& Young in preparation). We have
-also formalised a method for using generalised Cunningham transfer functions to
-integrate arbitrary quantities of the accretion disc. This will be applied to
-absorption layers on the accretion disc \citep{fabian_blueshifted_2020} and
-polarisation quantities from Comptonising slabs on the accretion disc
-\citep[e.g.][]{poutanen_the_1996}. An early demonstration is in this paper using
-timing information to compute high resolution reverberation lags.
+line profile models that treat e.g. both the lamppost height and Eddington ratio
+of a SSD as free parameters, and allowing us to build on the work of e.g.
+\citet{jiang_black_20222}. Anticipated applications are to calculate transfer
+function tables for turbulent velocity profiles \citep{pariev_line_1998}, for
+warped accretion discs \citep[e.g.][]{hartnoll_reprocessed_2001}, for conical or
+sub-Keplerian discs \citep[e.g.][]{wu_iron_2007}, and more.
 
 We are happy to assist with new applications of \Gradus, and encourage members
 of the community to contact us with interesting problems. Our ultimate aim is to
