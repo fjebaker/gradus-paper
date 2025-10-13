@@ -313,22 +313,6 @@ calculating two columns of the Jacobian entirely.
 \subsection{Observers and emitters}
 \label{sec:observers-and-emitters}
 
-\begin{figure}
-    \centering
-    \includegraphics[width=0.99\columnwidth]{figures/skycoords.pdf}
-    \caption{
-    Geometry of the local sky for an observer or emitter. The image plane
-    (yellow) is perpendicular to the $e_{(r)}$ axis, which, for an observer,
-    points towards the the central singularity. The momenta $v_{(\phi)}$ and
-    $v_{(\theta)}$ are used to calculate the impact parameters on the image
-    plane, $\alpha$ and $\beta$ respectively. For emitters, the angles
-    $(\Upsilon, \Psi)$ are used to parameterize vectors that point on the local
-    sky, which may subsequently be decomposed onto the basis $e_{(i)}$ to find
-    $v_{(\mu)}$.
-    }
-    \label{fig:observer-coordinates}
-\end{figure}
-
 A different method is used to calculate the initial velocity vectors $v^\mu$
 depending on whether an \emph{observer} or an \emph{emitter} is being
 considered. This is for a convenience of parameterisation: observers are
@@ -393,6 +377,22 @@ where the partial derivative matrix in square brackets denotes the Jacobian of
 the Cartesian to spherical coordinate transformation. The constant of motion
 component $v_{(t)}$ is defined as the negative of the energy in the local frame,
 and $-v_{(t)}=E=1$ without loss of generality.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.99\columnwidth]{figures/skycoords.pdf}
+    \caption{
+    Geometry of the local sky for an observer or emitter. The image plane
+    (yellow) is perpendicular to the $e_{(r)}$ axis, which, for an observer,
+    points towards the the central singularity. The momenta $v_{(\phi)}$ and
+    $v_{(\theta)}$ are used to calculate the impact parameters on the image
+    plane, $\alpha$ and $\beta$ respectively. For emitters, the angles
+    $(\Upsilon, \Psi)$ are used to parameterize vectors that point on the local
+    sky, which may subsequently be decomposed onto the basis $e_{(i)}$ to find
+    $v_{(\mu)}$.
+    }
+    \label{fig:observer-coordinates}
+\end{figure}
 
 Directions and momenta are easiest to express in a local frame and then
 transformed back to the global coordinates. The question arises which local
