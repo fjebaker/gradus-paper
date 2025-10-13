@@ -1,8 +1,10 @@
 
 all: latex/gradus.pdf
 
+LATEX_COMPILE := pdflatex -interaction=nonstopmode
+
 latex/gradus.pdf: latex/gradus.tex
-	(cd latex && pdflatex gradus && bibtex gradus && pdflatex gradus)
+	(cd latex && $(LATEX_COMPILE) gradus && bibtex gradus && $(LATEX_COMPILE) gradus)
 
 diff:
 	rm -rf diffs
@@ -12,9 +14,9 @@ diff:
 		sed --posix \
 			's/\\providecommand{\\DIFadd}\[1\]{{\\bf \#1}}/\\providecommand{\\DIFadd}\[1\]{{\\color{red} \\bf \#1}}/' \
 			> diffs/gradus.tex
-	(cd diffs && pdflatex gradus && bibtex gradus && pdflatex gradus)
+	(cd diffs && $(LATEX_COMPILE) gradus && bibtex gradus && $(LATEX_COMPILE) gradus)
 	cp diffs/gradus.pdf diff.pdf
 
 rediff:
-	(cd diffs && pdflatex gradus && bibtex gradus && pdflatex gradus)
+	(cd diffs && $(LATEX_COMPILE) gradus && bibtex gradus && $(LATEX_COMPILE) gradus)
 	cp diffs/gradus.pdf diff.pdf
