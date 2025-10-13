@@ -42,3 +42,10 @@ diff:
 rediff:
 	(cd diffs && $(LATEX_COMPILE) $(PROJECT) && bibtex $(PROJECT) && $(LATEX_COMPILE) $(PROJECT))
 	cp diffs/$(PROJECT).pdf diff.pdf
+
+clean:
+	rm -rf $(BUILD_DIR)
+	rm -rf $(BUNDLE)
+	rm -rf $(BUNDLE).tar.gz
+
+.PHONY: clean
