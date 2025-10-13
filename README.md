@@ -8,7 +8,7 @@ symbols during geodesic integration, and for propagating derivatives through
 the entire ray-tracer. Relevant numerical methods are detailed, and our models
 are validated using a number of tests and comparisons to other codes. The
 differentiability is used to optimally calculate Cunningham transfer functions
-- used to efficiently pre-compute relativistic effects in spectral models. A
+-- used to efficiently pre-compute relativistic effects in spectral models. A
 method is described for calculating such transfer functions for disc with
 non-zero vertical height, including the treatment of self-obscuration. An
 extension of the transfer function formalism that includes timing information
