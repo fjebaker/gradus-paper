@@ -1,22 +1,31 @@
 
-all: latex/gradus.pdf
-
+BUILD_DIR := build
 LATEX_COMPILE := pdflatex -interaction=nonstopmode
+PROJECT := gradus
 
-latex/gradus.pdf: latex/gradus.tex
-	(cd latex && $(LATEX_COMPILE) gradus && bibtex gradus && $(LATEX_COMPILE) gradus)
+all: $(BUILD_DIR)/$(PROJECT).pdf
+
+$(BUILD_DIR)/$(PROJECT).pdf: latex/$(PROJECT).tex
+	mkdir -p $(BUILD_DIR)
+	cp -r latex/* $(BUILD_DIR)
+	(cd $(BUILD_DIR) && \
+		$(LATEX_COMPILE) $(PROJECT) && \
+		bibtex $(PROJECT) && \
+		$(LATEX_COMPILE) $(PROJECT) \
+		$(LATEX_COMPILE) $(PROJECT) \
+	)
 
 diff:
 	rm -rf diffs
 	cp -r latex diffs
-	git show submitted:latex/gradus.tex > /tmp/.submitted-gradus.tex
-	latexdiff --type=BOLD /tmp/.submitted-gradus.tex latex/gradus.tex | \
+	git show submitted:latex/$(PROJECT).tex > /tmp/.submitted-$(PROJECT).tex
+	latexdiff --type=BOLD /tmp/.submitted-$(PROJECT).tex latex/$(PROJECT).tex | \
 		sed --posix \
 			's/\\providecommand{\\DIFadd}\[1\]{{\\bf \#1}}/\\providecommand{\\DIFadd}\[1\]{{\\color{red} \\bf \#1}}/' \
-			> diffs/gradus.tex
-	(cd diffs && $(LATEX_COMPILE) gradus && bibtex gradus && $(LATEX_COMPILE) gradus)
-	cp diffs/gradus.pdf diff.pdf
+			> diffs/$(PROJECT).tex
+	(cd diffs && $(LATEX_COMPILE) $(PROJECT) && bibtex $(PROJECT) && $(LATEX_COMPILE) $(PROJECT))
+	cp diffs/$(PROJECT).pdf diff.pdf
 
 rediff:
-	(cd diffs && $(LATEX_COMPILE) gradus && bibtex gradus && $(LATEX_COMPILE) gradus)
-	cp diffs/gradus.pdf diff.pdf
+	(cd diffs && $(LATEX_COMPILE) $(PROJECT) && bibtex $(PROJECT) && $(LATEX_COMPILE) $(PROJECT))
+	cp diffs/$(PROJECT).pdf diff.pdf
