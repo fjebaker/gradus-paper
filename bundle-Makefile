@@ -1,0 +1,10 @@
+
+LATEX_COMPILE := pdflatex -interaction=nonstopmode
+PROJECT       := gradus
+
+all:
+	$(LATEX_COMPILE) $(PROJECT)
+	bibtex $(PROJECT)
+	$(LATEX_COMPILE) $(PROJECT)
+	$(LATEX_COMPILE) $(PROJECT)
+
